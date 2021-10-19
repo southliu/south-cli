@@ -2,12 +2,12 @@
   "name": "south-cli",
   "version": "1.0.0",
   "description": "",
-  "main": "./bin/cli.ts",
+  "main": "./bin/src/cli.ts",
   "bin": {
-    "cli": "./bin/cli.js"
+    "cli": "./bin/src/cli.js"
   },
   "scripts": {
-    "dev": "tsc && node ./bin/cli.js"
+    "dev": "tsc && node ./bin/src/cli.js"
   },
   "author": "",
   "license": "ISC",

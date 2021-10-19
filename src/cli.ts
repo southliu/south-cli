@@ -7,11 +7,11 @@
 
 import inquirer from 'inquirer'
 import { Command } from 'commander'
-import pkg from '../package.json'
 import path from 'path'
 import fs from 'fs'
 import ejs from 'ejs'
 
+const pkg = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pkg.name)
 
 inquirer.prompt([
@@ -23,7 +23,7 @@ inquirer.prompt([
   }
 ]).then((answers) => {
   // 模版文件目录
-  const destUrl = path.join(__dirname, '../templates'); 
+  const destUrl = path.join(__dirname, '../../templates'); 
   // 生成文件目录
   // process.cwd() 对应控制台所在目录
   const cwdUrl = process.cwd();
@@ -35,7 +35,9 @@ inquirer.prompt([
       // renderFile（模版文件地址，传入渲染数据）
       ejs.renderFile<Promise<string>>(path.join(destUrl, file), answers).then(data => {
         // 生成 ejs 处理后的模版文件
-        fs.writeFileSync(path.join(cwdUrl, file) , data)
+        const filePath = `${cwdUrl}/dist`
+        if (!fs.existsSync(filePath)) fs.mkdirSync(filePath)
+        fs.writeFileSync(path.join(filePath, file) , data)
       })
   })
   })
