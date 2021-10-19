@@ -6,9 +6,13 @@
 // 具体就是通过 chmod 755 cli.js 实现修改
 
 import inquirer from 'inquirer'
+import { Command } from 'commander'
+import pkg from '../package.json'
 import path from 'path'
 import fs from 'fs'
 import ejs from 'ejs'
+
+const program = new Command(pkg.name)
 
 inquirer.prompt([
   {
@@ -17,7 +21,7 @@ inquirer.prompt([
     message: 'Your name', // 提示信息
     default: 'south-cli' // 默认值
   }
-]).then(answers => {
+]).then((answers) => {
   // 模版文件目录
   const destUrl = path.join(__dirname, '../templates'); 
   // 生成文件目录
@@ -31,9 +35,17 @@ inquirer.prompt([
       // renderFile（模版文件地址，传入渲染数据）
       ejs.renderFile<Promise<string>>(path.join(destUrl, file), answers).then(data => {
         // 生成 ejs 处理后的模版文件
-        console.log('data:', data)
         fs.writeFileSync(path.join(cwdUrl, file) , data)
       })
-    })
   })
+  })
+})
+
+program
+.version('0.1.0')
+.command('create <name>')
+.description('create a new project')
+.action(name => { 
+    // 打印命令行输入的值
+    console.log("project name is " + name)
 })

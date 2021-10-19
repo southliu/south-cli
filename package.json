@@ -7,8 +7,7 @@
     "cli": "./bin/cli.js"
   },
   "scripts": {
-    "dev": "tsc && node ./bin/cli.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsc && node ./bin/cli.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +15,9 @@
     "@types/ejs": "^3.1.0",
     "@types/inquirer": "^8.1.3",
     "@types/node": "^16.11.1",
-    "inquirer": "^8.2.0"
+    "commander": "^8.2.0",
+    "inquirer": "^8.2.0",
+    "typescript": "^4.4.4"
   },
   "dependencies": {
     "ejs": "^3.1.6"
