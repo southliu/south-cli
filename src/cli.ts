@@ -8,46 +8,65 @@
 import inquirer from 'inquirer'
 import { Command } from 'commander'
 import path from 'path'
-import fs from 'fs'
-import ejs from 'ejs'
+import chalk from 'chalk'
+import figlet from 'figlet'
+import create from '../lib/create'
 
 const pkg = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pkg.name)
 
-inquirer.prompt([
-  {
-    type: 'input', //type：input,confirm,list,rawlist,checkbox,password...
-    name: 'name', // key 名
-    message: 'Your name', // 提示信息
-    default: 'south-cli' // 默认值
-  }
-]).then((answers) => {
-  // 模版文件目录
-  const destUrl = path.join(__dirname, '../../templates'); 
-  // 生成文件目录
-  // process.cwd() 对应控制台所在目录
-  const cwdUrl = process.cwd();
-  // 从模版目录中读取文件
-  fs.readdir(destUrl, (err, files) => {
-    if (err) throw err;
-    files.forEach((file) => {
-      // 使用 ejs 渲染对应的模版文件
-      // renderFile（模版文件地址，传入渲染数据）
-      ejs.renderFile<Promise<string>>(path.join(destUrl, file), answers).then(data => {
-        // 生成 ejs 处理后的模版文件
-        const filePath = `${cwdUrl}/dist`
-        if (!fs.existsSync(filePath)) fs.mkdirSync(filePath)
-        fs.writeFileSync(path.join(filePath, file) , data)
-      })
-  })
-  })
-})
-
+// 定义命令和参数
 program
-.version('0.1.0')
-.command('create <name>')
-.description('create a new project')
-.action(name => { 
+  .command('create <app-name>')
+  .description('create a new project')
+  // -f or --force 为强制创建，如果创建的目录存在则直接覆盖
+  .option('-f, --force', 'overwrite target directory if it exist')
+  .action((name, options) => { 
     // 打印命令行输入的值
-    console.log("project name is " + name)
-})
+    create(name, options)
+    console.log('name:',name,'options:',options)
+  })
+
+// 配置版本号信息
+program
+  .version(`v1.0.0`)
+  .usage('<command> [option]')
+
+// 配置 config 命令
+program
+  .command('config [value]')
+  .description('inspect and modify the config')
+  .option('-g, --get <path>', 'get value from option')
+  .option('-s, --set <path> <value>')
+  .option('-d, --delete <path>', 'delete option from config')
+  .action((value, options) => {
+    console.log(value, options)
+  })
+
+// 配置 ui 命令
+program
+  .command('ui')
+  .description('start add open roc-cli ui')
+  .option('-p, --port <port>', 'Port used for the UI Server')
+  .action((option) => {
+    console.log(option)
+  })
+
+// 监听 --help 执行
+program
+  .on('--help', () => {
+    // 新增说明信息
+    // 使用 figlet 绘制 Logo
+    console.log('\r\n' + figlet.textSync('SOUTH-CLI', {
+      horizontalLayout: 'default',
+      verticalLayout: 'default',
+      width: 90,
+      whitespaceBreak: true
+    }));
+    // 新增说明信息
+    console.log(`\r\nRun ${chalk.cyan(`roc <command> --help`)} show details\r\n`)
+  })
+
+  
+// 解析用户执行命令传入参数
+program.parse(process.argv);
