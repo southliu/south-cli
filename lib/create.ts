@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
 import inquirer from 'inquirer'
+import Generator  from './Generator'
 
 export default async function (name: string, options: any) {
   // 当前命令行选择的目录
@@ -41,4 +42,10 @@ export default async function (name: string, options: any) {
       }
     }
   }
+
+  // 创建项目
+  const generator = new Generator(name, targetAir);
+
+  // 开始创建项目
+  generator.create()
 }

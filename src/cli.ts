@@ -5,14 +5,12 @@
 // 如果是Linux 或者 macOS 系统下还需要修改此文件的读写权限为 755
 // 具体就是通过 chmod 755 cli.js 实现修改
 
-import inquirer from 'inquirer'
 import { Command } from 'commander'
-import path from 'path'
 import chalk from 'chalk'
 import figlet from 'figlet'
 import create from '../lib/create'
+import pkg from '../package.json'
 
-const pkg = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pkg.name)
 
 // 定义命令和参数
