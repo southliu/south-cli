@@ -39,6 +39,7 @@ class Generator {
 
   async getRepo() {
     // 1）从远程拉取模板数据
+    const loading = ora('waiting fetch template ...')
     const repoList = await wrapLoading(getRepoList, 'waiting fetch template');
     if (!repoList) return;
 

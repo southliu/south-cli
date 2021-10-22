@@ -44,6 +44,8 @@ export default async function (name: string, options: any) {
   }
 
   // 创建项目
+  console.log('name:', name)
+  console.log('targetAir:', targetAir)
   const generator = new Generator(name, targetAir);
 
   // 开始创建项目

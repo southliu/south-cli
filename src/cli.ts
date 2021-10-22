@@ -8,9 +8,10 @@
 import { Command } from 'commander'
 import chalk from 'chalk'
 import figlet from 'figlet'
+import path from 'path'
 import create from '../lib/create'
-import pkg from '../package.json'
 
+const pkg = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pkg.name)
 
 // 定义命令和参数

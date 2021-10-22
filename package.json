@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "./bin/src/cli.ts",
-  "type":"module",
   "bin": {
     "south": "./bin/src/cli.js"
   },
   "scripts": {
-    "dev": "tsc",
-    "start": "tsc && node ./bin/src/cli.js"
+    "dev:comment": "tsc",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
   "author": {
     "name": "South",
@@ -24,11 +23,13 @@
     "@types/node": "^16.11.1",
     "commander": "^8.2.0",
     "inquirer": "^8.2.0",
+    "ts-node-dev": "^1.1.8",
     "typescript": "^4.4.4"
   },
   "dependencies": {
     "axios": "^0.23.0",
     "chalk": "^4.1.2",
+    "download-git-repo": "^3.0.2",
     "ejs": "^3.1.6",
     "figlet": "^1.5.2",
     "fs-extra": "^10.0.0",
