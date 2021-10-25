@@ -1,23 +1,24 @@
-import ora from 'ora'
 import inquirer from 'inquirer'
 import { getRepoList } from './http'
+import cliSpinners from 'cli-spinners'
+
 
 // 添加加载动画
 async function wrapLoading(fn: (...args: any) => any, message: string, ...args: any) {
   // 使用 ora 初始化，传入提示信息 message
-  const spinner = ora(message);
   // 开始加载动画
-  spinner.start();
+  cliSpinners.dots
 
   try {
     // 执行传入方法 fn
     const result = await fn(...args);
     // 状态为修改为成功
-    spinner.succeed();
+    // spinner.dots();
     return result; 
   } catch (error) {
     // 状态为修改为失败
-    spinner.fail('Request failed, refetch ...')
+    // spinner.fail('Request failed, refetch ...')
+    new Error('Request failed, refetch ...')
   } 
 }
 
@@ -39,8 +40,9 @@ class Generator {
 
   async getRepo() {
     // 1）从远程拉取模板数据
-    const loading = ora('waiting fetch template ...')
+    // const message ='waiting fetch template ...'
     const repoList = await wrapLoading(getRepoList, 'waiting fetch template');
+    // const repoList = await oraPromise(getRepoList, message);
     if (!repoList) return;
 
     // 过滤我们需要的模板名称
