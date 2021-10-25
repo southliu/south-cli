@@ -23,7 +23,6 @@ program
   .action((name, options) => { 
     // 打印命令行输入的值
     create(name, options)
-    console.log('name:',name,'options:',options)
   })
 
 // 配置版本号信息
