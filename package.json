@@ -1,6 +1,6 @@
 {
   "name": "south-cli",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "./bin/src/cli.ts",
   "bin": {
@@ -9,6 +9,12 @@
   "scripts": {
     "dev": "tsc"
   },
+  "files": [
+    "bin",
+    "lib",
+    "src",
+    "types"
+  ],
   "author": {
     "name": "South",
     "email": "1275093225@qq.com"
