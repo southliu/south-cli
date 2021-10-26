@@ -25,10 +25,14 @@
   ],
   "license": "ISC",
   "devDependencies": {
+    "@types/figlet": "^1.5.4",
     "@types/node": "^16.11.1",
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "axios": "^0.24.0"
+    "axios": "^0.24.0",
+    "chalk": "^4.1.2",
+    "commander": "^8.3.0",
+    "figlet": "^1.5.2"
   }
 }
