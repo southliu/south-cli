@@ -13,16 +13,9 @@ program
   .command('create <project-name>')
   .description('创建一个项目')
   .action((name) => {
+    // 执行创建方法
     create(name)
   });
-
-// 配置生成页面指令
-// program
-//   .command('create-page <project-name>')
-//   .description('创建一个页面')
-//   .action((name) => {
-//     createPage(name)
-//   });
 
 // 监听help指令
 program

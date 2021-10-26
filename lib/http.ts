@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { CLI_NAME } from '../src/config';
 
 axios.interceptors.response.use(res => {
   
@@ -10,7 +11,7 @@ axios.interceptors.response.use(res => {
  * @returns Promise
  */
 async function getRepoList() {
-  return axios.get('https://api.github.com/orgs/south-cli/repos')
+  return axios.get(`https://api.github.com/orgs/${CLI_NAME}/repos`)
 }
 
 /**
@@ -19,7 +20,7 @@ async function getRepoList() {
  * @returns Promise
  */
 async function  getTagList(repo: string) {
-  return axios.get(`https://api.github.com/repos/south-cli/${repo}/tags`)
+  return axios.get(`https://api.github.com/repos/${CLI_NAME}/${repo}/tags`)
 }
 
 export {
