@@ -4,7 +4,6 @@ axios.interceptors.response.use(res => {
   return res.data;
 })
 
-
 /**
  * 获取模板列表
  * @returns Promise
