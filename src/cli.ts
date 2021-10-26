@@ -4,7 +4,6 @@ import path from 'path'
 import chalk from 'chalk'
 import figlet from 'figlet'
 import create from '../lib/create'
-import createPage from '../lib/createPage'
 
 const pack = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pack.name)
@@ -14,16 +13,16 @@ program
   .command('create <project-name>')
   .description('创建一个项目')
   .action((name) => {
-    new create(name)
+    create(name)
   });
 
 // 配置生成页面指令
-program
-  .command('create-page <project-name>')
-  .description('创建一个页面')
-  .action((name) => {
-    new createPage(name)
-  });
+// program
+//   .command('create-page <project-name>')
+//   .description('创建一个页面')
+//   .action((name) => {
+//     createPage(name)
+//   });
 
 // 监听help指令
 program

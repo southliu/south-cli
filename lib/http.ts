@@ -1,6 +1,7 @@
 import axios from 'axios'
 
 axios.interceptors.response.use(res => {
+  
   return res.data;
 })
 
@@ -8,7 +9,7 @@ axios.interceptors.response.use(res => {
  * 获取模板列表
  * @returns Promise
  */
-async function getRepoList(): Promise<any> {
+async function getRepoList() {
   return axios.get('https://api.github.com/orgs/south-cli/repos')
 }
 
