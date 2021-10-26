@@ -1,27 +1,25 @@
 import inquirer from 'inquirer'
 import { getRepoList, getTagList } from './http'
-import cliSpinners from 'cli-spinners'
 import downloadGitRepo from 'download-git-repo'
 import util from 'util'
 import path from 'path'
 import chalk from 'chalk'
+import loading from 'loading-cli';
 
-/**
- * TODO: 加载动画
- */
 // 添加加载动画
 async function wrapLoading(fn: (...args: any) => any, ...args: any) {
-  // 使用 ora 初始化，传入提示信息 message
   // 开始加载动画
+  const load = loading(" loading ...").start()
 
   try {
     // 执行传入方法 fn
-    cliSpinners.dots
     const result = await fn(...args);
     // 状态为修改为成功
+    load.stop()
     return result; 
   } catch (error) {
     // 状态为修改为失败
+    load.stop()
     new Error('Request failed, refetch ...')
   } 
 }
