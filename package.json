@@ -1,7 +1,10 @@
 {
   "name": "south-cli",
-  "version": "0.0.2",
-  "description": "",
+  "version": "0.0.7",
+  "description": "cli脚手架生成项目",
+  "repository": "https://github.com/SouthLiu/south-cli",
+  "homepage": "https://github.com/SouthLiu/south-cli",
+  "types": "./types/index.d.ts",
   "main": "./bin/src/cli.ts",
   "bin": {
     "south": "./bin/src/cli.js"
@@ -10,6 +13,7 @@
     "dev": "tsc"
   },
   "files": [
+    "bin",
     "lib",
     "src",
     "types"
