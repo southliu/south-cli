@@ -15,7 +15,7 @@ async function Create(name: string) {
   }
 
   // 执行创建指令
-  const generator = new Generator(targetPath)
+  const generator = new Generator(name, targetPath)
   generator.handleCreate()
 }
 
