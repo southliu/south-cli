@@ -2,7 +2,6 @@ import axios from 'axios'
 import { CLI_NAME } from '../src/config';
 
 axios.interceptors.response.use(res => {
-  
   return res.data;
 })
 
