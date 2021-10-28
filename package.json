@@ -1,6 +1,6 @@
 {
   "name": "south-cli",
-  "version": "0.0.7",
+  "version": "0.1.1",
   "description": "cli脚手架生成项目",
   "repository": "https://github.com/SouthLiu/south-cli",
   "homepage": "https://github.com/SouthLiu/south-cli",
@@ -9,7 +9,9 @@
     "south": "./bin/src/cli.js"
   },
   "scripts": {
-    "dev": "tsc"
+    "dev": "tsc",
+    "start": "node ./bin/src/cli.js",
+    "upload": "concurrently \"yarn start\" \"npm publish\""
   },
   "files": [
     "bin"
@@ -29,6 +31,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/inquirer": "^8.1.3",
     "@types/node": "^16.11.1",
+    "concurrently": "^6.3.0",
     "typescript": "^4.4.4"
   },
   "dependencies": {
