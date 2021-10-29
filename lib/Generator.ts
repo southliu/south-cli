@@ -19,7 +19,11 @@ class Generator {
 
   // 加载动画
   async handleLoading(fn: Promise<any>, text: string) {
-    const load = loading(text)
+    const load = loading({
+      text,
+      color: 'cyan',
+      frames: ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+    })
     load.start()
 
     try {
