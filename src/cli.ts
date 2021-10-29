@@ -34,7 +34,7 @@ program
 
 
 // 版本控制
-program.version('0.0.1')
+program.version(pack.version)
 
 // 解析用户执行命令传入参数
 program.parse(process.argv);
