@@ -7,31 +7,35 @@ import path from 'path'
 import { getRepoList, getTagList } from './http'
 import { CLI_NAME } from '../src/config'
 
-// 加载动画
-async function handleLoading(fn: Promise<any>, text: string) {
-  const load = loading(text)
-  load.start()
-
-  try {
-    // 执行方法
-    const result = await fn;
-    // 状态成功
-    load.stop()
-    return result; 
-  } catch (error) {
-    // 状态失败
-    load.stop()
-    console.log(`${chalk.red('×')} 执行失败,请重试`)
-    return false
-  }
-}
-
 class Generator {
   name: string;
   targetDir: string;
+  isSuccess: boolean
   constructor(name: string,targetDir: string) {
     this.name = name
     this.targetDir = targetDir
+    this.isSuccess = false
+  }
+
+  // 加载动画
+  async handleLoading(fn: Promise<any>, text: string) {
+    const load = loading(text)
+    load.start()
+
+    try {
+      // 执行方法
+      const result = await fn;
+      // 状态成功
+      load.stop()
+      this.isSuccess = true
+      return result; 
+    } catch (error) {
+      // 状态失败
+      load.stop()
+      this.isSuccess = false
+      console.log(`${chalk.red('×')} 执行失败,请重试`)
+      return false
+    }
   }
 
   // 下载模板
@@ -43,13 +47,13 @@ class Generator {
     const targetDir = path.resolve(process.cwd(), this.targetDir)
     
     // 调用下载
-    await handleLoading(download(requestUrl, targetDir), '下载代码中...')
+    await this.handleLoading(download(requestUrl, targetDir), '下载代码中...')
   }
 
   // 获取GitHub模板
   async handleGetRepo() {
     // 获取模板列表
-    const repoList = await handleLoading(getRepoList(), '获取项目列表中...')
+    const repoList = await this.handleLoading(getRepoList(), '获取项目列表中...')
     if (!repoList) return
     // 过滤获取名称
     const repos = repoList.map((item: { name: string }) => item.name)
@@ -68,7 +72,7 @@ class Generator {
   // 获取GitHub标签
   async handleGetTag(repo: string) {
     // 获取标签列表
-    const repoList = await handleLoading(getTagList(repo), '获取标签列表中...')
+    const repoList = await this.handleLoading(getTagList(repo), '获取标签列表中...')
     if (!repoList) return
     // 过滤获取名称
     const repos = repoList.map((item: { name: string }) => item.name)
@@ -97,10 +101,12 @@ class Generator {
     // 执行下载
     await this.hanleDownload(repo, tag)
     // 模板使用提示
-    console.log(`\r\n创建项目${chalk.cyan(this.name)}成功,请执行以下操作:`)
-    console.log(`\r\n  cd ${chalk.cyan(this.name)}`)
-    console.log('  yarn\r')
-    console.log('  yarn dev\r\n')
+    if (this.isSuccess) {
+      console.log(`\r\n创建项目${chalk.cyan(this.name)}成功,请执行以下操作:`)
+      console.log(`\r\n  cd ${chalk.cyan(this.name)}`)
+      console.log('  yarn\r')
+      console.log('  yarn dev\r\n')
+    }
   }
 }
 
