@@ -1,11 +1,11 @@
 import downloadGitRepo from 'download-git-repo'
 import inquirer from 'inquirer'
 import loading from 'loading-cli'
-import chalk from 'chalk'
 import util from 'util'
 import path from 'path'
 import { getRepoList, getTagList } from './http'
 import { CLI_NAME } from '../src/config'
+import { cyanColor, errorColor, successColor } from '../src/utils'
 
 class Generator {
   name: string;
@@ -37,7 +37,7 @@ class Generator {
       // 状态失败
       load.stop()
       this.isSuccess = false
-      console.log(`${chalk.red('×')} 执行失败,请重试`)
+      console.log(`${errorColor('×')} 执行失败,请重试`)
       return false
     }
   }
@@ -96,18 +96,18 @@ class Generator {
   async handleCreate() {
     // 获取模板
     const repo = await this.handleGetRepo()
-    console.log(`${chalk.green('√')} 获取项目列表成功`)
+    console.log(successColor(`  获取项目列表成功`))
 
     // 获取标签
     const tag = await this.handleGetTag(repo)
-    console.log(`${chalk.green('√')} 获取标签列表成功`)
+    console.log(successColor(`  获取标签列表成功`))
 
     // 执行下载
     await this.hanleDownload(repo, tag)
     // 模板使用提示
     if (this.isSuccess) {
-      console.log(`\r\n创建项目${chalk.cyan(this.name)}成功,请执行以下操作:`)
-      console.log(`\r\n  cd ${chalk.cyan(this.name)}`)
+      console.log(`\r\n创建项目${cyanColor(this.name)}成功,请执行以下操作:`)
+      console.log(`\r\n  cd ${cyanColor(this.name)}`)
       console.log('  yarn\r')
       console.log('  yarn dev\r\n')
     }
