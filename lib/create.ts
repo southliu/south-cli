@@ -1,11 +1,11 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { errorColor } from '../src/utils'
+import { ILanguage } from '../types'
 import Generator from './Generator'
 import GeneratorPage from './GeneratorPage'
 
 type IType = 'project' | 'page' | 'page'
-type ILanguage = 'vue' | 'react'
 
 async function Create(name: string, type: IType, language?: ILanguage) {
   // 获取当前命令行选择文件
@@ -23,7 +23,7 @@ async function Create(name: string, type: IType, language?: ILanguage) {
       const langs: ILanguage[] = ['vue', 'react'] // 语言类型
       // if (!langs.includes(name)) return console.log(chalk.bold.red('无效创建指令'))
       // 执行创建指令
-      const generator = new GeneratorPage(name, targetPath)
+      const generator = new GeneratorPage(name, targetPath, language as ILanguage)
       generator.handleCreate()
       break
     }

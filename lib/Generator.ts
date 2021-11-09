@@ -5,13 +5,13 @@ import util from 'util'
 import path from 'path'
 import { getRepoList, getTagList } from './http'
 import { CLI_NAME } from '../src/config'
-import { cyanColor, errorColor, successColor } from '../src/utils'
+import { cyanColor, errorColor, dimColor } from '../src/utils'
 
 class Generator {
   name: string;
   targetDir: string;
   isSuccess: boolean
-  constructor(name: string,targetDir: string) {
+  constructor(name: string, targetDir: string) {
     this.name = name
     this.targetDir = targetDir
     this.isSuccess = false
@@ -37,7 +37,7 @@ class Generator {
       // 状态失败
       load.stop()
       this.isSuccess = false
-      console.log(`${errorColor('×')} 执行失败,请重试`)
+      console.log(`${errorColor('执行失败,请重试')}`)
       return false
     }
   }
@@ -96,11 +96,11 @@ class Generator {
   async handleCreate() {
     // 获取模板
     const repo = await this.handleGetRepo()
-    console.log(successColor(`  获取项目列表成功`))
+    console.log(dimColor(`  获取项目列表成功`))
 
     // 获取标签
     const tag = await this.handleGetTag(repo)
-    console.log(successColor(`  获取标签列表成功`))
+    console.log(dimColor(`  获取标签列表成功`))
 
     // 执行下载
     await this.hanleDownload(repo, tag)

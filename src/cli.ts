@@ -44,12 +44,14 @@ program
     }
   })
   .showHelpAfterError(`
-    \r\n创建项目操作:\n
+    \r\n创建项目操作:
     ${cyanColor('south create ' + italicFont('project-name'))}\r
-    \r\n创建页面操作:\n
+    \r\n创建页面操作:
     ${cyanColor('south create-react-page ' + italicFont('page-name'))}\r
     ${dimColor('or')}\r
     ${cyanColor('south create-vue-page ' + italicFont('page-name'))}\r\n
+    \r\帮助说明:
+    ${cyanColor('south --help')}\r
   `)
 
 // 监听help指令
