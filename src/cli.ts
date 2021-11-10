@@ -20,7 +20,7 @@ program
 // 配置生成react页面指令
 program
   .command('create-react-page <language-name>')
-  .description('创建一个项目')
+  .description('创建一个React页面')
   .action((language) => {
     // 执行创建方法
     create(language, 'page', 'react')
@@ -29,7 +29,7 @@ program
 // 配置生成vue页面指令
 program
   .command('create-vue-page <language-name>')
-  .description('创建一个项目')
+  .description('创建一个Vue页面')
   .action((language) => {
     // 执行创建方法
     create(language, 'page', 'vue')
