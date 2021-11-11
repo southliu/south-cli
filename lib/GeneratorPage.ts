@@ -1,20 +1,16 @@
 import inquirer from 'inquirer'
 import loading from 'loading-cli'
-// import path from 'path'
 import fs from 'fs-extra'
-import { cyanColor, errorColor } from '../src/utils';
+import { cyanColor, errorColor, getFilePath } from '../src/utils';
 import { ILanguage, IPageFunctions } from '../types'
 import { handleReactFile } from '../templates/React';
-// import downloadGitRepo from 'download-git-repo'
 
 class GeneratorPage {
-  name: string;
-  targetDir: string;
+  name: string; // 文件名
   language: ILanguage;
   isSuccess: boolean;
-  constructor(name: string, targetDir: string, language: ILanguage) {
+  constructor(name: string, language: ILanguage) {
     this.name = name
-    this.targetDir = targetDir
     this.language = language
     this.isSuccess = false
   }
@@ -79,30 +75,26 @@ class GeneratorPage {
 
   // 下载模板
   hanleDownload(functions: IPageFunctions[]) {
-    // 文件后缀
-    const prefix = this.language === 'vue' ? '.vue' : '.tsx'
     // 文件路径
-    const file = `${process.cwd()}/${this.name}${prefix}`
+    const filePath = getFilePath(this.name, this.language)
     // 文件内容
     const content = handleReactFile(functions)
 
     // 判断是否存在当前文件
-    if (fs.pathExistsSync(file)) {
+    if (fs.pathExistsSync(filePath)) {
       this.isSuccess = false
-      return console.log(errorColor('文件已存在'))
+      return console.log(errorColor('文件已存在sss'))
     }
 
     this.isSuccess = true
     // 生成文件
-    fs.outputFileSync(file, content)
+    fs.outputFileSync(filePath, content)
   }
 
   // 创建处理
   async handleCreate() {
     // 页面功能
     const functions = await this.handleFunctions()
-
-    console.log('functions:', functions)
 
     this.hanleDownload(functions)
 
