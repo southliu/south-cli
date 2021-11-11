@@ -20,7 +20,7 @@ async function Create(name: string, type: IType, language?: ILanguage) {
   // 根据类型执行对应创建指令： project(项目) page(页面)
   switch (type) {
     case 'page': {
-      const langs: ILanguage[] = ['vue', 'react'] // 语言类型
+      // const langs: ILanguage[] = ['vue', 'react'] // 语言类型
       // if (!langs.includes(name)) return console.log(chalk.bold.red('无效创建指令'))
       // 执行创建指令
       const generator = new GeneratorPage(name, targetPath, language as ILanguage)

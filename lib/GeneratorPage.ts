@@ -1,10 +1,11 @@
-import downloadGitRepo from 'download-git-repo'
 import inquirer from 'inquirer'
 import loading from 'loading-cli'
-import path from 'path'
+// import path from 'path'
 import fs from 'fs-extra'
 import { cyanColor, errorColor } from '../src/utils';
-import { ILanguage } from '../types'
+import { ILanguage, IPageFunctions } from '../types'
+import { handleReactFile } from '../templates/React';
+// import downloadGitRepo from 'download-git-repo'
 
 class GeneratorPage {
   name: string;
@@ -15,7 +16,7 @@ class GeneratorPage {
     this.name = name
     this.targetDir = targetDir
     this.language = language
-    this.isSuccess = true
+    this.isSuccess = false
   }
 
   // 加载动画
@@ -46,7 +47,7 @@ class GeneratorPage {
   // 页面所需功能
   async handleFunctions() {
     // 询问基础功能
-    const { functions }: { functions: string[] } = await inquirer.prompt({
+    const { functions }: { functions: IPageFunctions[] } = await inquirer.prompt({
       name: 'functions',
       type: 'checkbox',
       message: '选择页面功能:',
@@ -77,16 +78,23 @@ class GeneratorPage {
   }
 
   // 下载模板
-  hanleDownload() {
-    // 模版文件目录
-    const destUrl = path.join(__dirname, '../templates/React'); 
-    // 生成文件目录
-    // process.cwd() 对应控制台所在目录
-    const cwdUrl = process.cwd();
+  hanleDownload(functions: IPageFunctions[]) {
+    // 文件后缀
+    const prefix = this.language === 'vue' ? '.vue' : '.tsx'
+    // 文件路径
+    const file = `${process.cwd()}/${this.name}${prefix}`
+    // 文件内容
+    const content = handleReactFile(functions)
 
-    fs.readFile(destUrl).then(res => {
-      console.log('res:', res)
-    })
+    // 判断是否存在当前文件
+    if (fs.pathExistsSync(file)) {
+      this.isSuccess = false
+      return console.log(errorColor('文件已存在'))
+    }
+
+    this.isSuccess = true
+    // 生成文件
+    fs.outputFileSync(file, content)
   }
 
   // 创建处理
@@ -96,7 +104,7 @@ class GeneratorPage {
 
     console.log('functions:', functions)
 
-    this.hanleDownload()
+    this.hanleDownload(functions)
 
     // 模板使用提示
     if (this.isSuccess) {
