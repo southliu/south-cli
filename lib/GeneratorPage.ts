@@ -4,6 +4,7 @@ import fs from 'fs-extra'
 import { cyanColor, errorColor, getFilePath } from '../src/utils';
 import { ILanguage, IPageFunctions } from '../types'
 import { handleReactFile } from '../templates/React';
+import { handleVueFile } from '../templates/Vue';
 
 class GeneratorPage {
   name: string; // 文件名
@@ -13,6 +14,7 @@ class GeneratorPage {
     this.name = name
     this.language = language
     this.isSuccess = false
+    console.log('this.language:', this.language)
   }
 
   // 加载动画
@@ -78,12 +80,12 @@ class GeneratorPage {
     // 文件路径
     const filePath = getFilePath(this.name, this.language)
     // 文件内容
-    const content = handleReactFile(functions)
+    const content = this.language === 'react' ? handleReactFile(functions) : handleVueFile(functions)
 
     // 判断是否存在当前文件
     if (fs.pathExistsSync(filePath)) {
       this.isSuccess = false
-      return console.log(errorColor('文件已存在sss'))
+      return console.log(errorColor('文件已存在'))
     }
 
     this.isSuccess = true

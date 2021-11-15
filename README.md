@@ -13,7 +13,7 @@ south create project-name
 ```
 south create-react-page page-name
 or
-south creat-vue-page page-name
+south create-vue-page page-name
 ```
 
 ### 帮助说明
