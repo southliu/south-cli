@@ -39,3 +39,10 @@ export function getFilePath(name: string, language?: ILanguage) {
   
   return filePath
 }
+
+// 首字母大写
+export function firstToUpper(str: string) {
+  return str.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
+    return $1.toUpperCase() + $2.toLowerCase();
+  })
+}

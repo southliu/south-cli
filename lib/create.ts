@@ -18,9 +18,9 @@ async function Create(name: string, type: IType, language?: ILanguage) {
   const target = type === 'project' ? targetPath : targetFile
 
   // 判断是否存在当前文件
-  if (fs.existsSync(target)) {
-    return console.log(errorColor('文件已存在'))
-  }
+  // if (fs.existsSync(target)) {
+  //   return console.log(errorColor('文件已存在'))
+  // }
 
   // 根据类型执行对应创建指令： project(项目) page(页面)
   switch (type) {

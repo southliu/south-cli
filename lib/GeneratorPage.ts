@@ -14,7 +14,6 @@ class GeneratorPage {
     this.name = name
     this.language = language
     this.isSuccess = false
-    console.log('this.language:', this.language)
   }
 
   // 加载动画
@@ -40,6 +39,30 @@ class GeneratorPage {
       console.log(`${errorColor('执行失败,请重试')}`)
       return false
     }
+  }
+
+  // 询问页面标题
+  async handleTitle() {
+    // 获取标题
+    const { title } = await inquirer.prompt({
+      name: 'title',
+      type: 'input',
+      message: '请输入标题：'
+    })
+
+    return title
+  }
+
+  // 模型名称
+  async handleModalName() {
+    // 获取模型名称
+    const { modalName } = await inquirer.prompt({
+      name: 'modalName',
+      type: 'input',
+      message: '请输入模型名称：'
+    })
+
+    return modalName
   }
 
   // 页面所需功能
@@ -76,17 +99,17 @@ class GeneratorPage {
   }
 
   // 下载模板
-  hanleDownload(functions: IPageFunctions[]) {
+  hanleDownload(title: string, modalName: string, functions: IPageFunctions[]) {
     // 文件路径
     const filePath = getFilePath(this.name, this.language)
     // 文件内容
-    const content = this.language === 'react' ? handleReactFile(functions) : handleVueFile(functions)
+    const content = this.language === 'react' ? handleReactFile(title, modalName, functions) : handleVueFile(functions)
 
     // 判断是否存在当前文件
-    if (fs.pathExistsSync(filePath)) {
-      this.isSuccess = false
-      return console.log(errorColor('文件已存在'))
-    }
+    // if (fs.pathExistsSync(filePath)) {
+    //   this.isSuccess = false
+    //   return console.log(errorColor('文件已存在'))
+    // }
 
     this.isSuccess = true
     // 生成文件
@@ -95,10 +118,16 @@ class GeneratorPage {
 
   // 创建处理
   async handleCreate() {
+    // 获取标题
+    const title = await this.handleTitle()
+
+    // 模型名称
+    const modalName = await this.handleModalName()
+
     // 页面功能
     const functions = await this.handleFunctions()
 
-    this.hanleDownload(functions)
+    this.hanleDownload(title, modalName.trim(), functions)
 
     // 模板使用提示
     if (this.isSuccess) {
