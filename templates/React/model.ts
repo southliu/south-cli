@@ -179,7 +179,8 @@ const Modal: IModelType = {
           type: 'handleGetPageState',
           payload: { data: pageResponse.data, query }
         })
-      }` : ''
+      }
+    }` : ''
     }${
       isBatchDelete ? 
       `

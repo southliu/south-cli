@@ -35,8 +35,7 @@ function create(data: any) {
  */
 function update(id: string, data: any) {
   return request.patch(\`/${authPath}/\${id}\`, data)
-}
-  ` : ''
+}` : ''
 }${
   isDelete ? `\n
 /**
@@ -45,8 +44,7 @@ function update(id: string, data: any) {
  */
 function del(id: string) {
   return request.delete(\`/${authPath}/\${id}\`)
-}
-  ` : ''
+}` : ''
 }${
   isBatchDelete ? `\n
   /**
