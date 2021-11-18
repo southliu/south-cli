@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
 import create from '../lib/create'
-import { cyanColor, dimColor, errorColor, italicFont  } from './utils'
+import { cyanColor, errorColor, italicFont  } from './utils'
 
 const pack = require(path.join(__dirname, '../../package.json'))
 const program = new Command(pack.name)
@@ -17,22 +17,13 @@ program
     create(name, 'project')
   });
 
-// 配置生成react页面指令
+// 配置生成页面指令
 program
-  .command('create-react-page <language-name>')
+  .command('create-page <language-name>')
   .description('创建一个React页面')
   .action((language) => {
     // 执行创建方法
-    create(language, 'page', 'react')
-  });
-
-// 配置生成vue页面指令
-program
-  .command('create-vue-page <language-name>')
-  .description('创建一个Vue页面')
-  .action((language) => {
-    // 执行创建方法
-    create(language, 'page', 'vue')
+    create(language, 'page')
   });
 
 // 处理错误指令
@@ -47,9 +38,7 @@ program
     \r\n创建项目操作:
     ${cyanColor('south create ' + italicFont('project-name'))}\r
     \r\n创建页面操作:
-    ${cyanColor('south create-react-page ' + italicFont('page-name'))}\r
-    ${dimColor('or')}\r
-    ${cyanColor('south create-vue-page ' + italicFont('page-name'))}\r\n
+    ${cyanColor('south create-page ' + italicFont('page-name'))}\r\n
     \r\帮助说明:
     ${cyanColor('south --help')}\r
   `)

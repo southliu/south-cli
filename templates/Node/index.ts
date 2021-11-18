@@ -1,6 +1,6 @@
 import { IPageFunctions } from "../../types";
 
-export function handleFile(title: string, functions: IPageFunctions[]): string {
+export function handleFile(functions: IPageFunctions[]): string {
   let render = '' // 渲染数据
   const paginationData: string[] = [] // 分页数据
 

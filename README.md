@@ -11,14 +11,17 @@ south create project-name
 
 ### 创建页面(page-name为页面名称)
 ```
-south create-react-page page-name
-or
-south create-vue-page page-name
+south create-page page-name
 ```
 
 ### 帮助说明
 ```
 south --help
+```
+
+### 本地使用(当前目录)
+```
+npm link
 ```
 
 ### 页面功能
