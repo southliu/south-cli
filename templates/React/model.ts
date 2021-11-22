@@ -3,12 +3,11 @@ import { IPageFunctions } from "../../types";
 
 // 生成react文件
 export function handleModelFile(modelName: string, functions: IPageFunctions[]): string {
-  // 分割模型名称中大写字母
-  const modelArr: string[] = modelName.split(/(?=[A-Z])/)
-  // 权限路径
-  let authPath = `${modelArr[modelArr.length - 2]}/${modelName}`
+  // let modelName = handleAuthPath(authPath, 'modal')
   // 模板ts数据
   const modelTsData = `I${firstToUpper(modelName)}`
+  // api路径
+  // let apiPath = handleAuthPath(authPath, 'api')
 
   // 功能拆分
   const {
@@ -21,16 +20,16 @@ export function handleModelFile(modelName: string, functions: IPageFunctions[]):
   let render = `
 import { Reducer } from 'redux'
 import { Effect } from 'dva'
-import API from '@/services/${authPath}'
+import API from '@/services/xxx'
 import { message } from 'antd'
 
 export type ${modelTsData} = {
   data: any;
   manager: any;
   total: number;${isCreate ? `
-  isCreate: boolean;` : ''}
+  isCreate: boolean;
+  updateId: string;` : ''}
   query: IQuery;
-  updateId: string;
   initQuery: IQuery;
   initFormData: any;
 }
@@ -57,18 +56,24 @@ interface IModelType {
   reducers: {
     handleGetPageState: Reducer<${modelTsData}>;
     handleSetInitFormDataState: Reducer<${modelTsData}>;
-    handleChangeQuery: Reducer<${modelTsData}>;
+    handleChangeQuery: Reducer<${modelTsData}>;${
+      isCreate ?
+      `
     handleChangeCreateState: Reducer<${modelTsData}>;
-    handleChangeUpdateState: Reducer<${modelTsData}>;
+    handleChangeUpdateState: Reducer<${modelTsData}>;` : ''
+    }
   };
 }
 
 const Modal: IModelType = {
-  namespace: 'platformPlatformServerOwner',
-  state: {
+  namespace: '${modelName}',
+  state: {${
+    isCreate ?
+    `
     isCreate: false,
+    updateId: '',` : ''
+  }
     initFormData: {},
-    updateId: '',
     manager: [],
     data: [],
     total: 0,
@@ -261,7 +266,7 @@ const Modal: IModelType = {
 }
 
 export default Modal
-  `
+`
 
   return render
 }

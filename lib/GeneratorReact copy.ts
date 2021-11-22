@@ -31,7 +31,7 @@ class GeneratorPage {
     // 文件路径
     const filePath = getFilePath(this.name, this.language)
     // 文件内容
-    const content = handleFile(title, modelName, functions)
+    const content = handleFile(title, modelName, 'xxx', functions)
 
     // 判断是否存在当前文件
     if (fs.pathExistsSync(filePath)) {

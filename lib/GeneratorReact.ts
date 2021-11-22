@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../src/utils';
+import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../src/utils';
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../templates/React';
 import { handleModelFile } from '../templates/React/model'
@@ -28,22 +28,45 @@ class GeneratorPage {
     return modelName
   }
 
+  // 权限路径
+  async handleAuthPath() {
+    // 获取模型名称
+    const { authPath } = await inquirer.prompt({
+      name: 'authPath',
+      type: 'input',
+      message: '请输入权限名称：'
+    })
+
+    return authPath
+    
+  }
+
   // 下载模板
-  hanleDownload(title: string, modelName: string, functions: IPageFunctions[]) {
+  hanleDownload(title: string, modelName: string, authPath: string, functions: IPageFunctions[]) {
+    // 文件名称
+    let fileName = this.name
+    if (this.name.includes('-')) {
+      const arr = fileName.trim().split('-')
+      let result = ``
+      arr.forEach((item, index) => {
+        result += index === 0 ? item : firstToUpper(item)
+      })
+      fileName = result
+    }
     // 文件路径
     const filePath = getFilePath(this.name, this.language)
     // 文件内容
-    const content = handleFile(title, modelName, functions)
+    const content = handleFile(title, modelName, authPath, functions)
 
     // 模型文件路径
-    const modelFilePath = getFilePath(`${modelName}.model`, this.language)
+    const modelFilePath = getFilePath(`${fileName}.model`, 'ts')
     // 模型内容
     const modelContent = handleModelFile(modelName, functions)
 
     // api文件路径
-    const apiFilePath = getFilePath(`${modelName}.api`, this.language)
+    const apiFilePath = getFilePath(`${fileName}.api`, 'ts')
     // 模型内容
-    const apiContent = handleServerFile(modelName, functions)
+    const apiContent = handleServerFile(authPath, functions)
 
     // 判断是否存在当前文件
     if (fs.pathExistsSync(filePath)) {
@@ -78,11 +101,14 @@ class GeneratorPage {
     // 模型名称
     const modelName = await this.handleModelName()
 
+    // 权限路径
+    const authPath = await this.handleAuthPath()
+    
     // 页面功能
     const functions = await handleFunctions()
 
     // 执行下载
-    this.hanleDownload(title, modelName.trim(), functions)
+    this.hanleDownload(title, modelName.trim(), authPath, functions)
 
     // 模板使用提示
     if (this.isSuccess) {

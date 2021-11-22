@@ -2,12 +2,7 @@ import { filterFuncs } from "../../src/utils";
 import { IPageFunctions } from "../../types";
 
 // 生成react文件
-export function handleServerFile(modelName: string, functions: IPageFunctions[]): string {
-  // 分割模型名称中大写字母
-  const modelArr: string[] = modelName.split(/(?=[A-Z])/)
-  // 权限路径
-  let authPath = `${modelArr[modelArr.length - 2]}/${modelName}`
-
+export function handleServerFile(authPath: string, functions: IPageFunctions[]): string {
   // 功能拆分
   const {
     isCreate,
@@ -25,7 +20,7 @@ ${
  * @param {Object} data
  */
 function create(data: any) {
-  return request.post(\`/${authPath}\`, data)
+  return request.post(\`${authPath}\`, data)
 }
 
 /**
@@ -34,7 +29,7 @@ function create(data: any) {
  * @param {Object} data
  */
 function update(id: string, data: any) {
-  return request.patch(\`/${authPath}/\${id}\`, data)
+  return request.patch(\`${authPath}/\${id}\`, data)
 }` : ''
 }${
   isDelete ? `\n
@@ -43,7 +38,7 @@ function update(id: string, data: any) {
  * @param {String} id
  */
 function del(id: string) {
-  return request.delete(\`/${authPath}/\${id}\`)
+  return request.delete(\`${authPath}/\${id}\`)
 }` : ''
 }${
   isBatchDelete ? `\n
@@ -52,17 +47,16 @@ function del(id: string) {
    * @param {String} ids
    */
   function del(ids: string) {
-    return request.delete(\`/${authPath}/batch-delete?ids=\${ids}\`)
+    return request.delete(\`${authPath}/batch-delete?ids=\${ids}\`)
   }
   ` : ''
 }
-
 /**
  * 查询-根据主键查询
  * @param {String} id
  */
 function find_one(id: string) {
-  return request.get(\`/${authPath}/\${id}\`)
+  return request.get(\`${authPath}/\${id}\`)
 }
 
 /**
@@ -70,7 +64,7 @@ function find_one(id: string) {
  * @param {Object} data
  */
 function find_page(data: any) {
-  return request.get(\`/${authPath}/index\`, { params: data })
+  return request.get(\`${authPath}\`, { params: data })
 }
 
 /**
@@ -78,7 +72,7 @@ function find_page(data: any) {
  * @param {Object} data
  */
 function find_tree(data: any) {
-  return request.get(\`/${authPath}/tree\`, { params: data })
+  return request.get(\`${authPath}/tree\`, { params: data })
 }
 
 export default {${
@@ -93,7 +87,7 @@ export default {${
   find_page,
   find_tree
 }
-  `
+`
 
   return render
 }

@@ -2,11 +2,7 @@ import { filterFuncs, firstToUpper } from "../../src/utils";
 import { IPageFunctions } from "../../types";
 
 // 生成react文件
-export function handleFile(title: string, modelName: string, functions: IPageFunctions[]): string {
-  // 分割模型名称中大写字母
-  const modelArr: string[] = modelName.split(/(?=[A-Z])/)
-  // 权限路径
-  let authPath = `${modelArr[modelArr.length - 2]}/${modelName}`
+export function handleFile(title: string, modelName: string, authPath: string, functions: IPageFunctions[]): string {
   // 模板ts数据
   const modelTsData = `I${firstToUpper(modelName)}`
 
@@ -23,8 +19,10 @@ export function handleFile(title: string, modelName: string, functions: IPageFun
   let render = `
 import { useCallback, useEffect } from 'react'${ isSearch ? `\nimport Searchs from '@/components/Searchs'` : '' }${ isPagination ? `\nimport Paginations from '@/components/Paginations'` : '' }${ isCreate ? `\nimport Create from '@/components/Create'` : '' }
 import { connect } from 'dva'
-import { ColumnsType } from 'antd/es/table'
-import { Popconfirm, Tooltip } from 'antd'
+import { ColumnsType } from 'antd/es/table'${
+  (isCreate || isDelete || isBatchDelete) ? 
+  `\nimport { Popconfirm, Tooltip${isBatchDelete ? ', Button' : ''} } from 'antd'` : ''
+}
 import { initData } from '@/utils/initData'
 import { IAuthorityLoginState, ${modelTsData} } from '@/models'
 import checkPermission from '@/utils/permission'
@@ -37,12 +35,14 @@ type IProps = {
   data: any;
   status: ${modelTsData};
   loginStatus: IAuthorityLoginState;
-} & IPublic
-
+} & IPublic${
+  isCreate ?
+  `\n
 const CreateLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
-};
+};` : ''
+}
 
 function Page(props: IProps) {
   useTitleHook('${title}');
@@ -50,20 +50,30 @@ function Page(props: IProps) {
     dispatch,
     status,
     loginStatus,
-    isLoading,
-    isCreateLoading,
+    isLoading,${
+      isCreate ? `\nisCreateLoading,` : ''
+    }
   } = props;
-  const {
+  const {${
+    isCreate ? `
     isCreate,
     updateId,
+    ` : ''
+  }
     total,
     data,
     query,
   } = status;
   let { initFormData } = status;
-  const { permissions } = loginStatus;
-  const isNotCreateBtn: boolean = !checkPermission({ value: \`${authPath}/create\`, permissions });
-  const isNotSearchBtn: boolean = !checkPermission({ value: \`${authPath}\`, permissions });
+  const { permissions } = loginStatus;${
+    isCreate ?
+    `
+  const isNotCreateBtn: boolean = !checkPermission({ value: \`${authPath}/create\`, permissions });` : ''
+  }${
+    isSearch ?
+    `
+  const isNotSearchBtn: boolean = !checkPermission({ value: \`${authPath}\`, permissions });` : ''
+  }
 
   const defaultData: IDefaultData[] = [
     { label: 'ID', key: 'id', width: 120, isNotCreate: true },
@@ -77,10 +87,14 @@ function Page(props: IProps) {
     },
     { label: '版本号', key: 'version', width: 80, type: 'string' },
     { label: '创建日期', key: 'created_at', width: 140, type: 'string', isNotCreate: true },
-    { label: '更新日期', key: 'updated_at', width: 140, type: 'string', isNotCreate: true },
+    { label: '更新日期', key: 'updated_at', width: 140, type: 'string', isNotCreate: true },${
+      (isCreate || isDelete) ?
+      `
     { label: '操作', key: 'operation', fixed: 'right', width: 70, isNotCreate: true, align: 'center',
       render: (text, record, index) => (
-        <div className={\`options_box\`}>
+        <div className={\`options_box\`}>${
+          isCreate ?
+          `
           {
             checkPermission({ value: \`${authPath}/update\`, permissions }) &&
             <Tooltip title='修改'>
@@ -91,7 +105,10 @@ function Page(props: IProps) {
                 &#xe612;
               </div>
             </Tooltip>
-          }
+          }` : ''
+        }${
+          isDelete ?
+          `
           {
             checkPermission({ value: \`${authPath}/delete\`, permissions }) &&
             <Popconfirm title='确定删除?' cancelText='取消' okText='确定' onConfirm={() => handleDelete(record.id)}>
@@ -104,13 +121,17 @@ function Page(props: IProps) {
               </Tooltip>
             </Popconfirm>
           }
+          ` : ''
+        }
         </div>
       ),
-    },
+    },` : ''
+    }
   ];
   const datas = initData(defaultData, initFormData);
-  const columnLists: ColumnsType<IDefaultData> = datas.columns;
-  const createList = datas.createList;
+  const columnLists: ColumnsType<IDefaultData> = datas.columns;${
+    isCreate ? '\nconst createList = datas.createList;' : ''
+  }
   const searchList = datas.searchList;
   initFormData = datas.initFormData;
 
@@ -128,18 +149,18 @@ function Page(props: IProps) {
   }, [handleGetPage]);
   ${
     isSearch ?
-    `\n
-    // 搜索
-    const handleSearch = (values: any) => {
-      query.page = 1;
-      for (let key in values) {
-        values.hasOwnProperty(key) && values[key] !== undefined && values[key] !== '' ? query[key] = values[key] : delete query[key];
-      }
-      dispatch({
-        type: '${modelName}/handleGetPage',
-        payload: query,
-      });
-    };` : ''
+    `
+  // 搜索
+  const handleSearch = (values: any) => {
+    query.page = 1;
+    for (let key in values) {
+      values.hasOwnProperty(key) && values[key] !== undefined && values[key] !== '' ? query[key] = values[key] : delete query[key];
+    }
+    dispatch({
+      type: '${modelName}/handleGetPage',
+      payload: query,
+    });
+  };` : ''
   }${
     isCreate ?
     `\n
@@ -257,10 +278,13 @@ function Page(props: IProps) {
         isLoading={isLoading}
         query={query}
         list={searchList}
-        isNotSearch={isNotSearchBtn}
-        isNotCreate={isNotCreateBtn}
-        handleSearch={handleSearch}${isBatchDelete ? 'addElement={addSearchElement}' : ''}
-        handleClickCreate={handleClickCreate}
+        isNotSearch={${isSearch ? 'isNotSearchBtn' : 'false'}}
+        isNotCreate={${isCreate ? 'isNotCreateBtn' : 'false'}}
+        handleSearch={handleSearch}${
+          isBatchDelete ? '\naddElement={addSearchElement}' : ''
+        }${
+          isCreate ? '\nhandleClickCreate={handleClickCreate}' : ''
+        }
       />
       ` : ''
       }
@@ -313,12 +337,13 @@ export default connect(
     {
       status: ${modelName},
       loginStatus: authorityLogin,
-      isLoading: loading.effects['${modelName}/handleGetPage'],
-      isCreateLoading: loading.models.${modelName},
+      isLoading: loading.effects['${modelName}/handleGetPage'],${
+        isCreate ? `\nisCreateLoading: loading.models.${modelName},` : ''
+      }
     }
   ),
 )(Page);
-  `
+`
 
   return render
 }

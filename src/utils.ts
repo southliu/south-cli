@@ -58,8 +58,46 @@ export function getFilePath(name: string, language?: ILanguage) {
 // 首字母大写
 export function firstToUpper(str: string) {
   return str.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
-    return $1.toUpperCase() + $2.toLowerCase();
+    return $1.toUpperCase() + $2;
   })
+}
+
+// 获取处理后的权限路径
+type IAuthPathResult = 'modal' | 'api'
+export function handleAuthPath(str: string, type: IAuthPathResult) {
+  let result = ``
+  
+  // 拆分路径
+  const authArr = str.trim().substring(1, str.length).split('/')
+
+  authArr.forEach((item, index) => {
+    if (!item) return
+
+    switch (type) {
+      // 模型名称
+      case 'modal': {
+        if (item.includes('-')) {
+          const arr = item.trim().split('-')
+          arr.forEach(child => result += firstToUpper(child))
+        } else {
+          result += firstToUpper(item)
+        }
+        break
+      }
+
+      // API路径
+      case 'api': {
+        if (item.includes('-')) {
+          const arr = item.trim().split('-')
+          arr.forEach(child => result += index === 1 ? `${child}/` : firstToUpper(child))
+        } else {
+          result += index === 1 ? `${item}/` : firstToUpper(item)
+        }
+        break
+      }
+    }
+  })
+  return result
 }
 
 // 加载动画
