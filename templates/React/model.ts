@@ -12,6 +12,7 @@ export function handleModelFile(modelName: string, functions: IPageFunctions[]):
   // 功能拆分
   const {
     isCreate,
+    isPagination,
     isDelete,
     isBatchDelete
   } = filterFuncs(functions)
@@ -29,8 +30,8 @@ export type ${modelTsData} = {
   total: number;${isCreate ? `
   isCreate: boolean;
   updateId: string;` : ''}
-  query: IQuery;
-  initQuery: IQuery;
+  query: ${isPagination ? 'IQuery' : 'ITreeQuery'};
+  initQuery: ${isPagination ? 'IQuery' : 'ITreeQuery'};
   initFormData: any;
 }
 
@@ -42,6 +43,7 @@ interface IModelType {
     handleSetInitFormData: Effect;${
       isCreate ?  `
     handleChangeCreate: Effect;
+    handleChangeUpdate: Effect;
     handleCreate: Effect;
     handleUpdate: Effect;` : ''
     }${
@@ -77,13 +79,17 @@ const Modal: IModelType = {
     manager: [],
     data: [],
     total: 0,
-    initQuery: {
+    initQuery: {${
+      isPagination ? `
       page: 1,
-      pageSize: 20,
+      pageSize: 20,` : ''
+    }
     },
-    query: {
+    query: {${
+      isPagination ? `
       page: 1,
-      pageSize: 20,
+      pageSize: 20,` : ''
+    }
     }
   },
   effects: {
@@ -129,6 +135,21 @@ const Modal: IModelType = {
         type: 'handleChangeCreateState',
         payload
       })
+    },
+    // 更改修改弹窗状态
+    *handleChangeUpdate({ payload }, { call, put }) {
+      const { id, state } = payload
+      if (id) {
+        const response = yield call(API.find_one, id)
+        yield put({
+          type: 'handleChangeUpdateState',
+          payload: {
+            id,
+            state,
+            data: response.data,
+          }
+        })
+      }
     },
     // 处理新增
     *handleCreate({ payload }, { call, put }) {

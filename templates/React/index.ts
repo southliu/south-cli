@@ -51,16 +51,18 @@ function Page(props: IProps) {
     status,
     loginStatus,
     isLoading,${
-      isCreate ? `\nisCreateLoading,` : ''
+      isCreate ? `
+      isCreateLoading,` : ''
     }
   } = props;
   const {${
     isCreate ? `
     isCreate,
-    updateId,
-    ` : ''
+    updateId,` : ''
+  }${
+    isPagination ? `
+    total,` : ''
   }
-    total,
     data,
     query,
   } = status;
@@ -120,8 +122,7 @@ function Page(props: IProps) {
                 </div>
               </Tooltip>
             </Popconfirm>
-          }
-          ` : ''
+          }` : ''
         }
         </div>
       ),
@@ -130,7 +131,8 @@ function Page(props: IProps) {
   ];
   const datas = initData(defaultData, initFormData);
   const columnLists: ColumnsType<IDefaultData> = datas.columns;${
-    isCreate ? '\nconst createList = datas.createList;' : ''
+    isCreate ? `
+  const createList = datas.createList;` : ''
   }
   const searchList = datas.searchList;
   initFormData = datas.initFormData;
@@ -146,10 +148,9 @@ function Page(props: IProps) {
 
   useEffect(() => {
     handleGetPage();
-  }, [handleGetPage]);
-  ${
+  }, [handleGetPage]);${
     isSearch ?
-    `
+    `\n
   // 搜索
   const handleSearch = (values: any) => {
     query.page = 1;
@@ -170,7 +171,7 @@ function Page(props: IProps) {
       type: '${modelName}/handleChangeCreate',
       payload: {
         id: '',
-        state: !isCreate,
+        state: true
       },
     });
   };
@@ -181,7 +182,7 @@ function Page(props: IProps) {
       type: '${modelName}/handleChangeUpdate',
       payload: {
         id,
-        state: !isCreate,
+        state: true
       },
     });
   };
@@ -281,9 +282,10 @@ function Page(props: IProps) {
         isNotSearch={${isSearch ? 'isNotSearchBtn' : 'false'}}
         isNotCreate={${isCreate ? 'isNotCreateBtn' : 'false'}}
         handleSearch={handleSearch}${
-          isBatchDelete ? '\naddElement={addSearchElement}' : ''
+          isBatchDelete ? '\r\naddElement={addSearchElement}' : ''
         }${
-          isCreate ? '\nhandleClickCreate={handleClickCreate}' : ''
+          isCreate ? `
+        handleClickCreate={handleClickCreate}` : ''
         }
       />
       ` : ''
@@ -338,7 +340,8 @@ export default connect(
       status: ${modelName},
       loginStatus: authorityLogin,
       isLoading: loading.effects['${modelName}/handleGetPage'],${
-        isCreate ? `\nisCreateLoading: loading.models.${modelName},` : ''
+        isCreate ? `
+      isCreateLoading: loading.models.${modelName},` : ''
       }
     }
   ),
