@@ -17,11 +17,11 @@ export function handleFile(title: string, modelName: string, authPath: string, f
 
   // 渲染数据
   let render = `
-import { useCallback, useEffect } from 'react'${ isSearch ? `\nimport Searchs from '@/components/Searchs'` : '' }${ isPagination ? `\nimport Paginations from '@/components/Paginations'` : '' }${ isCreate ? `\nimport Create from '@/components/Create'` : '' }
+import { useCallback, useEffect${ isBatchDelete ? ', useState' : '' } } from 'react'${ isSearch ? `\nimport Searchs from '@/components/Searchs'` : '' }${ isPagination ? `\nimport Paginations from '@/components/Paginations'` : '' }${ isCreate ? `\nimport Create from '@/components/Create'` : '' }
 import { connect } from 'dva'
 import { ColumnsType } from 'antd/es/table'${
   (isCreate || isDelete || isBatchDelete) ? 
-  `\nimport { Popconfirm, Tooltip${isBatchDelete ? ', Button' : ''} } from 'antd'` : ''
+  `\nimport { Popconfirm, Tooltip${isBatchDelete ? ', Button, message' : ''} } from 'antd'` : ''
 }
 import { initData } from '@/utils/initData'
 import { IAuthorityLoginState, ${modelTsData} } from '@/models'
@@ -75,6 +75,9 @@ function Page(props: IProps) {
     isSearch ?
     `
   const isNotSearchBtn: boolean = !checkPermission({ value: \`${authPath}\`, permissions });` : ''
+  }${
+    isBatchDelete ? `
+  const [selectIds, setSelectIds] = useState<React.Key[]>([]);` : ''
   }
 
   const defaultData: IDefaultData[] = [
@@ -231,6 +234,24 @@ function Page(props: IProps) {
     });
   };` : ''
   }${
+    isBatchDelete ?
+    `\n
+  // row选择
+  const handleRowSelect = (selectedRowKeys: React.Key[], selectedRows: any[]) => {
+    setSelectIds(selectedRowKeys);
+  };
+
+  // 批量删除
+  const handleBatchDelete = () => {
+    if (selectIds.length === 0) {
+      return message.warning({ content: '请勾选!', key: 'check_please' });
+    }
+    dispatch({
+      type: '${modelName}/handleDelete',
+      payload: { ids: selectIds },
+    });
+  };` : ''
+  }${
     isPagination ?
     `\n
   // 处理分页
@@ -279,10 +300,11 @@ function Page(props: IProps) {
         isLoading={isLoading}
         query={query}
         list={searchList}
-        isNotSearch={${isSearch ? 'isNotSearchBtn' : 'false'}}
-        isNotCreate={${isCreate ? 'isNotCreateBtn' : 'false'}}
+        isNotSearch={${isSearch ? 'isNotSearchBtn' : 'true'}}
+        isNotCreate={${isCreate ? 'isNotCreateBtn' : 'true'}}
         handleSearch={handleSearch}${
-          isBatchDelete ? '\r\naddElement={addSearchElement}' : ''
+          isBatchDelete ? `
+        addElement={addSearchElement}` : ''
         }${
           isCreate ? `
         handleClickCreate={handleClickCreate}` : ''
@@ -294,14 +316,16 @@ function Page(props: IProps) {
         loading={isLoading}
         data={data}
         isPagination={true}
-        columnLists={columnLists}
+        columnLists={columnLists}${
+          isBatchDelete ? `
+        handleRowSelect={handleRowSelect}` : ''
+        }
       />${
         isPagination ? 
         `\n
       <Paginations
         query={query}
         total={total}
-        isNotSearch={isNotSearchBtn}
         handleChangePage={handleChangePage}
       />` : ''
       }${

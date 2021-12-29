@@ -42,13 +42,13 @@ function del(id: string) {
 }` : ''
 }${
   isBatchDelete ? `\n
-  /**
-   * 删除
-   * @param {String} ids
-   */
-  function del(ids: string) {
-    return request.delete(\`${authPath}/batch-delete?ids=\${ids}\`)
-  }
+/**
+ * 批量删除
+ * @param {String} ids
+ */
+function batch_del(ids: string) {
+  return request.delete(\`${authPath}/batch-delete?ids=\${ids}\`)
+}
   ` : ''
 }
 /**
@@ -82,6 +82,9 @@ export default {${
 }${
   isDelete ? `
   del,` : ''
+}${
+  isBatchDelete ? `
+  batch_del,` : ''
 }
   find_one,
   find_page,

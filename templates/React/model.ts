@@ -206,14 +206,14 @@ const Modal: IModelType = {
           payload: { data: pageResponse.data, query }
         })
       }
-    }` : ''
+    },` : ''
     }${
       isBatchDelete ? 
       `
     // 处理批量删除
     *handleBatchDelete({ payload }, { call, put }) {
       const { ids, query } = payload
-      const response = yield call(API.del, ids)
+      const response = yield call(API.batch_del, ids)
       if (response?.code === 200) {
         message.success(response?.message || '删除成功!')
         const pageResponse = yield call(API.find_page, query)
