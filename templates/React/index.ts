@@ -52,7 +52,7 @@ function Page(props: IProps) {
     loginStatus,
     isLoading,${
       isCreate ? `
-      isCreateLoading,` : ''
+    isCreateLoading,` : ''
     }
   } = props;
   const {${
@@ -283,7 +283,7 @@ function Page(props: IProps) {
               style={{ marginRight: 10 }}
               icon={<i className="iconfont icon-xiazai14" />}
             >
-              删除
+              批量删除
             </Button>
           </Popconfirm>
         )}

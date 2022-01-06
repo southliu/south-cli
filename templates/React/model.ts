@@ -197,7 +197,7 @@ const Modal: IModelType = {
     // 处理删除
     *handleDelete({ payload }, { call, put }) {
       const { id, query } = payload
-      const response = yield call(API.del, id)
+      const response = yield call(API.batch_del, id)
       if (response?.code === 200) {
         message.success(response?.message || '删除成功!')
         const pageResponse = yield call(API.find_page, query)
