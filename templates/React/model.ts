@@ -60,7 +60,7 @@ interface IModelType {
     handleSetInitFormDataState: Reducer<${modelTsData}>;
     handleChangeQuery: Reducer<${modelTsData}>;${
       isCreate ?
-      `
+    `
     handleChangeCreateState: Reducer<${modelTsData}>;
     handleChangeUpdateState: Reducer<${modelTsData}>;` : ''
     }
@@ -180,7 +180,7 @@ const Modal: IModelType = {
         const pageResponse = yield call(API.find_page, query)
         yield put({
           type: 'handleGetPageState',
-          payload: pageResponse
+          payload: { data: pageResponse.data, query }
         })
         yield put({
           type: 'handleChangeCreateState',
@@ -231,7 +231,7 @@ const Modal: IModelType = {
       const _state = JSON.parse(JSON.stringify(state))
       _state.data = payload?.data?.items || []
       _state.total = payload?.data?.total || 0
-      _state.query = payload.query
+      _state.query = payload?.query || {}
       
       return {
         ..._state,

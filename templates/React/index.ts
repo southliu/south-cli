@@ -51,7 +51,7 @@ function Page(props: IProps) {
     status,
     loginStatus,
     isLoading,${
-      isCreate ? `
+    isCreate ? `
     isCreateLoading,` : ''
     }
   } = props;
@@ -229,7 +229,7 @@ function Page(props: IProps) {
   // 删除
   const handleDelete = (id: string) => {
     dispatch({
-      type: '${modelName}/handleDelete',
+      type: '${modelName}/handleBatchDelete',
       payload: { id, query },
     });
   };` : ''
@@ -248,7 +248,7 @@ function Page(props: IProps) {
     }
     dispatch({
       type: '${modelName}/handleDelete',
-      payload: { ids: selectIds },
+      payload: { ids: selectIds, query },
     });
   };` : ''
   }${
