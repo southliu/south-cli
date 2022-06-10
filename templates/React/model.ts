@@ -26,7 +26,6 @@ import { message } from 'antd'
 
 export type ${modelTsData} = {
   data: any;
-  manager: any;
   total: number;${isCreate ? `
   isCreate: boolean;
   updateId: string;` : ''}
@@ -76,7 +75,6 @@ const Modal: IModelType = {
     updateId: '',` : ''
   }
     initFormData: {},
-    manager: [],
     data: [],
     total: 0,
     initQuery: {${
