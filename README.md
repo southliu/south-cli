@@ -21,7 +21,12 @@ south --help
 
 ### 本地使用(当前目录)
 ```
-npm link
+pnpm link
+```
+
+### 安装依赖
+```
+pnpm i
 ```
 
 ### 页面功能
