@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
-import { errorColor, getFilePath } from '../src/utils'
+import { errorColor, getFilePath } from '../utils/utils'
 import { ILanguage } from '../types'
 import Generator from './Generator'
 import GeneratorReact from './GeneratorReact'

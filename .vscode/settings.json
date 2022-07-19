@@ -1,0 +1,8 @@
+{
+  "editor.tabSize": 2,
+  // 需要在vscode中下载code spell checker插件
+  "cSpell.words": [
+    "adduser",
+    "commitlint"
+  ]
+}

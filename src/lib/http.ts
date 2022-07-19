@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { CLI_NAME } from '../src/config';
+import { CLI_NAME } from '../utils/config';
 
 axios.interceptors.response.use(res => {
   return res.data;

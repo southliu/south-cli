@@ -2,10 +2,10 @@
 import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
-import create from '../../lib/create'
-import { cyanColor, errorColor, italicFont  } from '../utils'
+import create from '../lib/create'
+import { cyanColor, errorColor, italicFont  } from '../utils/utils'
 
-const pack = require(path.join(__dirname, '../../package.json'))
+const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
 
 // 配置生成项目指令

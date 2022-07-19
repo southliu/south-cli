@@ -72,12 +72,12 @@
   "include": [
     "src/**/*",
     "lib/**/*",
-    "templates/**/*.ts",
-    "templates/**/*.tsx",
-    "templates/**/*.vue",
-    "templates/**/*.html",
-    "types/**/*"
-  ],
+    "src/templates/**/*.ts",
+    "src/templates/**/*.tsx",
+    "src/templates/**/*.vue",
+    "src/templates/**/*.html",
+    "src/types/**/*"
+, "utils"  ],
   "exclude": [
     "node_modules",
     "bin"

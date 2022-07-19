@@ -1,4 +1,4 @@
-import { filterFuncs, firstToUpper } from "../../src/utils";
+import { filterFuncs, firstToUpper } from "../../utils/utils";
 import { IPageFunctions } from "../../types";
 
 // 生成react文件
@@ -132,13 +132,13 @@ function Page(props: IProps) {
     },` : ''
     }
   ];
-  const datas = initData(defaultData, initFormData);
-  const columnLists: ColumnsType<IDefaultData> = datas.columns;${
+  const datus = initData(defaultData, initFormData);
+  const columnLists: ColumnsType<IDefaultData> = datus.columns;${
     isCreate ? `
-  const createList = datas.createList;` : ''
+  const createList = datus.createList;` : ''
   }
-  const searchList = datas.searchList;
-  initFormData = datas.initFormData;
+  const searchList = datus.searchList;
+  initFormData = datus.initFormData;
 
   const handleGetPage = useCallback(() => {
     if (!isNotSearchBtn && data?.length === 0) {

@@ -1,4 +1,4 @@
-import { filterFuncs, firstToUpper } from "../../src/utils";
+import { filterFuncs, firstToUpper } from "../../utils/utils";
 import { IPageFunctions } from "../../types";
 
 // 生成react文件

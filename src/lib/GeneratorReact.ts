@@ -1,6 +1,6 @@
 import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../src/utils';
+import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../utils/utils';
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../templates/React';
 import { handleModelFile } from '../templates/React/model'
@@ -42,7 +42,7 @@ class GeneratorPage {
   }
 
   // 下载模板
-  hanleDownload(title: string, modelName: string, authPath: string, functions: IPageFunctions[]) {
+  handleDownload(title: string, modelName: string, authPath: string, functions: IPageFunctions[]) {
     // 文件名称
     let fileName = this.name
     if (this.name.includes('-')) {
@@ -108,7 +108,7 @@ class GeneratorPage {
     const functions = await handleFunctions()
 
     // 执行下载
-    this.hanleDownload(title, modelName.trim(), authPath, functions)
+    this.handleDownload(title, modelName.trim(), authPath, functions)
 
     // 模板使用提示
     if (this.isSuccess) {

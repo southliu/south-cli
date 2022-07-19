@@ -3,8 +3,8 @@ import inquirer from 'inquirer'
 import util from 'util'
 import path from 'path'
 import { getRepoList, getTagList } from './http'
-import { CLI_NAME } from '../src/config'
-import { cyanColor, dimColor, errorColor, handleLoading } from '../src/utils'
+import { CLI_NAME } from '../utils/config'
+import { cyanColor, dimColor, errorColor, handleLoading } from '../utils/utils'
 
 class Generator {
   name: string;
@@ -17,7 +17,7 @@ class Generator {
   }
 
   // 下载模板
-  async hanleDownload(repo: string, tag: string) {
+  async handleDownload(repo: string, tag: string) {
     const requestUrl = `${CLI_NAME}/${repo}${tag?'#'+tag:''}`
     // 下载方法添加promise
     const download = util.promisify(downloadGitRepo)
@@ -86,7 +86,7 @@ class Generator {
     console.log(dimColor(`  获取标签列表成功`))
 
     // 执行下载
-    await this.hanleDownload(repo, tag)
+    await this.handleDownload(repo, tag)
 
     // 模板使用提示
     if (this.isSuccess) {

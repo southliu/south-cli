@@ -1,4 +1,4 @@
-import { filterFuncs } from "../../src/utils";
+import { filterFuncs } from "../../utils/utils";
 import { IPageFunctions } from "../../types";
 
 // 生成react文件

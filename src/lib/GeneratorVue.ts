@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../src/utils';
+import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../utils/utils';
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../templates/Vue';
 
@@ -14,7 +14,7 @@ class GeneratorPage {
   }
 
   // 下载模板
-  hanleDownload(title: string, functions: IPageFunctions[]) {
+  handleDownload(title: string, functions: IPageFunctions[]) {
     // 文件路径
     const filePath = getFilePath(this.name, this.language)
     // 文件内容
@@ -40,7 +40,7 @@ class GeneratorPage {
     const functions = await handleFunctions()
 
     // 执行下载
-    this.hanleDownload(title, functions)
+    this.handleDownload(title, functions)
 
     // 模板使用提示
     if (this.isSuccess) {
