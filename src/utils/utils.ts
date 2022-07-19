@@ -1,31 +1,31 @@
 import loading from 'loading-cli'
-import inquirer from 'inquirer';
+import inquirer from 'inquirer'
 import path from 'path'
-import { ILanguage, IPageFunctions } from "../types";
+import { ILanguage, IPageFunctions } from "../types"
 
 // 添加 ANSI 转义字符，以将文本输出为红色
 export function errorColor(str: string) {
-  return `\x1b[31m${str}\x1b[0m`;
+  return `\x1b[31m${str}\x1b[0m`
 }
 
 // 添加 ANSI 转义字符，以将文本输出为绿色
 export function successColor(str: string) {
-  return `\x1b[32m${str}\x1b[0m`;
+  return `\x1b[32m${str}\x1b[0m`
 }
 
 // 添加 ANSI 转义字符，以将文本输出为蓝色
 export function cyanColor(str: string) {
-  return `\x1b[36m${str}\x1b[0m`;
+  return `\x1b[36m${str}\x1b[0m`
 }
 
 // 添加 ANSI 转义字符，以将文本输出为暗淡
 export function dimColor(str: string) {
-  return `\x1b[2m${str}\x1b[0m`;
+  return `\x1b[2m${str}\x1b[0m`
 }
 
 // 添加 ANSI 转义字符，以将文本输出为斜体
 export function italicFont(str: string) {
-  return `\x1b[3m${str}\x1b[0m`;
+  return `\x1b[3m${str}\x1b[0m`
 }
 
 // 获取文件路径
@@ -58,7 +58,7 @@ export function getFilePath(name: string, language?: ILanguage) {
 // 首字母大写
 export function firstToUpper(str: string) {
   return str.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
-    return $1.toUpperCase() + $2;
+    return $1.toUpperCase() + $2
   })
 }
 
@@ -95,13 +95,16 @@ export function handleAuthPath(str: string, type: IAuthPathResult) {
         }
         break
       }
+
+      default:
+        break
     }
   })
   return result
 }
 
 // 加载动画
-export async function handleLoading(fn: Promise<any>, text: string = '加载中...') {
+export async function handleLoading(fn: Promise<any>, text = '加载中...') {
   const load = loading({
     text,
     color: 'cyan',
@@ -111,10 +114,10 @@ export async function handleLoading(fn: Promise<any>, text: string = '加载中.
 
   try {
     // 执行方法
-    const result = await fn;
+    const result = await fn
     // 状态成功
     load.stop()
-    return result; 
+    return result 
   } catch (error) {
     // 状态失败
     load.stop()
@@ -170,14 +173,14 @@ export async function handleFunctions() {
 
 // 功能划分
 interface IFilterFuncResult {
-  isSearch: boolean;
-  isCreate: boolean;
-  isPagination: boolean;
-  isDelete: boolean;
-  isBatchDelete: boolean;
+  isSearch: boolean
+  isCreate: boolean
+  isPagination: boolean
+  isDelete: boolean
+  isBatchDelete: boolean
 }
 export function filterFuncs(functions: IPageFunctions[]): IFilterFuncResult {
-  let isSearch = functions.includes('search'),
+  const isSearch = functions.includes('search'),
       isCreate = functions.includes('create') || functions.includes('create-page'),
       isPagination = functions.includes('pagination'),
       isDelete = functions.includes('delete'),

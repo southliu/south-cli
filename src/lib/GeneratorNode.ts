@@ -1,12 +1,12 @@
 import fs from 'fs-extra'
-import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../utils/utils';
+import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../utils/utils'
 import { ILanguage, IPageFunctions } from '../types'
-import { handleFile } from '../templates/Node';
+import { handleFile } from '../templates/Node'
 
 class GeneratorPage {
-  name: string; // 文件名
-  language: ILanguage;
-  isSuccess: boolean;
+  name: string // 文件名
+  language: ILanguage
+  isSuccess: boolean
   constructor(name: string, language: ILanguage) {
     this.name = name
     this.language = language

@@ -1,15 +1,15 @@
 import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../utils/utils';
+import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../utils/utils'
 import { ILanguage, IPageFunctions } from '../types'
-import { handleFile } from '../templates/React';
+import { handleFile } from '../templates/React'
 import { handleModelFile } from '../templates/React/model'
 import { handleServerFile } from '../templates/React/server'
 
 class GeneratorPage {
-  name: string; // 文件名
-  language: ILanguage;
-  isSuccess: boolean;
+  name: string // 文件名
+  language: ILanguage
+  isSuccess: boolean
   constructor(name: string, language: ILanguage) {
     this.name = name
     this.language = language

@@ -53,12 +53,14 @@ async function hasFile(type: IType, name: string, language?: ILanguage) {
 // 创建指令
 async function Create(name: string, type: IType): Promise<void> {
   // 当前语言，类型为页面的时候使用
-  let language = await getLanguage(type)
+  const language = await getLanguage(type)
   // 文件是否存在
   const { isFile, targetPath } = await hasFile(type, name, language)
 
   // 当文件存在则退出
-  if (isFile) return console.log(errorColor('  文件已存在'))
+  if (isFile) {
+    return console.log(errorColor('  文件已存在'))
+  }
 
   // 根据类型执行对应创建指令： project(项目) page(页面)
   switch (type) {

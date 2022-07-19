@@ -1,4 +1,4 @@
-import { IPageFunctions } from "../../types";
+import { IPageFunctions } from "../../types"
 
 export function handleFile(functions: IPageFunctions[]): string {
   let render = '' // 渲染数据

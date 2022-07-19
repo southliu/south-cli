@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
 import create from '../lib/create'
-import { cyanColor, errorColor, italicFont  } from '../utils/utils'
+import { cyanColor, errorColor, italicFont } from '../utils/utils'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
@@ -15,7 +15,7 @@ program
   .action((name) => {
     // 执行创建方法
     create(name, 'project')
-  });
+  })
 
 // 配置生成页面指令
 program
@@ -24,7 +24,7 @@ program
   .action((language) => {
     // 执行创建方法
     create(language, 'page')
-  });
+  })
 
 // 处理错误指令
 program
@@ -39,7 +39,7 @@ program
     ${cyanColor('south create ' + italicFont('project-name'))}\r
     \r\n创建页面操作:
     ${cyanColor('south create-page ' + italicFont('page-name'))}\r\n
-    \r\帮助说明:
+    \r\n帮助说明:
     ${cyanColor('south --help')}\r
   `)
 
@@ -53,7 +53,7 @@ program
       verticalLayout: 'default',
       width: 90,
       whitespaceBreak: true
-    }));
+    }))
     // 新增说明信息
     console.log(`\r\nRun ${cyanColor(`south <command> --help`)} show details\r\n`)
   })
@@ -62,4 +62,4 @@ program
 program.version(pack.version)
 
 // 解析用户执行命令传入参数
-program.parse(process.argv);
+program.parse(process.argv)

@@ -38,9 +38,3 @@ pnpm i
 删除-批量删除      批量删除按钮
 分页              分页栏
 ```
-
-- 如果无法运行commitlint，请运行以下指令：
-
-```
-  npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
-```

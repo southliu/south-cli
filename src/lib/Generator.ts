@@ -7,8 +7,8 @@ import { CLI_NAME } from '../utils/config'
 import { cyanColor, dimColor, errorColor, handleLoading } from '../utils/utils'
 
 class Generator {
-  name: string;
-  targetDir: string;
+  name: string
+  targetDir: string
   isSuccess: boolean
   constructor(name: string, targetDir: string) {
     this.name = name
@@ -18,7 +18,7 @@ class Generator {
 
   // 下载模板
   async handleDownload(repo: string, tag: string) {
-    const requestUrl = `${CLI_NAME}/${repo}${tag?'#'+tag:''}`
+    const requestUrl = `${CLI_NAME}/${repo}${tag ? `#${tag}` : ''}`
     // 下载方法添加promise
     const download = util.promisify(downloadGitRepo)
     // 获取参数位置

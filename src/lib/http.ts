@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { CLI_NAME } from '../utils/config';
+import { CLI_NAME } from '../utils/config'
 
 axios.interceptors.response.use(res => {
-  return res.data;
+  return res.data
 })
 
 /**
@@ -18,7 +18,7 @@ async function getRepoList() {
  * @param {string} repo 模板名称
  * @returns Promise
  */
-async function  getTagList(repo: string) {
+async function getTagList(repo: string) {
   return axios.get(`https://api.github.com/repos/${CLI_NAME}/${repo}/tags`)
 }
 
