@@ -1,12 +1,20 @@
-import { useCallback, useEffect<%% if (isBatchDelete) { return ', useState' } %> } from 'react'
-<%% if (isSearch) { return "Searchs from '@/components/Searchs'"} %>
-<%% if (isPagination) { return "import Paginations from '@/components/Paginations'"} %>
-<%% if (isCreate) { return "import Create from '@/components/Create'"} %>
+import { useCallback, useEffect<% if (isBatchDelete) { %>
+  , useState
+<% } %> } from 'react'
+<% if (isSearch) { %>
+  import Searchs from '@/components/Searchs'
+<% } %>
+<% if (isPagination) { %>
+  import Paginations from '@/components/Paginations'
+<% } %>
+<% if (isCreate) { %>
+  import Create from '@/components/Create'
+<% } %>
 import { connect } from 'dva'
 import { ColumnsType } from 'antd/es/table'
-<%% if (isCreate || isDelete || isBatchDelete) {
+<% if (isCreate || isDelete || isBatchDelete) { %>
   return `import { Popconfirm, Tooltip${isBatchDelete ? ', Button, message' : ''} } from 'antd'`
-} %>
+<% } %>
 import { initData } from '@/utils/initData'
 import { IAuthorityLoginState, ${modelTsData} } from '@/models'
 import checkPermission from '@/utils/permission'

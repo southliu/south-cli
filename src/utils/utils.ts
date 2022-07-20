@@ -1,31 +1,49 @@
+import type { ILanguage, IPageFunctions } from "../types"
 import loading from 'loading-cli'
 import inquirer from 'inquirer'
 import path from 'path'
-import { ILanguage, IPageFunctions } from "../types"
+import fs from 'fs-extra'
 
-// 添加 ANSI 转义字符，以将文本输出为红色
-export function errorColor(str: string) {
-  return `\x1b[31m${str}\x1b[0m`
+/**
+ * 文件是否存在
+ * @param path - 路径
+ */
+export function hasFile(path: string): boolean {
+  return fs.existsSync(path)
 }
 
-// 添加 ANSI 转义字符，以将文本输出为绿色
-export function successColor(str: string) {
-  return `\x1b[32m${str}\x1b[0m`
+/**
+ * 文件夹是否存在
+ * @param path - 路径
+ */
+export function hasFolder(path: string): boolean {
+  return fs.existsSync(path)
 }
 
-// 添加 ANSI 转义字符，以将文本输出为蓝色
-export function cyanColor(str: string) {
-  return `\x1b[36m${str}\x1b[0m`
-}
+/**
+ * 加载动画
+ * @param fn - 加载方法
+ * @param text - 加载小时内容
+ */
+export async function handleLoading<T>(fn: Promise<T>, text = '加载中...') {
+  const load = loading({
+    text,
+    color: 'cyan',
+    frames: ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
+  })
+  load.start()
 
-// 添加 ANSI 转义字符，以将文本输出为暗淡
-export function dimColor(str: string) {
-  return `\x1b[2m${str}\x1b[0m`
-}
-
-// 添加 ANSI 转义字符，以将文本输出为斜体
-export function italicFont(str: string) {
-  return `\x1b[3m${str}\x1b[0m`
+  try {
+    // 执行方法
+    const result = await fn
+    // 状态成功
+    load.stop()
+    return result 
+  } catch (error) {
+    // 状态失败
+    load.stop()
+    return false
+  }
 }
 
 // 获取文件路径
@@ -57,7 +75,7 @@ export function getFilePath(name: string, language?: ILanguage) {
 
 // 首字母大写
 export function firstToUpper(str: string) {
-  return str.replace(/\b(\w)(\w*)/g, function($0, $1, $2) {
+  return str.replace(/\b(\w)(\w*)/g, ($0, $1, $2) => {
     return $1.toUpperCase() + $2
   })
 }
@@ -101,41 +119,6 @@ export function handleAuthPath(str: string, type: IAuthPathResult) {
     }
   })
   return result
-}
-
-// 加载动画
-export async function handleLoading(fn: Promise<any>, text = '加载中...') {
-  const load = loading({
-    text,
-    color: 'cyan',
-    frames: ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏']
-  })
-  load.start()
-
-  try {
-    // 执行方法
-    const result = await fn
-    // 状态成功
-    load.stop()
-    return result 
-  } catch (error) {
-    // 状态失败
-    load.stop()
-    console.log(`${errorColor('执行失败,请重试')}`)
-    return false
-  }
-}
-
-// 询问页面标题
-export async function handleTitle() {
-  // 获取标题
-  const { title } = await inquirer.prompt({
-    name: 'title',
-    type: 'input',
-    message: '请输入标题：'
-  })
-
-  return title
 }
 
 // 页面所需功能
@@ -193,4 +176,44 @@ export function filterFuncs(functions: IPageFunctions[]): IFilterFuncResult {
     isDelete,
     isBatchDelete
   }
+}
+
+/**
+ * 添加 ANSI 转义字符，以将文本输出为红色
+ * @param str - 文本
+ */
+ export function errorText(str: string) {
+  return `\x1b[31m${str}\x1b[0m`
+}
+
+/**
+ * 添加 ANSI 转义字符，以将文本输出为绿色
+ * @param str - 文本
+ */
+export function successText(str: string) {
+  return `\x1b[32m${str}\x1b[0m`
+}
+
+/**
+ * 添加 ANSI 转义字符，以将文本输出为蓝色
+ * @param str - 文本
+ */
+export function cyanText(str: string) {
+  return `\x1b[36m${str}\x1b[0m`
+}
+
+/**
+ * 添加 ANSI 转义字符，以将文本输出为暗淡
+ * @param str - 文本
+ */
+export function dimText(str: string) {
+  return `\x1b[2m${str}\x1b[0m`
+}
+
+/**
+ * 添加 ANSI 转义字符，以将文本输出为斜体
+ * @param str - 文本
+ */
+export function italicFont(str: string) {
+  return `\x1b[3m${str}\x1b[0m`
 }

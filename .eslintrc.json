@@ -13,12 +13,9 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
-    // 允许出现;
-    // "@typescript-eslint/semi": ["warn", "always"],
     "@typescript-eslint/ban-ts-ignore": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
-    // 允许出现any
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-empty-function": "off",

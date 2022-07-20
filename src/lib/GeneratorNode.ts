@@ -1,5 +1,6 @@
 import fs from 'fs-extra'
-import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../utils/utils'
+import { cyanText, errorText, getFilePath, handleFunctions } from '../utils/utils'
+import { getTitle } from '../utils/common'
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../../templates/Node'
 
@@ -23,7 +24,7 @@ class GeneratorPage {
     // 判断是否存在当前文件
     if (fs.pathExistsSync(filePath)) {
       this.isSuccess = false
-      return console.log(errorColor('  文件已存在'))
+      return console.log(errorText('  文件已存在'))
     }
 
     this.isSuccess = true
@@ -34,7 +35,7 @@ class GeneratorPage {
   // 创建处理
   async handleCreate() {
     // 获取标题
-    const title = await handleTitle()
+    const title = await getTitle()
 
     // 页面功能
     const functions = await handleFunctions()
@@ -44,7 +45,7 @@ class GeneratorPage {
 
     // 模板使用提示
     if (this.isSuccess) {
-      console.log(`\n创建${cyanColor(this.name)}页面成功!\n`)
+      console.log(`\n创建${cyanText(this.name)}页面成功!\n`)
     }
   }
 }

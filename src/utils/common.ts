@@ -30,3 +30,17 @@ export async function getName(): Promise<string> {
 
   return name
 }
+
+/**
+ * 获取页面标题
+ */
+export async function getTitle(): Promise<string> {
+  // 获取标题
+  const { title } = await inquirer.prompt({
+    name: 'title',
+    type: 'input',
+    message: '请输入标题：'
+  })
+
+  return title
+}

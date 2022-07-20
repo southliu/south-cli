@@ -1,6 +1,7 @@
 import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanColor, errorColor, firstToUpper, getFilePath, handleFunctions, handleTitle } from '../utils/utils'
+import { cyanText, errorText, firstToUpper, getFilePath, handleFunctions } from '../utils/utils'
+import { getTitle } from '../utils/common'
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../../templates/React'
 import { handleModelFile } from '../../templates/React/model'
@@ -71,19 +72,19 @@ class GeneratorPage {
     // 判断是否存在当前文件
     if (fs.pathExistsSync(filePath)) {
       this.isSuccess = false
-      return console.log(errorColor('  文件已存在'))
+      return console.log(errorText('  文件已存在'))
     }
 
     // 判断是否存在模型文件
     if (fs.pathExistsSync(modelFilePath)) {
       this.isSuccess = false
-      return console.log(errorColor('  模型文件已存在'))
+      return console.log(errorText('  模型文件已存在'))
     }
 
     // 判断是否存在API文件
     if (fs.pathExistsSync(apiFilePath)) {
       this.isSuccess = false
-      return console.log(errorColor('  API文件已存在'))
+      return console.log(errorText('  API文件已存在'))
     }
 
     this.isSuccess = true
@@ -96,7 +97,7 @@ class GeneratorPage {
   // 创建处理
   async handleCreate() {
     // 获取标题
-    const title = await handleTitle()
+    const title = await getTitle()
 
     // 模型名称
     const modelName = await this.handleModelName()
@@ -112,7 +113,7 @@ class GeneratorPage {
 
     // 模板使用提示
     if (this.isSuccess) {
-      console.log(`\n创建${cyanColor(this.name)}页面成功!\n`)
+      console.log(`\n创建${cyanText(this.name)}页面成功!\n`)
     }
   }
 }

@@ -1,14 +1,34 @@
 import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
-import { errorColor, getFilePath } from '../utils/utils'
+import { errorText, getFilePath, hasFolder } from '../utils/utils'
 import { ILanguage } from '../types'
-import Generator from './Generator'
+import GeneratorProject from './GeneratorProject'
 import GeneratorReact from './GeneratorReact'
 import GeneratorVue from './GeneratorVue'
 import GeneratorNode from './GeneratorNode'
 
-type IType = 'project' | 'page' | 'page'
+type IType = 'project' | 'page'
+
+/**
+ * 生成项目
+ * @param name - 项目名称
+ */
+export async function createProject(name: string) {
+  // 获取当前命令行选择文件
+  const cwd = process.cwd()
+  // 文件所在路径
+  const filePath = path.join(cwd, name)
+
+  // 如果文件夹存在则退出
+  if (hasFolder(filePath)) {
+    return console.error(errorText('  文件已存在'))
+  }
+
+  // 执行创建指令
+  const generator = new GeneratorProject(name, filePath)
+  generator.handleCreate()
+}
 
 // 获取语言
 async function getLanguage(type: IType): Promise<ILanguage | undefined> {
@@ -59,7 +79,7 @@ async function Create(name: string, type: IType): Promise<void> {
 
   // 当文件存在则退出
   if (isFile) {
-    return console.log(errorColor('  文件已存在'))
+    return console.log(errorText('  文件已存在'))
   }
 
   // 根据类型执行对应创建指令： project(项目) page(页面)
@@ -80,7 +100,7 @@ async function Create(name: string, type: IType): Promise<void> {
           break
 
         default:
-          console.log(errorColor('  无法执行'))
+          console.log(errorText('  无法执行'))
           break
       }
       break
@@ -88,7 +108,7 @@ async function Create(name: string, type: IType): Promise<void> {
 
     default: {
       // 执行创建指令
-      const generator = new Generator(name, targetPath)
+      const generator = new GeneratorProject(name, targetPath)
       generator.handleCreate()
       break
     }

@@ -14,6 +14,13 @@ export function renderReact() {
     isBatchDelete: true,
   })
 
-  fs.mkdirSync(__dirname, 'test123')
-  fs.writeFileSync(`${__dirname}/test123/index.js`, code)
+
+    console.log('templateCode:', templateCode)
+    console.log('code:', code)
+    
+    // 获取当前命令行选择文件
+    const cwd = process.cwd()
+    // 文件所在路径
+    const filePath = path.join(cwd, '/test.ts')
+    fs.outputFileSync(filePath, code)
 }

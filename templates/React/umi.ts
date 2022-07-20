@@ -6,7 +6,7 @@ export function handleFile(title: string, modelName: string, functions: IPageFun
   // 分割模型名称中大写字母
   const modelArr: string[] = modelName.split(/(?=[A-Z])/)
   // 权限路径
-  let authPath = `${modelArr[modelArr.length - 2]}/${modelName}`
+  const authPath = `${modelArr[modelArr.length - 2]}/${modelName}`
   // 模板ts数据
   const modelTsData = `I${firstToUpper(modelName)}`
 

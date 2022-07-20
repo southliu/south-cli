@@ -2,21 +2,11 @@
 import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
-import create from '../lib/create'
-import { cyanColor, errorColor, italicFont } from '../utils/utils'
-import { renderReact } from './test'
+import create, { createProject } from '../lib/create'
+import { cyanText, errorText, italicFont } from '../utils/utils'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
-
-// 配置生成项目指令
-program
-  .command('test <project-name>')
-  .description('test')
-  .action((name) => {
-    console.log('test:', name)
-    renderReact()
-  })
 
 // 配置生成项目指令
 program
@@ -24,7 +14,7 @@ program
   .description('创建一个项目')
   .action((name) => {
     // 执行创建方法
-    create(name, 'project')
+    createProject(name)
   })
 
 // 配置生成页面指令
@@ -41,16 +31,16 @@ program
   .configureOutput({
     // 将错误高亮显示
     outputError: (str, write) => {
-      return write(errorColor(`无效指令,请执行以下操作`))
+      return write(errorText(`无效指令,请执行以下操作`))
     }
   })
   .showHelpAfterError(`
     \r\n创建项目操作:
-    ${cyanColor('south create ' + italicFont('project-name'))}\r
+    ${cyanText('south create ' + italicFont('project-name'))}\r
     \r\n创建页面操作:
-    ${cyanColor('south create-page ' + italicFont('page-name'))}\r\n
+    ${cyanText('south create-page ' + italicFont('page-name'))}\r\n
     \r\n帮助说明:
-    ${cyanColor('south --help')}\r
+    ${cyanText('south --help')}\r
   `)
 
 // 监听help指令
@@ -65,7 +55,7 @@ program
       whitespaceBreak: true
     }))
     // 新增说明信息
-    console.log(`\r\nRun ${cyanColor(`south <command> --help`)} show details\r\n`)
+    console.log(`\r\nRun ${cyanText(`south <command> --help`)} show details\r\n`)
   })
 
 // 版本控制
