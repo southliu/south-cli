@@ -1,5 +1,5 @@
-import { filterFuncs } from "../../utils/utils";
-import { IPageFunctions } from "../../types";
+import type { IPageFunctions } from "../../src/types"
+import { filterFuncs } from "../../src/utils/utils"
 
 // 生成react文件
 export function handleServerFile(authPath: string, functions: IPageFunctions[]): string {
@@ -11,7 +11,7 @@ export function handleServerFile(authPath: string, functions: IPageFunctions[]):
   } = filterFuncs(functions)
 
   // 渲染数据
-  let render = `
+  const render = `
 import request from '@/utils/request'
 ${
   isCreate ? `

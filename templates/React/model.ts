@@ -1,5 +1,5 @@
-import { filterFuncs, firstToUpper } from "../../utils/utils";
-import { IPageFunctions } from "../../types";
+import { filterFuncs, firstToUpper } from "../../src/utils/utils"
+import { IPageFunctions } from "../../src/types"
 
 // 生成react文件
 export function handleModelFile(modelName: string, functions: IPageFunctions[]): string {

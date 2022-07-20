@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import { cyanColor, errorColor, getFilePath, handleFunctions, handleTitle } from '../utils/utils'
 import { ILanguage, IPageFunctions } from '../types'
-import { handleFile } from '../templates/Node'
+import { handleFile } from '../../templates/Node'
 
 class GeneratorPage {
   name: string // 文件名

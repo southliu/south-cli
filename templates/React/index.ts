@@ -1,5 +1,5 @@
-import { filterFuncs, firstToUpper } from "../../utils/utils";
-import { IPageFunctions } from "../../types";
+import type { IPageFunctions } from "../../src/types"
+import { filterFuncs, firstToUpper } from "../../src/utils/utils"
 
 // 生成react文件
 export function handleFile(title: string, modelName: string, authPath: string, functions: IPageFunctions[]): string {
@@ -16,7 +16,7 @@ export function handleFile(title: string, modelName: string, authPath: string, f
   } = filterFuncs(functions)
 
   // 渲染数据
-  let render = `
+  const render = `
 import { useCallback, useEffect${ isBatchDelete ? ', useState' : '' } } from 'react'${ isSearch ? `\nimport Searchs from '@/components/Searchs'` : '' }${ isPagination ? `\nimport Paginations from '@/components/Paginations'` : '' }${ isCreate ? `\nimport Create from '@/components/Create'` : '' }
 import { connect } from 'dva'
 import { ColumnsType } from 'antd/es/table'${

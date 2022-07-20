@@ -4,9 +4,19 @@ import path from 'path'
 import figlet from 'figlet'
 import create from '../lib/create'
 import { cyanColor, errorColor, italicFont } from '../utils/utils'
+import { renderReact } from './test'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
+
+// 配置生成项目指令
+program
+  .command('test <project-name>')
+  .description('test')
+  .action((name) => {
+    console.log('test:', name)
+    renderReact()
+  })
 
 // 配置生成项目指令
 program
