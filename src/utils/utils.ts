@@ -1,6 +1,5 @@
 import type { ILanguage, IPageFunctions } from "../types"
 import loading from 'loading-cli'
-import inquirer from 'inquirer'
 import path from 'path'
 import fs from 'fs-extra'
 
@@ -8,7 +7,7 @@ import fs from 'fs-extra'
  * 文件是否存在
  * @param path - 路径
  */
-export function hasFile(path: string): boolean {
+export function hasFile2(path: string): boolean {
   return fs.existsSync(path)
 }
 
@@ -119,39 +118,6 @@ export function handleAuthPath(str: string, type: IAuthPathResult) {
     }
   })
   return result
-}
-
-// 页面所需功能
-export async function handleFunctions() {
-  // 询问基础功能
-  const { functions }: { functions: IPageFunctions[] } = await inquirer.prompt({
-    name: 'functions',
-    type: 'checkbox',
-    message: '选择页面功能:',
-    choices: [
-      { name: '搜索', value: 'search', checked: true },
-      { name: '分页', value: 'pagination', checked: true },
-      { name: '新增', value: 'create', checked: true },
-      { name: '删除', value: 'delete', checked: true },
-      { name: '批量删除', value: 'batch-delete' }
-    ]
-  })
-
-  // 新增类型 create: 弹窗 create-page: 跳转页面
-  if (functions.includes('create')) {
-    // 询问新增类型
-    const { type } = await inquirer.prompt({
-      name: 'type',
-      type: 'confirm',
-      message: '新增是否以弹窗形式展现? Y: 弹窗 n: 跳转'
-    })
-
-    // 处理基础功能中的新增类型
-    const createIdx = functions.indexOf('create')
-    functions[createIdx] = type ? 'create' : 'create-page'
-  }
-
-  return functions
 }
 
 // 功能划分

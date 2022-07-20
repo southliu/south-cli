@@ -1,7 +1,7 @@
 import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanText, errorText, firstToUpper, getFilePath, handleFunctions } from '../utils/utils'
-import { getTitle } from '../utils/common'
+import { cyanText, errorText, firstToUpper, getFilePath } from '../utils/utils'
+import { getTitle, getFunctions } from '../utils/common'
 import { ILanguage, IPageFunctions } from '../types'
 import { handleFile } from '../../templates/React'
 import { handleModelFile } from '../../templates/React/model'
@@ -106,7 +106,7 @@ class GeneratorPage {
     const authPath = await this.handleAuthPath()
     
     // 页面功能
-    const functions = await handleFunctions()
+    const functions = await getFunctions()
 
     // 执行下载
     this.handleDownload(title, modelName.trim(), authPath, functions)

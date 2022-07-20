@@ -1,12 +1,11 @@
 import fs from 'fs-extra'
 import inquirer from 'inquirer'
 import path from 'path'
-import { errorText, getFilePath, hasFolder } from '../utils/utils'
+import { errorText, getFilePath, hasFile2, hasFolder } from '../utils/utils'
 import { ILanguage } from '../types'
 import GeneratorProject from './GeneratorProject'
 import GeneratorReact from './GeneratorReact'
 import GeneratorVue from './GeneratorVue'
-import GeneratorNode from './GeneratorNode'
 
 type IType = 'project' | 'page'
 
@@ -22,11 +21,51 @@ export async function createProject(name: string) {
 
   // 如果文件夹存在则退出
   if (hasFolder(filePath)) {
-    return console.error(errorText('  文件已存在'))
+    return console.error(errorText('  文件夹已存在'))
   }
 
   // 执行创建指令
   const generator = new GeneratorProject(name, filePath)
+  generator.handleCreate()
+}
+
+/**
+ * 生成Vue项目
+ * @param name - 页面名称
+ */
+export async function createVue(name: string) {
+  // 获取当前命令行选择文件
+  const cwd = process.cwd()
+  // 文件所在路径
+  const filePath = path.join(cwd, `${name}.vue`)
+
+  // 如果文件夹存在则退出
+  if (hasFile2(filePath)) {
+    return console.error(errorText('  文件已存在'))
+  }
+
+  // 执行创建命令
+  const generator = new GeneratorVue(name)
+  generator.handleCreate()
+}
+
+/**
+ * 生成React项目
+ * @param name - 页面名称
+ */
+export async function createReact(name: string) {
+  // 获取当前命令行选择文件
+  const cwd = process.cwd()
+  // 文件所在路径
+  const filePath = path.join(cwd, `${name}.tsx`)
+
+  // 如果文件夹存在则退出
+  if (hasFile2(filePath)) {
+    return console.error(errorText('  文件已存在'))
+  }
+
+  // 执行创建命令
+  const generator = new GeneratorVue(name)
   generator.handleCreate()
 }
 
@@ -92,11 +131,7 @@ async function Create(name: string, type: IType): Promise<void> {
           break
 
         case 'vue':
-          new GeneratorVue(name, language).handleCreate()
-          break
-
-        case 'node':
-          new GeneratorNode(name, language).handleCreate()
+          new GeneratorVue(name).handleCreate()
           break
 
         default:

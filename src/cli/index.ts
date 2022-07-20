@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
-import create, { createProject } from '../lib/create'
+import create, { createProject, createVue } from '../lib/create'
 import { cyanText, errorText, italicFont } from '../utils/utils'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
@@ -16,6 +16,25 @@ program
     // 执行创建方法
     createProject(name)
   })
+
+// 配置生成Vue页面指令
+program
+  .command('create-vue')
+  .description('创建一个Vue页面')
+  .action(() => {
+    // 执行创建方法
+    createVue('index')
+  })
+
+// 配置生成Vue页面指令
+program
+  .command('create-vue <page-name>')
+  .description('创建一个Vue页面')
+  .action((name) => {
+    // 执行创建方法
+    createVue(name)
+  })
+
 
 // 配置生成页面指令
 program
@@ -37,8 +56,10 @@ program
   .showHelpAfterError(`
     \r\n创建项目操作:
     ${cyanText('south create ' + italicFont('project-name'))}\r
-    \r\n创建页面操作:
-    ${cyanText('south create-page ' + italicFont('page-name'))}\r\n
+    \r\n创建Vue页面操作:
+    ${cyanText('south create-vue ' + italicFont('vue-name'))}\r\n
+    \r\n创建React页面操作:
+    ${cyanText('south create-react ' + italicFont('react-name'))}\r\n
     \r\n帮助说明:
     ${cyanText('south --help')}\r
   `)
