@@ -1,0 +1,68 @@
+import { request } from '@/utils/request'
+
+enum API {
+  URL = '<%= rule %>',
+}
+
+/**
+ * 获取分页数据
+ * @param data - 请求数据
+ */
+export function <%= api.search %>(data: Partial<unknown> & IPaginationData) {
+  return request.get<IPageServerResult<unknown>(
+    `${API.URL}/index`,
+    { params: data }
+  )
+}
+<% if (api.detail) { -%>
+
+/**
+ * 根据ID获取数据
+ * @param id - ID
+ * @param data - 请求数据
+ */
+export function <%= api.detail %>(id: string) {
+  return request.get(`${API.URL}/${id}`)
+}
+<% } -%>
+<% if (api.create) { -%>
+
+/**
+ * 新增数据
+ * @param data - 请求数据
+ */
+export function <%= api.create %>(data: unknown) {
+  return request.post(API.URL, data)
+}
+<% } -%>
+<% if (api.update) { -%>
+
+/**
+ * 修改数据
+ * @param id - 修改id值
+ * @param data - 请求数据
+ */
+export function <%= api.update %>(id: string, data: unknown) {
+  return request.put(`${API.URL}/${id}`, data)
+}
+<% } -%>
+<% if (api.delete) { -%>
+
+/**
+ * 删除
+ * @param id - 删除id值
+ */
+ export function <%= api.delete %>(id: string) {
+  return request.delete(`${API.URL}/${id}`)
+}
+<% } -%>
+<% if (api.batchDelete) { -%>
+
+/**
+ * 批量删除
+ * @param ids - 批量删除id值
+ */
+ export function <%= api.batchDelete %>(ids: string[]) {
+  return request.delete(`${API.URL}`, { data: { ids } })
+}
+<% } -%>

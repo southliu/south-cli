@@ -1,4 +1,4 @@
-import type { ILanguage, IPageFunctions } from '../types'
+import type { IFunctionApi, ILanguage, IPageFunctions } from '../types'
 import inquirer from 'inquirer'
 
 /**
@@ -16,6 +16,20 @@ export async function getLanguage(): Promise<ILanguage> {
   })
 
   return language
+}
+
+/**
+ * 获取页面名称
+ */
+export async function getName(): Promise<string> {
+  // 获取名称
+  const { name } = await inquirer.prompt({
+    name: 'name',
+    type: 'input',
+    message: '请输入名称：'
+  })
+
+  return name
 }
 
 /**
@@ -59,6 +73,7 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
       { name: '搜索', value: 'search', checked: true },
       { name: '分页', value: 'pagination', checked: true },
       { name: '新增', value: 'create', checked: true },
+      { name: '修改', value: 'update', checked: true },
       { name: '删除', value: 'delete', checked: true },
       { name: '批量删除', value: 'batch-delete' }
     ]
@@ -79,4 +94,74 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
   }
 
   return functions
+}
+
+/**
+ * 根据功能获取API接口
+ */
+ export async function getApiByFunctions(func: IPageFunctions[]): Promise<IFunctionApi> {
+  const res: IFunctionApi = {
+    search: false,
+    detail: false,
+    create: false,
+    update: false,
+    delete: false,
+    batchDelete: false,
+  }
+  
+  // 搜索
+  const { search } = await inquirer.prompt({
+    name: 'search',
+    type: 'input',
+    message: '请输入搜索接口：'
+  })
+  res.search = search || 'getPage'
+
+  // 新增
+  if (func.includes('create') || func.includes('create-page')) {
+    const { create } = await inquirer.prompt({
+      name: 'create',
+      type: 'input',
+      message: '请输入新增接口：'
+    })
+    res.create = create || 'create'
+  }
+
+  // 修改
+  if (func.includes('update')) {
+    const { detail } = await inquirer.prompt({
+      name: 'detail',
+      type: 'input',
+      message: '请输入根据ID获取详情接口：'
+    })
+    const { update } = await inquirer.prompt({
+      name: 'update',
+      type: 'input',
+      message: '请输入修改接口：'
+    })
+    res.detail = detail || 'detail'
+    res.update = update || 'update'
+  }
+  
+  // 删除
+  if (func.includes('delete')) {
+    const { remove } = await inquirer.prompt({
+      name: 'remove',
+      type: 'input',
+      message: '请输入删除接口：'
+    })
+    res.delete = remove || 'delete'
+  }
+  
+  // 批量删除
+  if (func.includes('batch-delete')) {
+    const { remove } = await inquirer.prompt({
+      name: 'remove',
+      type: 'input',
+      message: '请输入批量删除接口：'
+    })
+    res.batchDelete = remove || 'batchDelete'
+  }
+
+  return res
 }

@@ -1,11 +1,11 @@
-<% if (funcs.includes('search') || funcs.includes('create')) { %>
+<% if (funcs.includes('search') || funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormList } from "@/types/form"
-<% } %>
+<% } -%>
 import type { VxeGridPropTypes } from "vxe-table"
-<% if (funcs.includes('create')) { %>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import { INPUT_REQUIRED, SELECT_REQUIRED } from "@/utils/config"
-<% } %>
-<% if (funcs.includes('search')) { %>
+<% } -%>
+<% if (funcs.includes('search')) { -%>
 import { MENU_STATUS } from "@/utils/constants"
 
 // 搜索数据
@@ -24,8 +24,9 @@ export const searchList: IFormList[] = [
     component: 'Input'
   }
 ]
-<% } %>
-<% if (funcs.includes('create')) { %>
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+
 // 新增数据
 export const createList: IFormList[] = [
   {
@@ -65,7 +66,8 @@ export const createList: IFormList[] = [
     component: 'Input'
   },
 ]
-<% } %>
+<% } -%>
+
 // 表格数据
 export const tableColumns: VxeGridPropTypes.Columns = [
   {

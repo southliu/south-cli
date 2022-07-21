@@ -1,41 +1,53 @@
 <template>
   <BasicContent v-if="pagePermission.page">
-    <% if (funcs.includes('search')) { %>
+<% if (funcs.includes('search')) { -%>
     <template #top>
       <BasicSearch
         :list="searchList"
         :data="searches.data"
         :loading="loading"
         :isCreate="pagePermission.create"
-        <% if (funcs.includes('create')) { %>
+<% if (funcs.includes('create')) { -%>
         @onCreate="onCreate"
-        <% } %>
+<% } -%>
         @handleFinish="handleSearch"
       />
     </template>
-    <% } %>
 
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('delete')) { -%>
     <BasicTable
       :data="tables"
       :columns="tableColumns"
       :loading="loading"
     >
       <template v-slot:operate='row'>
+<% if (funcs.includes('create')) { -%>
         <UpdateBtn
           v-if="pagePermission.update"
           class="mr-2"
           :loading="createLoading"
           @click="onUpdate(row.record)"
         />
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
         <DeleteBtn
           v-if="pagePermission.delete"
           :loading="loading"
           @click="handleDelete(row.record.id)"
         />
+<% } -%>
       </template>
     </BasicTable>
+<% } else { -%>
+    <BasicTable
+      :data="tables"
+      :columns="tableColumns"
+      :loading="loading"
+    />
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
 
-    <% if (funcs.includes('pagination')) { %>
     <template #footer>
       <BasicPagination
         :page="pagination.page"
@@ -45,9 +57,10 @@
         @handleChange="handlePagination"
       />
     </template>
-    <% } %>
+<% } -%>
   </BasicContent>
-  <% if (funcs.includes('create')) { %>
+<% if (funcs.includes('create')) { -%>
+
   <BasicModal
     v-model:visible="creates.isVisible"
     :loading="createLoading"
@@ -63,51 +76,79 @@
       @handleFinish="handleCreate"
     />
   </BasicModal>
-  <% } %>
+<% } -%>
 </template>
 
-<script lang="ts">
+<%- '<script lang="ts">' %>
+<% if (funcs.includes('create')) { -%>
 import type { IFormData } from '@/types/form'
 import type { IBasicForm } from '@/components/Form/model'
-import { SmileOutlined, DownOutlined } from '@ant-design/icons-vue'
+<% } -%>
 import { message } from 'ant-design-vue'
-import { defineComponent, onMounted, reactive, ref } from 'vue'
+import { defineComponent<% if (funcs.includes('search')) { %>, onMounted<% } %>, reactive, ref } from 'vue'
 import { getMenuPage, getMenuById, createMenu, updateMenu, deleteMenu } from '@/servers/systems/menu'
-import { UpdateBtn, DeleteBtn } from '@/components/Buttons'
+<% if (funcs.includes('update') || funcs.includes('delete')) { -%>
+import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
+<% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
+<% } -%>
+<% if (funcs.includes('create')) { -%>
 import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
-import { searchList, createList, tableColumns } from './data'
+<% } -%>
+import { <% if (funcs.includes('search')) { -%>searchList<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>, createList, <% } -%>
+tableColumns } from './data'
 import { useLoading } from '@/hooks/useLoading'
+<% if (funcs.includes('create')) { -%>
 import { useCreateLoading } from '@/hooks/useCreateLoading'
+<% } -%>
 import { checkPermission } from '@/utils/permissions'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
 import BasicContent from '@/components/Content/BasicContent.vue'
 import BasicTable from '@/components/Table/BasicTable.vue'
+<% if (funcs.includes('pagination')) { -%>
 import BasicPagination from '@/components/Pagination/BasicPagination.vue'
+<% } -%>
+<% if (funcs.includes('search')) { -%>
 import BasicSearch from '@/components/Search/BasicSearch.vue'
+<% } -%>
+<% if (funcs.includes('create')) { -%>
 import BasicForm from '@/components/Form/BasicForm.vue'
 import BasicModal from '@/components/Modal/BasicModal.vue'
+<% } -%>
 
 export default defineComponent({
-  name: 'SystemMenu',
+  name: '<%= name %>',
   components: {
-    SmileOutlined,
-    DownOutlined,
     BasicContent,
     BasicTable,
+<% if (funcs.includes('pagination')) { -%>
     BasicPagination,
+<% } -%>
+<% if (funcs.includes('search')) { -%>
     BasicSearch,
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     BasicForm,
     BasicModal,
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
     DeleteBtn,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     UpdateBtn
+<% } -%>
   },
   setup() {
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     const createFormRef = ref<IBasicForm>()
+<% } -%>
     const userStore = useUserStore()
     const { permissions } = storeToRefs(userStore)
     const { loading, startLoading, endLoading } = useLoading()
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     const { createLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
+<% } -%>
 
     // 权限前缀
     const permissionPrefix = '<%= rule %>'
@@ -115,21 +156,32 @@ export default defineComponent({
     // 权限
     const pagePermission = reactive({
       page: checkPermission(`${permissionPrefix}/index`, permissions.value),
+<% if (funcs.includes('create')) { -%>
       create: checkPermission(`${permissionPrefix}/create`, permissions.value),
+<% } -%>
+<% if (funcs.includes('update')) { -%>
       update: checkPermission(`${permissionPrefix}/update`, permissions.value),
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
       delete: checkPermission(`${permissionPrefix}/delete`, permissions.value)
+<% } -%>
     })
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
     // 初始化新增数据
     const initCreate = {
       status: 1,
       module: 'authority'
     }
+<% } -%>
+<% if (funcs.includes('search')) { -%>
 
     // 搜索数据
     const searches = reactive<ISearchData>({
       data: {}
     })
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
     // 新增数据
     const creates = reactive<ICreateData>({
@@ -138,19 +190,23 @@ export default defineComponent({
       title: '新增',
       data: initCreate
     })
-    
+<% } -%>
+
     // 表格数据
     const tables = reactive<ITableData>({
       total: 0,
       data: []
     })
 
+<% if (funcs.includes('pagination')) { -%>
     // 分页数据
     const pagination = reactive<IPaginationData>({
       page: 1,
       pageSize: 20,
     })
 
+<% } -%>
+<% if (funcs.includes('search')) { -%>
     onMounted(() => {
       getPage()
     })
@@ -162,6 +218,8 @@ export default defineComponent({
       handleSearch(searches.data)
     }
 
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     /** 表格提交 */
     const createSubmit = () => {
       createFormRef.value?.handleSubmit()
@@ -186,6 +244,8 @@ export default defineComponent({
         console.error(err)
       }
     }
+<% } -%>
+<% if (funcs.includes('create')) { -%>
 
     /** 点击新增 */
     const onCreate = () => {
@@ -194,6 +254,8 @@ export default defineComponent({
       creates.id = ''
       creates.data = initCreate
     }
+<% } -%>
+<% if (funcs.includes('update')) { -%>
 
     /**
      * 点击编辑
@@ -215,6 +277,8 @@ export default defineComponent({
         console.error(err)
       }
     }
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
     /**
      * 新增/编辑提交
@@ -242,6 +306,8 @@ export default defineComponent({
       creates.isVisible = false
     }
 
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
     /**
      * 删除
      * @param id
@@ -261,6 +327,8 @@ export default defineComponent({
       }
     }
 
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
     /**
      * 分页
      * @param page - 当前页
@@ -272,27 +340,52 @@ export default defineComponent({
       getPage()
     }
 
+<% } -%>
     return {
       loading,
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
       createLoading,
       createFormRef,
+<% } -%>
+<% if (funcs.includes('search')) { -%>
       searches,
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
       creates,
+<% } -%>
       tables,
+<% if (funcs.includes('pagination')) { -%>
       pagination,
+<% } -%>
+<% if (funcs.includes('search')) { -%>
       searchList,
+<% } -%>
       tableColumns,
       pagePermission,
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
       createList,
+<% } -%>
+<% if (funcs.includes('search')) { -%>
+      handleSearch,
+<% } -%>
+<% if (funcs.includes('create')) { -%>
       onCreate,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
       onUpdate,
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
       createSubmit,
       onCloseCreate,
-      handleSearch,
       handleCreate,
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
       handleDelete,
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
       handlePagination
+<% } -%>
     }
   }
 })
-</script>
+<%- '</script>' %>
