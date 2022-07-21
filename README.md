@@ -9,9 +9,14 @@ npm i south-cli -g
 south create project-name
 ```
 
-### 创建页面(page-name为页面名称)
+### 创建Vue页面(page-name为页面名称)
 ```
-south create-page page-name
+south create-vue page-name
+```
+
+### 创建React页面(page-name为页面名称)
+```
+south create-react page-name
 ```
 
 ### 帮助说明
@@ -21,7 +26,7 @@ south --help
 
 ### 本地使用(当前目录)
 ```
-npm link
+pnpm link:dev
 ```
 
 ### 安装依赖
