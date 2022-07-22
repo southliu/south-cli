@@ -1,120 +1,120 @@
-import inquirer from 'inquirer'
 import fs from 'fs-extra'
-import { cyanText, errorText, firstToUpper, getFilePath } from '../utils/utils'
-import { getTitle, getFunctions } from '../utils/common'
-import { ILanguage, IPageFunctions } from '../types'
-import { handleFile } from '../../templates/React'
-import { handleModelFile } from '../../templates/React/model'
-import { handleServerFile } from '../../templates/React/server'
+import path from 'path'
+import ejs from 'ejs'
+import { errorText } from '../utils/utils'
+import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
+import type { IPageFunctions } from '../types'
 
+/**
+ * 生成React页面
+ * 1. 输入页面名称
+ * 2. 输入页面权限名称
+ * 3. 输入模型名称和模型接口名称
+ * 4. 选择页面功能：增删改查
+ * 5. 生成模板页面
+ */
 class GeneratorPage {
   name: string // 文件名
-  language: ILanguage
-  isSuccess: boolean
-  constructor(name: string, language: ILanguage) {
+  constructor(name: string) {
     this.name = name
-    this.language = language
-    this.isSuccess = false
   }
 
-  // 模型名称
-  async handleModelName() {
-    // 获取模型名称
-    const { modelName } = await inquirer.prompt({
-      name: 'modelName',
-      type: 'input',
-      message: '请输入模型名称：'
-    })
+  /**
+   * 获取模板
+   * @param title - 标题
+   * @param rule - 权限
+   * @param funcs - 功能数据
+   * @param model - 模型名称
+   * @param modelInterface - 模型接口名称
+   */
+  getTemplate(title: string, rule: string, funcs: IPageFunctions[], model: string, modelInterface: string): string {
+    const templateCode = fs.readFileSync(
+      path.resolve(__dirname, "../../templates/React/index.ejs")
+    )
+    const code = ejs.render(
+      templateCode.toString(),
+      { title, rule, funcs, model, modelInterface }
+    )
 
-    return modelName
+    return code
   }
 
-  // 权限路径
-  async handleAuthPath() {
-    // 获取模型名称
-    const { authPath } = await inquirer.prompt({
-      name: 'authPath',
-      type: 'input',
-      message: '请输入权限名称：'
-    })
+  /**
+   * 获取模型模板
+   * @param model - 模型名称
+   * @param modelInterface - 模型接口名称
+   * @param funcs - 功能数据
+   */
+  getModelTemplate(model: string, modelInterface: string, funcs: IPageFunctions[]): string {
+    const templateCode = fs.readFileSync(
+      path.resolve(__dirname, "../../templates/React/model.ejs")
+    )
+    const code = ejs.render(templateCode.toString(), { model, modelInterface, funcs })
 
-    return authPath
-    
+    return code
   }
 
-  // 下载模板
-  handleDownload(title: string, modelName: string, authPath: string, functions: IPageFunctions[]) {
-    // 文件名称
-    let fileName = this.name
-    if (this.name.includes('-')) {
-      const arr = fileName.trim().split('-')
-      let result = ``
-      arr.forEach((item, index) => {
-        result += index === 0 ? item : firstToUpper(item)
-      })
-      fileName = result
-    }
-    // 文件路径
-    const filePath = getFilePath(this.name, this.language)
-    // 文件内容
-    const content = handleFile(title, modelName, authPath, functions)
+  /**
+   * 获取接口模板
+   * @param rule - 权限
+   * @param funcs - 功能数据
+   */
+  getApiTemplate(rule: String, funcs: IPageFunctions[]): string {
+    const templateCode = fs.readFileSync(
+      path.resolve(__dirname, "../../templates/React/server.ejs")
+    )
+    const code = ejs.render(templateCode.toString(), { rule, funcs })
 
-    // 模型文件路径
-    const modelFilePath = getFilePath(`${fileName}.model`, 'ts')
-    // 模型内容
-    const modelContent = handleModelFile(modelName, functions)
-
-    // api文件路径
-    const apiFilePath = getFilePath(`${fileName}.api`, 'ts')
-    // 模型内容
-    const apiContent = handleServerFile(authPath, functions)
-
-    // 判断是否存在当前文件
-    if (fs.pathExistsSync(filePath)) {
-      this.isSuccess = false
-      return console.log(errorText('  文件已存在'))
-    }
-
-    // 判断是否存在模型文件
-    if (fs.pathExistsSync(modelFilePath)) {
-      this.isSuccess = false
-      return console.log(errorText('  模型文件已存在'))
-    }
-
-    // 判断是否存在API文件
-    if (fs.pathExistsSync(apiFilePath)) {
-      this.isSuccess = false
-      return console.log(errorText('  API文件已存在'))
-    }
-
-    this.isSuccess = true
-    // 生成文件
-    fs.outputFileSync(filePath, content)
-    fs.outputFileSync(modelFilePath, modelContent)
-    fs.outputFileSync(apiFilePath, apiContent)
+    return code
   }
 
+  /**
+   * 生成模板
+   * @param code - 模板代码
+   * @param model - 模型代码
+   * @param api - 接口代码
+   */
+  generatorTemplate(code: string, model: string, api: string) {
+    // 获取当前命令行选择文件
+    const cwd = process.cwd()
+
+    // 输出模板代码
+    const codeFilePath = path.join(cwd, `${this.name}.tsx`)
+    fs.outputFileSync(codeFilePath, code)
+
+    // 输出模型代码
+    const modelFilePath = path.join(cwd, `${this.name}.model.ts`)
+    fs.outputFileSync(modelFilePath, model)
+
+    // 输出接口代码
+    const apiFilePath = path.join(cwd, `${this.name}.api.ts`)
+    fs.outputFileSync(apiFilePath, api)
+  }
+
+  
   // 创建处理
   async handleCreate() {
-    // 获取标题
+    // 1. 输入页面名称
     const title = await getTitle()
+    if (!title) return console.log(errorText('  请输入有效标题'))
 
-    // 模型名称
-    const modelName = await this.handleModelName()
+    // 2. 获取权限
+    const rule = await getRule()
+    if (!rule) return console.log(errorText('  请输入有效权限'))
 
-    // 权限路径
-    const authPath = await this.handleAuthPath()
-    
-    // 页面功能
-    const functions = await getFunctions()
+    // 3. 输入模型名称和模型接口名称
+    const model = await getModel()
+    const modelInterface = await getModelInterface()
+    if (!model || !modelInterface) return console.log(errorText('  请输入有效模型'))
 
-    // 执行下载
-    this.handleDownload(title, modelName.trim(), authPath, functions)
+    // 4. 选择页面功能：增删改查
+    const funcs = await getFunctions()
 
-    // 模板使用提示
-    if (this.isSuccess) {
-      console.log(`\n创建${cyanText(this.name)}页面成功!\n`)
-    }
+    // 5. 生成模板页面
+    const codeTemplate = this.getTemplate(title, rule, funcs, model, modelInterface)
+    const modelTemplate = this.getModelTemplate(model, modelInterface, funcs)
+    const apiTemplate = this.getApiTemplate(rule, funcs)
+    this.generatorTemplate(codeTemplate, modelTemplate, apiTemplate)
   }
 }
 

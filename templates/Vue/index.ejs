@@ -86,7 +86,15 @@ import type { IBasicForm } from '@/components/Form/model'
 <% } -%>
 import { message } from 'ant-design-vue'
 import { defineComponent<% if (funcs.includes('search')) { %>, onMounted<% } %>, reactive, ref } from 'vue'
-import { getMenuPage, getMenuById, createMenu, updateMenu, deleteMenu } from '@/servers/systems/menu'
+import { <%= api.search -%>
+<% if (api.detail) { -%>, <% } -%>
+<%= api.detail -%>
+<% if (api.create) { -%>, <% } -%>
+<%= api.create -%>
+<% if (api.update) { -%>, <% } -%>
+<%= api.update -%>
+<% if (api.delete) { -%>, <% } -%>
+<%= api.delete -%> } from '@/servers<%= rule %>'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
@@ -234,7 +242,7 @@ export default defineComponent({
       const query = { ...pagination, ...values }
       try {
         startLoading()
-        const { data: { data } } = await getMenuPage(query)
+        const { data: { data } } = await <%= api.search %>(query)
         const { items, total } = data
         tables.data = items
         tables.total = total
@@ -269,7 +277,7 @@ export default defineComponent({
 
       try {
         startCreateLoading()
-        const { data: { data } } = await getMenuById(id as string)
+        const { data: { data } } = await <%= api.detail %>(id as string)
         creates.data = data
         endCreateLoading()
       } catch(err) {
@@ -287,7 +295,7 @@ export default defineComponent({
     const handleCreate = async (values: IFormData) => {
       try {
         startCreateLoading()
-        const functions = () => creates.id ? updateMenu(creates.id, values) :  createMenu(values)
+        const functions = () => creates.id ? <%= api.update %>(creates.id, values) : <%= api.create %>(values)
         const { data } = await functions()
         if (data?.code === 200) {
           getPage()
@@ -315,7 +323,7 @@ export default defineComponent({
     const handleDelete = async (id: string | number) => {
       try {
         startLoading()
-        const { data } = await deleteMenu(id as string)
+        const { data } = await <%= api.delete %>(id as string)
         if (data?.code === 200) {
           message.success(data?.message || '删除成功')
           getPage()

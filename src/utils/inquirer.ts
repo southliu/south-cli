@@ -1,22 +1,5 @@
-import type { IFunctionApi, ILanguage, IPageFunctions } from '../types'
+import type { IFunctionApi, IPageFunctions } from '../types'
 import inquirer from 'inquirer'
-
-/**
- * 获取语言
- */
-export async function getLanguage(): Promise<ILanguage> {
-  const { language }: { language: ILanguage } = await inquirer.prompt({
-    name: 'language',
-    type: 'list',
-    message: '选择语言:',
-    choices: [
-      { name: 'React', value: 'react' },
-      { name: 'Vue', value: 'vue' }
-    ]
-  })
-
-  return language
-}
 
 /**
  * 获取页面名称
@@ -44,6 +27,34 @@ export async function getTitle(): Promise<string> {
   })
 
   return title
+}
+
+/**
+ * 获取模型名称
+ */
+export async function getModel(): Promise<string> {
+  // 获取模型
+  const { model } = await inquirer.prompt({
+    name: 'model',
+    type: 'input',
+    message: '请输入模型：'
+  })
+
+  return model
+}
+
+/**
+ * 获取模型接口名称
+ */
+export async function getModelInterface(): Promise<string> {
+  // 获取模型
+  const { modelInterface } = await inquirer.prompt({
+    name: 'modelInterface',
+    type: 'input',
+    message: '请输入模型接口名称：'
+  })
+
+  return modelInterface
 }
 
 /**

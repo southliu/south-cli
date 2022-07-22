@@ -1,13 +1,11 @@
-import type { ILanguage, IPageFunctions } from "../types"
 import loading from 'loading-cli'
-import path from 'path'
 import fs from 'fs-extra'
 
 /**
  * 文件是否存在
  * @param path - 路径
  */
-export function hasFile2(path: string): boolean {
+export function hasFile(path: string): boolean {
   return fs.existsSync(path)
 }
 
@@ -42,105 +40,6 @@ export async function handleLoading<T>(fn: Promise<T>, text = '加载中...') {
     // 状态失败
     load.stop()
     return false
-  }
-}
-
-// 获取文件路径
-export function getFilePath(name: string, language?: ILanguage) {
-  // 获取当前命令行选择文件
-  const cwd = process.cwd()
-  // 文件后缀
-  let prefix = ''
-  switch (language) {
-    case 'vue':
-      prefix = '.vue'
-      break
-
-    case 'react':
-      prefix = '.tsx'
-      break
-
-    default:
-      prefix = '.ts'
-      break
-  }
-  // 文件名称
-  const fileName = `${name}${prefix}`
-  // 文件所在路径
-  const filePath = path.join(cwd, fileName)
-  
-  return filePath
-}
-
-// 首字母大写
-export function firstToUpper(str: string) {
-  return str.replace(/\b(\w)(\w*)/g, ($0, $1, $2) => {
-    return $1.toUpperCase() + $2
-  })
-}
-
-// 获取处理后的权限路径
-type IAuthPathResult = 'modal' | 'api'
-export function handleAuthPath(str: string, type: IAuthPathResult) {
-  let result = ``
-  
-  // 拆分路径
-  const authArr = str.trim().substring(1, str.length).split('/')
-
-  authArr.forEach((item, index) => {
-    if (!item) return
-
-    switch (type) {
-      // 模型名称
-      case 'modal': {
-        if (item.includes('-')) {
-          const arr = item.trim().split('-')
-          arr.forEach(child => result += firstToUpper(child))
-        } else {
-          result += firstToUpper(item)
-        }
-        break
-      }
-
-      // API路径
-      case 'api': {
-        if (item.includes('-')) {
-          const arr = item.trim().split('-')
-          arr.forEach(child => result += index === 1 ? `${child}/` : firstToUpper(child))
-        } else {
-          result += index === 1 ? `${item}/` : firstToUpper(item)
-        }
-        break
-      }
-
-      default:
-        break
-    }
-  })
-  return result
-}
-
-// 功能划分
-interface IFilterFuncResult {
-  isSearch: boolean
-  isCreate: boolean
-  isPagination: boolean
-  isDelete: boolean
-  isBatchDelete: boolean
-}
-export function filterFuncs(functions: IPageFunctions[]): IFilterFuncResult {
-  const isSearch = functions.includes('search'),
-      isCreate = functions.includes('create') || functions.includes('create-page'),
-      isPagination = functions.includes('pagination'),
-      isDelete = functions.includes('delete'),
-      isBatchDelete = functions.includes('batch-delete')
-
-  return {
-    isSearch,
-    isCreate,
-    isPagination,
-    isDelete,
-    isBatchDelete
   }
 }
 

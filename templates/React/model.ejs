@@ -1,93 +1,84 @@
-import { filterFuncs, firstToUpper } from "../../src/utils/utils"
-import { IPageFunctions } from "../../src/types"
-
-// 生成react文件
-export function handleModelFile(modelName: string, functions: IPageFunctions[]): string {
-  // let modelName = handleAuthPath(authPath, 'modal')
-  // 模板ts数据
-  const modelTsData = `I${firstToUpper(modelName)}`
-  // api路径
-  // let apiPath = handleAuthPath(authPath, 'api')
-
-  // 功能拆分
-  const {
-    isCreate,
-    isPagination,
-    isDelete,
-    isBatchDelete
-  } = filterFuncs(functions)
-
-  // 渲染数据
-  let render = `
 import { Reducer } from 'redux'
 import { Effect } from 'dva'
 import API from '@/services/xxx'
 import { message } from 'antd'
 
-export type ${modelTsData} = {
+export type <%= modelInterface %> = {
   data: any;
-  total: number;${isCreate ? `
+  total: number;
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
   isCreate: boolean;
-  updateId: string;` : ''}
-  query: ${isPagination ? 'IQuery' : 'ITreeQuery'};
-  initQuery: ${isPagination ? 'IQuery' : 'ITreeQuery'};
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+  updateId: string;
+<% } -%>
+  query: <% if (funcs.includes('pagination')) { %>'IQuery'<% } else { %>'ITreeQuery'<% } %>;
+  initQuery: <% if (funcs.includes('pagination')) { %>'IQuery'<% } else { %>'ITreeQuery'<% } %>;
   initFormData: any;
 }
 
 interface IModelType {
   namespace: string;
-  state: ${modelTsData};
+  state: <%= modelInterface %>;
   effects: {
     handleGetPage: Effect;
-    handleSetInitFormData: Effect;${
-      isCreate ?  `
+    handleSetInitFormData: Effect;
+<% if (funcs.includes('create')) { -%>
     handleChangeCreate: Effect;
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     handleChangeUpdate: Effect;
+<% } -%>
+<% if (funcs.includes('create')) { -%>
     handleCreate: Effect;
-    handleUpdate: Effect;` : ''
-    }${
-      isDelete ? `
-    handleDelete: Effect;` : ''
-    }${
-      isBatchDelete ? `
-    handleBatchDelete: Effect;` : ''
-    }
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+    handleUpdate: Effect;
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
+    handleDelete: Effect;
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+    handleBatchDelete: Effect;
+<% } -%>
     handleRefresh: Effect;
   };
   reducers: {
-    handleGetPageState: Reducer<${modelTsData}>;
-    handleSetInitFormDataState: Reducer<${modelTsData}>;
-    handleChangeQuery: Reducer<${modelTsData}>;${
-      isCreate ?
-    `
-    handleChangeCreateState: Reducer<${modelTsData}>;
-    handleChangeUpdateState: Reducer<${modelTsData}>;` : ''
-    }
+    handleGetPageState: Reducer<<%= modelInterface %>>;
+    handleSetInitFormDataState: Reducer<<%= modelInterface %>>;
+    handleChangeQuery: Reducer<<%= modelInterface %>>;
+<% if (funcs.includes('create')) { -%>
+    handleChangeCreateState: Reducer<<%= modelInterface %>>;
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+    handleChangeUpdateState: Reducer<<%= modelInterface %>>;
+<% } -%>
   };
 }
 
 const Modal: IModelType = {
-  namespace: '${modelName}',
-  state: {${
-    isCreate ?
-    `
+  namespace: '<%= model %>',
+  state: {
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     isCreate: false,
-    updateId: '',` : ''
-  }
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+    updateId: '',
+<% } -%>
     initFormData: {},
     data: [],
     total: 0,
-    initQuery: {${
-      isPagination ? `
+    initQuery: {
+<% if (funcs.includes('pagination')) { -%>
       page: 1,
-      pageSize: 20,` : ''
-    }
+      pageSize: 20
+<% } -%>
     },
-    query: {${
-      isPagination ? `
+    query: {
+<% if (funcs.includes('pagination')) { -%>
       page: 1,
-      pageSize: 20,` : ''
-    }
+      pageSize: 20
+<% } -%>
     }
   },
   effects: {
@@ -103,7 +94,7 @@ const Modal: IModelType = {
     },
     // 刷新当前页
     *handleRefresh({ payload }, { call, put, select }) {
-      const query = yield select((state: any) => state.platformPlatformServerOwner.initQuery)
+      const query = yield select((state: any) => state.<%= model %>.initQuery)
       const response = yield call(API.find_page, query)
       
       if (response?.code === 200) {
@@ -124,9 +115,8 @@ const Modal: IModelType = {
         type: 'handleSetInitFormDataState',
         payload
       })
-    },${
-      isCreate ? 
-      `
+    },
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     // 更改新增弹窗状态
     *handleChangeCreate({ payload }, { call, put }) {
       yield put({
@@ -134,6 +124,8 @@ const Modal: IModelType = {
         payload
       })
     },
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     // 更改修改弹窗状态
     *handleChangeUpdate({ payload }, { call, put }) {
       const { id, state } = payload
@@ -149,6 +141,8 @@ const Modal: IModelType = {
         })
       }
     },
+<% } -%>
+<% if (funcs.includes('create')) { -%>
     // 处理新增
     *handleCreate({ payload }, { call, put }) {
       const { values, query } = payload
@@ -169,6 +163,8 @@ const Modal: IModelType = {
         })
       }
     },
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     // 处理修改
     *handleUpdate({ payload }, { call, put }) {
       const { id, query, values } = payload
@@ -188,14 +184,13 @@ const Modal: IModelType = {
           }
         })
       }
-    },` : ''
-    }${
-      isDelete ?
-      `
+    },
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
     // 处理删除
     *handleDelete({ payload }, { call, put }) {
       const { id, query } = payload
-      const response = yield call(API.batch_del, id)
+      const response = yield call(API.del, id)
       if (response?.code === 200) {
         message.success(response?.message || '删除成功!')
         const pageResponse = yield call(API.find_page, query)
@@ -204,10 +199,9 @@ const Modal: IModelType = {
           payload: { data: pageResponse.data, query }
         })
       }
-    },` : ''
-    }${
-      isBatchDelete ? 
-      `
+    },
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
     // 处理批量删除
     *handleBatchDelete({ payload }, { call, put }) {
       const { ids, query } = payload
@@ -220,8 +214,8 @@ const Modal: IModelType = {
           payload: { data: pageResponse.data, query }
         })
       }
-    }` : ''
     }
+<% } -%>
   },
   reducers: {
     // 返回接口数据
@@ -254,9 +248,8 @@ const Modal: IModelType = {
         ..._state,
         initFormData: {},
       }
-    },${
-      isCreate ? 
-      `
+    },
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
     // 更改新增/修改状态
     handleChangeCreateState(state, { payload }) {
       const _state = JSON.parse(JSON.stringify(state))
@@ -268,7 +261,8 @@ const Modal: IModelType = {
         initFormData: {},
       }
     },
-    
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     // 更改修改状态
     handleChangeUpdateState(state, { payload }) {
       const _state = JSON.parse(JSON.stringify(state))
@@ -279,13 +273,9 @@ const Modal: IModelType = {
       return {
         ..._state,
       }
-    },` : ''
     }
+<% } -%>
   }
 }
 
 export default Modal
-`
-
-  return render
-}

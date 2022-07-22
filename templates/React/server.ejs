@@ -1,0 +1,87 @@
+import request from '@/utils/request'
+<% if (funcs.includes('create')) { -%>
+/**
+ * 新增
+ * @param {Object} data
+ */
+function create(data: any) {
+  return request.post('<%= rule %>', data)
+}
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+
+/**
+ * 修改
+ * @param {String} id  主键ID
+ * @param {Object} data
+ */
+function update(id: string, data: any) {
+  return request.patch(`<%= rule %>/${id}`, data)
+}
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+
+/**
+ * 删除
+ * @param {String} id
+ */
+function del(id: string) {
+  return request.delete(`<%= rule %>/${id}`)
+}
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+
+  /**
+ * 批量删除
+ * @param {String} ids
+ */
+function batch_del(ids: string) {
+  return request.delete(`<%= rule %>/batch-delete?ids=${ids}`)
+}
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+
+/**
+ * 查询-根据主键查询
+ * @param {String} id
+ */
+function find_one(id: string) {
+  return request.get(`<%= rule %>/${id}`)
+}
+<% } -%>
+
+/**
+ * 查询-根据条件分页查询
+ * @param {Object} data
+ */
+function find_page(data: any) {
+  return request.get('<%= rule %>', { params: data })
+}
+
+/**
+ * 查询-根据条件分页查询
+ * @param {Object} data
+ */
+function find_tree(data: any) {
+  return request.get(`<%= rule %>/tree`, { params: data })
+}
+
+export default {
+<% if (funcs.includes('create')) { -%>
+  create,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+  update,
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
+  del,
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+  batch_del,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+  find_one,
+<% } -%>
+  find_page,
+  find_tree
+}

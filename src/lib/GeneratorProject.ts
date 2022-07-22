@@ -2,7 +2,7 @@ import downloadGitRepo from 'download-git-repo'
 import inquirer from 'inquirer'
 import util from 'util'
 import path from 'path'
-import { getDownloadUrl, getRepoList, getTagList } from '../utils/serves'
+import { getDownloadUrl, getRepoList } from '../utils/serves'
 import { cyanText, dimText, errorText, handleLoading } from '../utils/utils'
 
 /**
@@ -19,10 +19,9 @@ class GeneratorProject {
   /**
    * 下载模板
    * @param repo - 模板名称
-   * @param tag - 标签名称
    */
-  async handleDownload(repo: string, tag: string) {
-    const requestUrl = getDownloadUrl(repo, tag)
+  async handleDownload(repo: string) {
+    const requestUrl = getDownloadUrl(repo)
     // 下载方法添加promise
     const download = util.promisify(downloadGitRepo)
     // 获取参数位置
@@ -63,32 +62,6 @@ class GeneratorProject {
     }
   }
 
-  /**
-   * 获取GitHub标签
-   * @param repo - 模板名称
-   */
-  async handleGetTag(repo: string) {
-    try {
-      // 获取标签列表
-      const repoList = await handleLoading(getTagList(repo), '获取标签列表中...')
-      if (!repoList) return console.log('\n  暂无标签列表数据')
-      // 过滤获取名称
-      const repos = repoList.map((item: { name: string }) => item.name)
-
-      // 咨询用户选择项目
-      const { tag } = await inquirer.prompt({
-        name: 'tag',
-        type: 'list',
-        choices: repos,
-        message: '请选择标签:'
-      })
-
-      return tag
-    } catch(err) {
-      console.log(errorText('\n  获取标签列表失败'))
-    }
-  }
-
   /** 创建处理 */
   async handleCreate() {
     try {
@@ -96,12 +69,8 @@ class GeneratorProject {
       const repo = await this.handleGetRepo()
       console.log(dimText(`  获取项目列表成功`))
 
-      // 获取标签
-      const tag = await this.handleGetTag(repo)
-      console.log(dimText(`  获取标签列表成功`))
-
       // 执行下载
-      await this.handleDownload(repo, tag)
+      await this.handleDownload(repo)
 
       // 模板使用提示
       console.log(`\r\n创建项目${cyanText(this.name)}成功,请执行以下操作:`)

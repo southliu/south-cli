@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
-import create, { createProject, createVue } from '../lib/create'
+import { createProject, createVue, createReact } from '../lib/create'
 import { cyanText, errorText, italicFont } from '../utils/utils'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
@@ -35,14 +35,13 @@ program
     createVue(name)
   })
 
-
-// 配置生成页面指令
+// 配置生成React页面指令
 program
-  .command('create-page <language-name>')
+  .command('create-react <page-name>')
   .description('创建一个React页面')
-  .action((language) => {
+  .action((name) => {
     // 执行创建方法
-    create(language, 'page')
+    createReact(name)
   })
 
 // 处理错误指令

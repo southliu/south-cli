@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "tsc && gulp ejs",
     "tsc": "tsc -w && gulp ejs",
+    "ejs": "gulp ejs",
     "link:dev": "tsc && gulp ejs && concurrently \"npm link\"",
     "adduser": "npm adduser",
     "upload": "tsc && gulp ejs && concurrently \"npm publish\""

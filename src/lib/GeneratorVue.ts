@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
-import { getApiByFunctions, getFunctions, getName, getRule } from '../utils/common'
+import { getApiByFunctions, getFunctions, getName, getRule } from '../utils/inquirer'
 import { errorText } from '../utils/utils'
 import type { IFunctionApi, IPageFunctions } from '../types'
 
@@ -21,6 +21,10 @@ class GeneratorVue {
 
   /**
    * 获取模板
+   * @param name - 页面唯一名称，需要与keepalive一致
+   * @param rule - 权限
+   * @param funcs - 功能数据
+   * @param api - 接口数据
    */
   getTemplate(name: string, rule: string, funcs: IPageFunctions[], api: IFunctionApi): string {
     const templateCode = fs.readFileSync(
@@ -36,6 +40,7 @@ class GeneratorVue {
 
   /**
    * 获取数据模板
+   * @param funcs - 功能数据
    */
   getDateTemplate(funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
@@ -48,6 +53,8 @@ class GeneratorVue {
 
   /**
    * 获取接口模板
+   * @param rule - 权限
+   * @param api - 接口数据
    */
   getApiTemplate(rule: string, api: IFunctionApi): string {
     const templateCode = fs.readFileSync(

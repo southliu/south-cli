@@ -1,30 +1,20 @@
-import type { IPageFunctions } from "../../src/types"
-import { filterFuncs, firstToUpper } from "../../src/utils/utils"
-
-// 生成react文件
-export function handleFile(title: string, modelName: string, authPath: string, functions: IPageFunctions[]): string {
-  // 模板ts数据
-  const modelTsData = `I${firstToUpper(modelName)}`
-
-  // 功能拆分
-  const {
-    isSearch,
-    isCreate,
-    isPagination,
-    isDelete,
-    isBatchDelete
-  } = filterFuncs(functions)
-
-  // 渲染数据
-  const render = `
-import { useCallback, useEffect${ isBatchDelete ? ', useState' : '' } } from 'react'${ isSearch ? `\nimport Searchs from '@/components/Searchs'` : '' }${ isPagination ? `\nimport Paginations from '@/components/Paginations'` : '' }${ isCreate ? `\nimport Create from '@/components/Create'` : '' }
+import { useCallback, useEffect<% if (funcs.includes('batchDelete')) { %>, useState<% } %> } from 'react'
+<% if (funcs.includes('search')) { -%>
+import Searchs from '@/components/Searchs'
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
+import Paginations from '@/components/Paginations'
+<% } -%>
+<% if (funcs.includes('create')) { -%>
+import Create from '@/components/Create'
+<% } -%>
 import { connect } from 'dva'
-import { ColumnsType } from 'antd/es/table'${
-  (isCreate || isDelete || isBatchDelete) ? 
-  `\nimport { Popconfirm, Tooltip${isBatchDelete ? ', Button, message' : ''} } from 'antd'` : ''
-}
+import { ColumnsType } from 'antd/es/table'
+<% if (funcs.includes('create') || funcs.includes('delete') || funcs.includes('batchDelete')) { -%>
+import { Popconfirm, Tooltip<% if (funcs.includes('batchDelete')) { %>, Button, message'<% } %> } from 'antd'
+<% } -%>
 import { initData } from '@/utils/initData'
-import { IAuthorityLoginState, ${modelTsData} } from '@/models'
+import { IAuthorityLoginState, <%= modelInterface %> } from '@/models'
 import checkPermission from '@/utils/permission'
 import { useTitleHook } from '@/hooks'
 import Tables from '@/components/Tables'
@@ -33,117 +23,118 @@ import { findMapColor, findMapValue } from '@/utils/filter'
 
 type IProps = {
   data: any;
-  status: ${modelTsData};
+  status: <%= modelInterface %>;
   loginStatus: IAuthorityLoginState;
-} & IPublic${
-  isCreate ?
-  `\n
+} & IPublic
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 const CreateLayout = {
   labelCol: { span: 6 },
   wrapperCol: { span: 18 },
-};` : ''
-}
+};
+<% } -%>
 
 function Page(props: IProps) {
-  useTitleHook('${title}');
+  useTitleHook('<%= title %>');
   const {
     dispatch,
     status,
     loginStatus,
-    isLoading,${
-    isCreate ? `
-    isCreateLoading,` : ''
-    }
+    isLoading,
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+    isCreateLoading,
+<% } -%>
   } = props;
-  const {${
-    isCreate ? `
+  const {
+<% if (funcs.includes('create')) { -%>
     isCreate,
-    updateId,` : ''
-  }${
-    isPagination ? `
-    total,` : ''
-  }
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+    updateId,
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
+    total,
+<% } -%>
     data,
     query,
   } = status;
   let { initFormData } = status;
-  const { permissions } = loginStatus;${
-    isCreate ?
-    `
-  const isNotCreateBtn: boolean = !checkPermission({ value: \`${authPath}/create\`, permissions });` : ''
-  }${
-    isSearch ?
-    `
-  const isNotSearchBtn: boolean = !checkPermission({ value: \`${authPath}\`, permissions });` : ''
-  }${
-    isBatchDelete ? `
-  const [selectIds, setSelectIds] = useState<React.Key[]>([]);` : ''
-  }
+  const { permissions } = loginStatus;
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+  const isNotCreateBtn: boolean = !checkPermission({ value: '<%= rule %>/create', permissions });
+<% } -%>
+<% if (funcs.includes('search')) { -%>
+  const isNotSearchBtn: boolean = !checkPermission({ value: '<%= rule %>', permissions });
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+  const [selectIds, setSelectIds] = useState<React.Key[]>([]);
+<% } -%>
 
   const defaultData: IDefaultData[] = [
     { label: 'ID', key: 'id', width: 120, isNotCreate: true },
     { label: '小程序appid', key: 'appid', width: 80, searchWidth: 240, type: 'string', isRequired: true, isSearch: true },
     { label: '状态', key: 'status', width: 130, searchWidth: 160, type: 'select', selectList: DISABLED_ENABLE, isSearch: true,
       render: (text, record) => (
-        <span
+        <%- '<span' %>
           style={{ color: findMapColor(text as string, DISABLED_ENABLE) }}
         >{ findMapValue(text as string, DISABLED_ENABLE)  }</span>
       )
     },
     { label: '版本号', key: 'version', width: 80, type: 'string' },
     { label: '创建日期', key: 'created_at', width: 140, type: 'string', isNotCreate: true },
-    { label: '更新日期', key: 'updated_at', width: 140, type: 'string', isNotCreate: true },${
-      (isCreate || isDelete) ?
-      `
+    { label: '更新日期', key: 'updated_at', width: 140, type: 'string', isNotCreate: true },
+<% if (funcs.includes('update') || funcs.includes('delete')) { -%>
     { label: '操作', key: 'operation', fixed: 'right', width: 70, isNotCreate: true, align: 'center',
       render: (text, record, index) => (
-        <div className={\`options_box\`}>${
-          isCreate ?
-          `
+        <div className='options_box'>
+<% if (funcs.includes('update')) { -%>
           {
-            checkPermission({ value: \`${authPath}/update\`, permissions }) &&
+            checkPermission({ value: '<%= rule %>/update', permissions }) &&
             <Tooltip title='修改'>
-              <div
-                className={\`options_btn iconfont\`}
+              <%- '<div' %>
+                className='options_btn iconfont'
                 onClick={() => handleUpdate(record.id)}
               >
                 &#xe612;
               </div>
             </Tooltip>
-          }` : ''
-        }${
-          isDelete ?
-          `
+          }
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
           {
-            checkPermission({ value: \`${authPath}/delete\`, permissions }) &&
-            <Popconfirm title='确定删除?' cancelText='取消' okText='确定' onConfirm={() => handleDelete(record.id)}>
+            checkPermission({ value: '<%= rule %>/delete', permissions }) &&
+            <%- '<Popconfirm' %>
+              title='确定删除?'
+              cancelText='取消'
+              okText='确定'
+              onConfirm={() => handleDelete(record.id)}
+            >
               <Tooltip title='删除'>
                 <div
-                  className={\`options_btn iconfont\`}
+                  className={'options_btn iconfont'}
                 >
                   &#xe60e;
                 </div>
               </Tooltip>
             </Popconfirm>
-          }` : ''
-        }
+          }
+<% } -%>
         </div>
       ),
-    },` : ''
-    }
+    },
+<% } -%>
   ];
-  const datus = initData(defaultData, initFormData);
-  const columnLists: ColumnsType<IDefaultData> = datus.columns;${
-    isCreate ? `
-  const createList = datus.createList;` : ''
-  }
-  const searchList = datus.searchList;
-  initFormData = datus.initFormData;
+  const dates = initData(defaultData, initFormData);
+  const columnLists: ColumnsType<IDefaultData> = dates.columns;
+<% if (funcs.includes('update')) { -%>
+  const createList = dates.createList;
+<% } -%>
+  const searchList = dates.searchList;
+  initFormData = dates.initFormData;
 
   const handleGetPage = useCallback(() => {
     if (!isNotSearchBtn && data?.length === 0) {
       dispatch({
-        type: '${modelName}/handleGetPage',
+        type: '<%= model %>/handleGetPage',
         payload: query,
       });
     }
@@ -151,9 +142,9 @@ function Page(props: IProps) {
 
   useEffect(() => {
     handleGetPage();
-  }, [handleGetPage]);${
-    isSearch ?
-    `\n
+  }, [handleGetPage]);
+<% if (funcs.includes('search')) { -%>
+
   // 搜索
   const handleSearch = (values: any) => {
     query.page = 1;
@@ -161,39 +152,43 @@ function Page(props: IProps) {
       values.hasOwnProperty(key) && values[key] !== undefined && values[key] !== '' ? query[key] = values[key] : delete query[key];
     }
     dispatch({
-      type: '${modelName}/handleGetPage',
+      type: '<%= model %>/handleGetPage',
       payload: query,
     });
-  };` : ''
-  }${
-    isCreate ?
-    `\n
+  };
+<% } -%>
+<% if (funcs.includes('create')) { -%>
+
   // 新增
   const handleClickCreate = () => {
     dispatch({
-      type: '${modelName}/handleChangeCreate',
+      type: '<%= model %>/handleChangeCreate',
       payload: {
         id: '',
         state: true
       },
     });
   };
+<% } -%>
+<% if (funcs.includes('update')) { -%>
 
   // 修改
   const handleUpdate = (id: string) => {
     dispatch({
-      type: '${modelName}/handleChangeUpdate',
+      type: '<%= model %>/handleChangeUpdate',
       payload: {
         id,
         state: true
       },
     });
   };
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
   // 关闭新增/修改
   const handleCloseCreate = () => {
     dispatch({
-      type: '${modelName}/handleChangeCreate',
+      type: '<%= model %>/handleChangeCreate',
       payload: {
         id: '',
         state: false,
@@ -206,7 +201,7 @@ function Page(props: IProps) {
   const handleCreateSubmit = (values: Record<string, any>) => {
     if (updateId) {
       dispatch({
-        type: '${modelName}/handleUpdate',
+        type: '<%= model %>/handleUpdate',
         payload: {
           id: updateId,
           values,
@@ -215,27 +210,27 @@ function Page(props: IProps) {
       });
     } else {
       dispatch({
-        type: '${modelName}/handleCreate',
+        type: '<%= model %>/handleCreate',
         payload: {
           values,
           query,
         },
       });
     }
-  };` : ''
-  }${
-    isDelete ?
-    `\n
+  };
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
+
   // 删除
   const handleDelete = (id: string) => {
     dispatch({
-      type: '${modelName}/handleBatchDelete',
+      type: '<%= model %>/handleBatchDelete',
       payload: { id, query },
     });
-  };` : ''
-  }${
-    isBatchDelete ?
-    `\n
+  };
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+
   // row选择
   const handleRowSelect = (selectedRowKeys: React.Key[], selectedRows: any[]) => {
     setSelectIds(selectedRowKeys);
@@ -247,38 +242,38 @@ function Page(props: IProps) {
       return message.warning({ content: '请勾选!', key: 'check_please' });
     }
     dispatch({
-      type: '${modelName}/handleDelete',
+      type: '<%= model %>/handleDelete',
       payload: { ids: selectIds, query },
     });
-  };` : ''
-  }${
-    isPagination ?
-    `\n
+  };
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
+
   // 处理分页
   const handleChangePage = (page: number, pageSize?: number) => {
     query.page = page;
     query.pageSize = pageSize || 20;
 
     dispatch({
-      type: '${modelName}/handleGetPage',
+      type: '<%= model %>/handleGetPage',
       payload: query,
     });
-  };` : ''
-  }${
-    isBatchDelete ?
-    `\n
+  };
+<% } -%>
+<% if (funcs.includes('batchDelete')) { -%>
+
   // 搜索额外添加
   const addSearchElement = () => {
     return (
       <>
-        {checkPermission({ value: \`${authPath}/batch-delete\`, permissions }) && (
+        {checkPermission({ value: '<%= rule %>/batch-delete', permissions }) && (
           <Popconfirm
             title="确定批量删除?"
             cancelText="取消"
             okText="确定"
             onConfirm={handleBatchDelete}
           >
-            <Button
+        <%- '<Button' %>
               loading={isLoading}
               style={{ marginRight: 10 }}
               icon={<i className="iconfont icon-xiazai14" />}
@@ -289,48 +284,47 @@ function Page(props: IProps) {
         )}
       </>
     );
-  };` : ''
-  }
+  };
+<% } -%>
 
   return (
     <>
-      ${
-      isSearch ?
-      `<Searchs
+<% if (funcs.includes('search')) { -%>
+      <Searchs
         isLoading={isLoading}
         query={query}
         list={searchList}
-        isNotSearch={${isSearch ? 'isNotSearchBtn' : 'true'}}
-        isNotCreate={${isCreate ? 'isNotCreateBtn' : 'true'}}
-        handleSearch={handleSearch}${
-          isBatchDelete ? `
-        addElement={addSearchElement}` : ''
-        }${
-          isCreate ? `
-        handleClickCreate={handleClickCreate}` : ''
-        }
+        isNotSearch={<% if (funcs.includes('search')) { -%>isNotSearchBtn<% } else { -%>true<% } -%>}
+        isNotCreate={<% if (funcs.includes('search')) { -%>isNotCreateBtn<% } else { -%>true<% } -%>}
+        handleSearch={handleSearch}
+<% if (funcs.includes('batchDelete')) { -%>
+        addElement={addSearchElement}
+<% } -%>
+<% if (funcs.includes('create')) { -%>
+        handleClickCreate={handleClickCreate}
+<% } -%>
       />
-      ` : ''
-      }
+
+<% } -%>
       <Tables
         loading={isLoading}
         data={data}
         isPagination={true}
-        columnLists={columnLists}${
-          isBatchDelete ? `
-        handleRowSelect={handleRowSelect}` : ''
-        }
-      />${
-        isPagination ? 
-        `\n
+        columnLists={columnLists}
+<% if (funcs.includes('batchDelete')) { -%>
+        handleRowSelect={handleRowSelect}
+<% } -%>
+      >
+<% if (funcs.includes('pagination')) { -%>
+
       <Paginations
         query={query}
         total={total}
         handleChangePage={handleChangePage}
-      />` : ''
-      }${
-        isCreate ? 
-        `\n
+      />
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+
       <Create
         isVisible={isCreate}
         list={createList}
@@ -340,8 +334,8 @@ function Page(props: IProps) {
         isLoading={isCreateLoading}
         handleCloseCreate={handleCloseCreate}
         handleCreateSubmit={handleCreateSubmit}
-      />` : ''
-      }
+      />
+<% } -%>
     </>
   );
 }
@@ -349,11 +343,11 @@ function Page(props: IProps) {
 
 export default connect(
   ({
-     ${modelName},
+     <%= model %>,
      authorityLogin,
      loading,
    }: {
-    ${modelName}: ${modelTsData},
+    <%= model %>: <%= modelInterface %>,
     authorityLogin: IAuthorityLoginState;
     loading: {
       models: Record<string, boolean>,
@@ -361,16 +355,12 @@ export default connect(
     }
   }) => (
     {
-      status: ${modelName},
+      status: <%= model %>,
       loginStatus: authorityLogin,
-      isLoading: loading.effects['${modelName}/handleGetPage'],${
-        isCreate ? `
-      isCreateLoading: loading.models.${modelName},` : ''
-      }
+      isLoading: loading.effects['<%= model %>/handleGetPage'],
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+      isCreateLoading: loading.models.<%= model %>
+<% } -%>
     }
   ),
 )(Page);
-`
-
-  return render
-}
