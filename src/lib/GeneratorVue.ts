@@ -2,7 +2,7 @@ import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
 import { getApiByFunctions, getFunctions, getName, getRule } from '../utils/inquirer'
-import { errorText } from '../utils/utils'
+import { errorText, successText } from '../utils/utils'
 import type { IFunctionApi, IPageFunctions } from '../types'
 
 /**
@@ -79,14 +79,17 @@ class GeneratorVue {
     // 输出模板代码
     const codeFilePath = path.join(cwd, `${this.name}.vue`)
     fs.outputFileSync(codeFilePath, code)
+    console.log(successText(`  创建vue文件成功 - ${this.name}.vue`))
 
     // 输出数据代码
     const dataFilePath = path.join(cwd, `${this.name}.ts`)
     fs.outputFileSync(dataFilePath, data)
+    console.log(successText(`  创建data文件成功 - ${this.name}.ts`))
 
     // 输出接口代码
     const apiFilePath = path.join(cwd, `${name}.ts`)
     fs.outputFileSync(apiFilePath, api)
+    console.log(successText(`  创建接口文件成功 - ${name}.ts`))
   }
 
   /**

@@ -1,7 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
-import { errorText } from '../utils/utils'
+import { errorText, successText } from '../utils/utils'
 import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
 import type { IPageFunctions } from '../types'
 
@@ -81,14 +81,17 @@ class GeneratorPage {
     // 输出模板代码
     const codeFilePath = path.join(cwd, `${this.name}.tsx`)
     fs.outputFileSync(codeFilePath, code)
+    console.log(successText(`  创建react文件成功 - ${this.name}.tsx`))
 
     // 输出模型代码
     const modelFilePath = path.join(cwd, `${this.name}.model.ts`)
     fs.outputFileSync(modelFilePath, model)
+    console.log(successText(`  创建模型文件成功 - ${this.name}.model.ts`))
 
     // 输出接口代码
     const apiFilePath = path.join(cwd, `${this.name}.api.ts`)
     fs.outputFileSync(apiFilePath, api)
+    console.log(successText(`  创建接口文件成功 - ${this.name}.api.ts`))
   }
 
   
