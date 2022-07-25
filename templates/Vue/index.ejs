@@ -84,6 +84,8 @@
 import type { IFormData } from '@/types/form'
 import type { IBasicForm } from '@/components/Form/model'
 <% } -%>
+import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
+<% if (funcs.includes('search')) { -%>ISearchData, <% } -%>ITableData, IPaginationData } from '@/types/global'
 import { message } from 'ant-design-vue'
 import { defineComponent<% if (funcs.includes('search')) { %>, onMounted<% } %>, reactive, ref } from 'vue'
 import { <%= api.search -%>
