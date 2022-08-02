@@ -19,15 +19,6 @@ program
 
 // 配置生成Vue页面指令
 program
-  .command('create-vue')
-  .description('创建一个Vue页面')
-  .action(() => {
-    // 执行创建方法
-    createVue('index')
-  })
-
-// 配置生成Vue页面指令
-program
   .command('create-vue <page-name>')
   .description('创建一个Vue页面')
   .action((name) => {
@@ -49,19 +40,18 @@ program
   .configureOutput({
     // 将错误高亮显示
     outputError: (str, write) => {
-      return write(errorText(`无效指令,请执行以下操作`))
+      return write(`${errorText(`无效指令,请执行以下操作`)}
+        \r\n创建项目操作:
+        ${cyanText('south create ' + italicFont('project-name'))}\r
+        \r\n创建Vue页面操作:
+        ${cyanText('south create-vue ' + italicFont('vue-name'))}\r\n
+        \r\n创建React页面操作:
+        ${cyanText('south create-react ' + italicFont('react-name'))}\r\n
+        \r\n帮助说明:
+        ${cyanText('south --help')}\r
+      `)
     }
   })
-  .showHelpAfterError(`
-    \r\n创建项目操作:
-    ${cyanText('south create ' + italicFont('project-name'))}\r
-    \r\n创建Vue页面操作:
-    ${cyanText('south create-vue ' + italicFont('vue-name'))}\r\n
-    \r\n创建React页面操作:
-    ${cyanText('south create-react ' + italicFont('react-name'))}\r\n
-    \r\n帮助说明:
-    ${cyanText('south --help')}\r
-  `)
 
 // 监听help指令
 program

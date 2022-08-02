@@ -1,17 +1,16 @@
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
-import { getApiByFunctions, getFunctions, getName, getRule } from '../utils/inquirer'
-import { errorText, successText } from '../utils/utils'
-import type { IFunctionApi, IPageFunctions } from '../types'
+import { getFunctions, getName, getRule } from '../utils/inquirer'
+import { errorText, getApiName, successText } from '../utils/utils'
+import type { IPageFunctions } from '../../types'
 
 /**
  * 生成Vue页面
  * 1. 输入页面名称，需要与keepalive一致
  * 2. 输入页面权限名称
  * 3. 选择页面功能：增删改查
- * 4. 获取接口名称
- * 5. 生成模板页面
+ * 4. 生成模板页面
  */
 class GeneratorVue {
   name: string // 文件名
@@ -26,13 +25,17 @@ class GeneratorVue {
    * @param funcs - 功能数据
    * @param api - 接口数据
    */
-  getTemplate(name: string, rule: string, funcs: IPageFunctions[], api: IFunctionApi): string {
+  getTemplate(
+    name: string,
+    rule: string,
+    funcs: IPageFunctions[],
+  ): string {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Vue/index.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
-      { name, rule, funcs, api }
+      { name, rule, funcs }
     )
 
     return code
@@ -46,7 +49,10 @@ class GeneratorVue {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Vue/data.ejs")
     )
-    const code = ejs.render(templateCode.toString(), { funcs })
+    const code = ejs.render(
+      templateCode.toString(),
+      { funcs }
+    )
 
     return code
   }
@@ -54,13 +60,20 @@ class GeneratorVue {
   /**
    * 获取接口模板
    * @param rule - 权限
-   * @param api - 接口数据
+   * @param name - 名称
    */
-  getApiTemplate(rule: string, api: IFunctionApi): string {
+  getApiTemplate(
+    rule: string,
+    name: string,
+    funcs: IPageFunctions[]
+  ): string {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Vue/server.ejs")
     )
-    const code = ejs.render(templateCode.toString(), { rule, api })
+    const code = ejs.render(
+      templateCode.toString(),
+      { rule, name, funcs }
+    )
 
     return code
   }
@@ -71,8 +84,15 @@ class GeneratorVue {
    * @param code - 模板代码
    * @param data - 数据代码
    * @param api - 接口代码
+   * @param apiName - 接口名称
    */
-  generatorTemplate(name: string, code: string, data: string, api: string) {
+  generatorTemplate(
+    name: string,
+    code: string,
+    data: string,
+    api: string,
+    apiName: string
+  ) {
     // 获取当前命令行选择文件
     const cwd = process.cwd()
 
@@ -82,14 +102,14 @@ class GeneratorVue {
     console.log(successText(`  创建vue文件成功 - ${this.name}.vue`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}.ts`)
+    const dataFilePath = path.join(cwd, 'data.ts')
     fs.outputFileSync(dataFilePath, data)
-    console.log(successText(`  创建data文件成功 - ${this.name}.ts`))
+    console.log(successText(`  创建data文件成功 - data.ts`))
 
     // 输出接口代码
-    const apiFilePath = path.join(cwd, `${name}.ts`)
+    const apiFilePath = path.join(cwd, `${apiName}.ts`)
     fs.outputFileSync(apiFilePath, api)
-    console.log(successText(`  创建接口文件成功 - ${name}.ts`))
+    console.log(successText(`  创建接口文件成功 - ${apiName}.ts`))
   }
 
   /**
@@ -107,15 +127,16 @@ class GeneratorVue {
     // 3. 选择页面功能：增删改查
     const funcs = await getFunctions()
 
-    // 4. 获取接口名称
-    const api = await getApiByFunctions(funcs)
-
-    // 5. 生成模板页面
-    const codeTemplate = this.getTemplate(name, rule, funcs, api)
+    // 4. 生成模板页面
+    const codeTemplate = this.getTemplate(name, rule, funcs)
     const dataTemplate = this.getDateTemplate(funcs)
-    const apiTemplate = this.getApiTemplate(rule, api)
-    if (!codeTemplate || !dataTemplate || !apiTemplate) return console.log(errorText('  错误模板数据'))
-    this.generatorTemplate(name, codeTemplate, dataTemplate, apiTemplate)
+    const apiTemplate = this.getApiTemplate(rule, name, funcs)
+    if (!codeTemplate || !dataTemplate || !apiTemplate) {
+      return console.log(errorText('  错误模板数据'))
+    }
+    // 获取api文件名称
+    const apiName = getApiName(rule)
+    this.generatorTemplate(name, codeTemplate, dataTemplate, apiTemplate, apiName)
   }
 }
 

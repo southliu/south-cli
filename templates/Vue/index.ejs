@@ -6,8 +6,8 @@
         :list="searchList"
         :data="searches.data"
         :loading="loading"
-        :isCreate="pagePermission.create"
 <% if (funcs.includes('create')) { -%>
+        :isCreate="pagePermission.create"
         @onCreate="onCreate"
 <% } -%>
         @handleFinish="handleSearch"
@@ -80,23 +80,22 @@
 </template>
 
 <%- '<script lang="ts">' %>
-<% if (funcs.includes('create')) { -%>
+<% if (funcs.includes('create') || funcs.includes('search')) { -%>
 import type { IFormData } from '#/form'
+<% } -%>
+<% if (funcs.includes('create')) { -%>
 import type { IBasicForm } from '@/components/Form/model'
 <% } -%>
 import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
 <% if (funcs.includes('search')) { -%>ISearchData, <% } -%>ITableData, IPaginationData } from '#/global'
+<% if (funcs.includes('create') || funcs.includes('update') || funcs.includes('delete')) { -%>
 import { message } from 'ant-design-vue'
-import { defineComponent<% if (funcs.includes('search')) { %>, onMounted<% } %>, reactive, ref } from 'vue'
-import { <%= api.search -%>
-<% if (api.detail) { -%>, <% } -%>
-<%= api.detail -%>
-<% if (api.create) { -%>, <% } -%>
-<%= api.create -%>
-<% if (api.update) { -%>, <% } -%>
-<%= api.update -%>
-<% if (api.delete) { -%>, <% } -%>
-<%= api.delete -%> } from '@/servers<%= rule %>'
+<% } -%>
+import { defineComponent<% if (funcs.includes('search')) { -%>, onMounted<% } -%>, reactive<% if (funcs.includes('create') || funcs.includes('update')) { -%>, ref<% } -%> } from 'vue'
+import { get<%=name%>Page<% if (funcs.includes('update')) { -%>, get<%=name%>ById<% } -%>
+<% if (funcs.includes('create')) { -%>, create<%=name%><% } -%>
+<% if (funcs.includes('update')) { -%>, update<%=name%><% } -%>
+<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from '@/servers<%=rule%>'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
@@ -104,8 +103,8 @@ import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('create')) { -%>
 import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
 <% } -%>
-import { <% if (funcs.includes('search')) { -%>searchList<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>, createList, <% } -%>
+import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
 tableColumns } from './data'
 import { useLoading } from '@/hooks/useLoading'
 <% if (funcs.includes('create')) { -%>
@@ -128,7 +127,7 @@ import BasicModal from '@/components/Modal/BasicModal.vue'
 <% } -%>
 
 export default defineComponent({
-  name: '<%= name %>',
+  name: '<%=name%>',
   components: {
     BasicContent,
     BasicTable,
@@ -161,7 +160,7 @@ export default defineComponent({
 <% } -%>
 
     // 权限前缀
-    const permissionPrefix = '<%= rule %>'
+    const permissionPrefix = '<%=rule%>'
 
     // 权限
     const pagePermission = reactive({
@@ -235,6 +234,8 @@ export default defineComponent({
       createFormRef.value?.handleSubmit()
     }
 
+<% } -%>
+<% if (funcs.includes('search')) { -%>
     /**
      * 搜索提交
      * @param values - 表单返回数据
@@ -244,7 +245,7 @@ export default defineComponent({
       const query = { ...pagination, ...values }
       try {
         startLoading()
-        const { data: { data } } = await <%= api.search %>(query)
+        const { data: { data } } = await get<%=name%>Page(query)
         const { items, total } = data
         tables.data = items
         tables.total = total
@@ -279,7 +280,7 @@ export default defineComponent({
 
       try {
         startCreateLoading()
-        const { data: { data } } = await <%= api.detail %>(id as string)
+        const { data: { data } } = await get<%=name%>ById(id as string)
         creates.data = data
         endCreateLoading()
       } catch(err) {
@@ -297,7 +298,7 @@ export default defineComponent({
     const handleCreate = async (values: IFormData) => {
       try {
         startCreateLoading()
-        const functions = () => creates.id ? <%= api.update %>(creates.id, values) : <%= api.create %>(values)
+        const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
         const { data } = await functions()
         if (data?.code === 200) {
           getPage()
@@ -325,7 +326,7 @@ export default defineComponent({
     const handleDelete = async (id: string | number) => {
       try {
         startLoading()
-        const { data } = await <%= api.delete %>(id as string)
+        const { data } = await delete<%=name%>(id as string)
         if (data?.code === 200) {
           message.success(data?.message || '删除成功')
           getPage()

@@ -1,9 +1,9 @@
 import { Reducer } from 'redux'
 import { Effect } from 'dva'
-import API from '@/services/xxx'
+import API from './<%=name%>.api'
 import { message } from 'antd'
 
-export type <%= modelInterface %> = {
+export type <%=modelInterface%> = {
   data: any;
   total: number;
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
@@ -12,14 +12,14 @@ export type <%= modelInterface %> = {
 <% if (funcs.includes('update')) { -%>
   updateId: string;
 <% } -%>
-  query: <% if (funcs.includes('pagination')) { %>'IQuery'<% } else { %>'ITreeQuery'<% } %>;
-  initQuery: <% if (funcs.includes('pagination')) { %>'IQuery'<% } else { %>'ITreeQuery'<% } %>;
+  query: <% if (funcs.includes('pagination')) { %>IQuery<% } else { %>ITreeQuery<% } %>;
+  initQuery: <% if (funcs.includes('pagination')) { %>IQuery<% } else { %>ITreeQuery<% } %>;
   initFormData: any;
 }
 
 interface IModelType {
   namespace: string;
-  state: <%= modelInterface %>;
+  state: <%=modelInterface%>;
   effects: {
     handleGetPage: Effect;
     handleSetInitFormData: Effect;
@@ -44,20 +44,20 @@ interface IModelType {
     handleRefresh: Effect;
   };
   reducers: {
-    handleGetPageState: Reducer<<%= modelInterface %>>;
-    handleSetInitFormDataState: Reducer<<%= modelInterface %>>;
-    handleChangeQuery: Reducer<<%= modelInterface %>>;
+    handleGetPageState: Reducer<<%=modelInterface%>>;
+    handleSetInitFormDataState: Reducer<<%=modelInterface%>>;
+    handleChangeQuery: Reducer<<%=modelInterface%>>;
 <% if (funcs.includes('create')) { -%>
-    handleChangeCreateState: Reducer<<%= modelInterface %>>;
+    handleChangeCreateState: Reducer<<%=modelInterface%>>;
 <% } -%>
 <% if (funcs.includes('update')) { -%>
-    handleChangeUpdateState: Reducer<<%= modelInterface %>>;
+    handleChangeUpdateState: Reducer<<%=modelInterface%>>;
 <% } -%>
   };
 }
 
 const Modal: IModelType = {
-  namespace: '<%= model %>',
+  namespace: '<%=model%>',
   state: {
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
     isCreate: false,
@@ -94,7 +94,7 @@ const Modal: IModelType = {
     },
     // 刷新当前页
     *handleRefresh({ payload }, { call, put, select }) {
-      const query = yield select((state: any) => state.<%= model %>.initQuery)
+      const query = yield select((state: any) => state.<%=model%>.initQuery)
       const response = yield call(API.find_page, query)
       
       if (response?.code === 200) {

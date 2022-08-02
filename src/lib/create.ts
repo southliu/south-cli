@@ -16,7 +16,7 @@ export async function createProject(name: string) {
 
   // 如果文件夹存在则退出
   if (hasFolder(filePath)) {
-    return console.error(errorText('  文件夹已存在'))
+    return console.error(errorText(`  ${name}文件夹已存在`))
   }
 
   // 执行创建指令
@@ -36,7 +36,7 @@ export async function createVue(name: string) {
 
   // 如果文件夹存在则退出
   if (hasFile(filePath)) {
-    return console.error(errorText('  文件已存在'))
+    return console.error(errorText(`  ${name}.vue已存在`))
   }
 
   // 执行创建命令
@@ -56,7 +56,7 @@ export async function createReact(name: string) {
 
   // 如果文件夹存在则退出
   if (hasFile(filePath)) {
-    return console.error(errorText('  文件已存在'))
+    return console.error(errorText(`  ${name}.tsx已存在`))
   }
 
   // 执行创建命令

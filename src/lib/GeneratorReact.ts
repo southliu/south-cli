@@ -3,7 +3,7 @@ import path from 'path'
 import ejs from 'ejs'
 import { errorText, successText } from '../utils/utils'
 import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
-import type { IPageFunctions } from '../types'
+import type { IPageFunctions } from '../../types'
 
 /**
  * 生成React页面
@@ -27,7 +27,13 @@ class GeneratorPage {
    * @param model - 模型名称
    * @param modelInterface - 模型接口名称
    */
-  getTemplate(title: string, rule: string, funcs: IPageFunctions[], model: string, modelInterface: string): string {
+  getTemplate(
+    title: string,
+    rule: string,
+    funcs: IPageFunctions[],
+    model: string,
+    modelInterface: string
+  ): string {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/React/index.ejs")
     )
@@ -45,11 +51,18 @@ class GeneratorPage {
    * @param modelInterface - 模型接口名称
    * @param funcs - 功能数据
    */
-  getModelTemplate(model: string, modelInterface: string, funcs: IPageFunctions[]): string {
+  getModelTemplate(
+    model: string,
+    modelInterface: string,
+    funcs: IPageFunctions[]
+  ): string {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/React/model.ejs")
     )
-    const code = ejs.render(templateCode.toString(), { model, modelInterface, funcs })
+    const code = ejs.render(
+      templateCode.toString(),
+      { model, modelInterface, funcs, name: this.name }
+    )
 
     return code
   }
@@ -63,7 +76,10 @@ class GeneratorPage {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/React/server.ejs")
     )
-    const code = ejs.render(templateCode.toString(), { rule, funcs })
+    const code = ejs.render(
+      templateCode.toString(),
+      { rule, funcs }
+    )
 
     return code
   }
@@ -93,7 +109,6 @@ class GeneratorPage {
     fs.outputFileSync(apiFilePath, api)
     console.log(successText(`  创建接口文件成功 - ${this.name}.api.ts`))
   }
-
   
   // 创建处理
   async handleCreate() {

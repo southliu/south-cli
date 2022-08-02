@@ -2,68 +2,68 @@ import type { IPageServerResult, IPaginationData } from '#/global'
 import { request } from '@/utils/request'
 
 enum API {
-  URL = '<%= rule %>',
+  URL = '<%=rule%>',
 }
 
 /**
  * 获取分页数据
  * @param data - 请求数据
  */
-export function <%= api.search %>(data: Partial<unknown> & IPaginationData) {
-  return request.get<IPageServerResult<unknown>(
+export function get<%=name%>Page(data: Partial<unknown> & IPaginationData) {
+  return request.get<IPageServerResult<unknown[]>>(
     `${API.URL}/index`,
     { params: data }
   )
 }
-<% if (api.detail) { -%>
+<% if (funcs.includes('update')) { -%>
 
 /**
  * 根据ID获取数据
  * @param id - ID
  * @param data - 请求数据
  */
-export function <%= api.detail %>(id: string) {
+export function get<%=name%>ById(id: string) {
   return request.get(`${API.URL}/${id}`)
 }
 <% } -%>
-<% if (api.create) { -%>
+<% if (funcs.includes('create')) { -%>
 
 /**
  * 新增数据
  * @param data - 请求数据
  */
-export function <%= api.create %>(data: unknown) {
+export function create<%=name%>(data: unknown) {
   return request.post(API.URL, data)
 }
 <% } -%>
-<% if (api.update) { -%>
+<% if (funcs.includes('update')) { -%>
 
 /**
  * 修改数据
  * @param id - 修改id值
  * @param data - 请求数据
  */
-export function <%= api.update %>(id: string, data: unknown) {
+export function update<%=name%>(id: string, data: unknown) {
   return request.put(`${API.URL}/${id}`, data)
 }
 <% } -%>
-<% if (api.delete) { -%>
+<% if (funcs.includes('delete')) { -%>
 
 /**
  * 删除
  * @param id - 删除id值
  */
- export function <%= api.delete %>(id: string) {
+ export function delete<%=name%>(id: string) {
   return request.delete(`${API.URL}/${id}`)
 }
 <% } -%>
-<% if (api.batchDelete) { -%>
+<% if (funcs.includes('batchDelete')) { -%>
 
 /**
  * 批量删除
  * @param ids - 批量删除id值
  */
- export function <%= api.batchDelete %>(ids: string[]) {
+ export function batchDelete<%=name%>(ids: string[]) {
   return request.delete(`${API.URL}`, { data: { ids } })
 }
 <% } -%>

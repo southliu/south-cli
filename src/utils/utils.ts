@@ -44,6 +44,16 @@ export async function handleLoading<T>(fn: Promise<T>, text = '加载中...') {
 }
 
 /**
+ * 获取API名称
+ * @param rule - 路由
+ */
+export function getApiName(rule: string): string {
+  // 返回路由中最后一个单词
+  const arr = rule.split('/')
+  return arr[arr.length - 1]
+}
+
+/**
  * 添加 ANSI 转义字符，以将文本输出为红色
  * @param str - 文本
  */

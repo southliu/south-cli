@@ -14,7 +14,7 @@ import { ColumnsType } from 'antd/es/table'
 import { Popconfirm, Tooltip<% if (funcs.includes('batchDelete')) { %>, Button, message'<% } %> } from 'antd'
 <% } -%>
 import { initData } from '@/utils/initData'
-import { IAuthorityLoginState, <%= modelInterface %> } from '@/models'
+import { IAuthorityLoginState, <%=modelInterface%> } from '@/models'
 import checkPermission from '@/utils/permission'
 import { useTitleHook } from '@/hooks'
 import Tables from '@/components/Tables'
@@ -23,7 +23,7 @@ import { findMapColor, findMapValue } from '@/utils/filter'
 
 type IProps = {
   data: any;
-  status: <%= modelInterface %>;
+  status: <%=modelInterface%>;
   loginStatus: IAuthorityLoginState;
 } & IPublic
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
@@ -34,7 +34,7 @@ const CreateLayout = {
 <% } -%>
 
 function Page(props: IProps) {
-  useTitleHook('<%= title %>');
+  useTitleHook('<%=title%>');
   const {
     dispatch,
     status,
@@ -60,10 +60,10 @@ function Page(props: IProps) {
   let { initFormData } = status;
   const { permissions } = loginStatus;
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-  const isNotCreateBtn: boolean = !checkPermission({ value: '<%= rule %>/create', permissions });
+  const isNotCreateBtn: boolean = !checkPermission({ value: '<%=rule%>/create', permissions });
 <% } -%>
 <% if (funcs.includes('search')) { -%>
-  const isNotSearchBtn: boolean = !checkPermission({ value: '<%= rule %>', permissions });
+  const isNotSearchBtn: boolean = !checkPermission({ value: '<%=rule%>', permissions });
 <% } -%>
 <% if (funcs.includes('batchDelete')) { -%>
   const [selectIds, setSelectIds] = useState<React.Key[]>([]);
@@ -88,7 +88,7 @@ function Page(props: IProps) {
         <div className='options_box'>
 <% if (funcs.includes('update')) { -%>
           {
-            checkPermission({ value: '<%= rule %>/update', permissions }) &&
+            checkPermission({ value: '<%=rule%>/update', permissions }) &&
             <Tooltip title='修改'>
               <%- '<div' %>
                 className='options_btn iconfont'
@@ -101,7 +101,7 @@ function Page(props: IProps) {
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
           {
-            checkPermission({ value: '<%= rule %>/delete', permissions }) &&
+            checkPermission({ value: '<%=rule%>/delete', permissions }) &&
             <%- '<Popconfirm' %>
               title='确定删除?'
               cancelText='取消'
@@ -134,7 +134,7 @@ function Page(props: IProps) {
   const handleGetPage = useCallback(() => {
     if (!isNotSearchBtn && data?.length === 0) {
       dispatch({
-        type: '<%= model %>/handleGetPage',
+        type: '<%=model%>/handleGetPage',
         payload: query,
       });
     }
@@ -152,7 +152,7 @@ function Page(props: IProps) {
       values.hasOwnProperty(key) && values[key] !== undefined && values[key] !== '' ? query[key] = values[key] : delete query[key];
     }
     dispatch({
-      type: '<%= model %>/handleGetPage',
+      type: '<%=model%>/handleGetPage',
       payload: query,
     });
   };
@@ -162,7 +162,7 @@ function Page(props: IProps) {
   // 新增
   const handleClickCreate = () => {
     dispatch({
-      type: '<%= model %>/handleChangeCreate',
+      type: '<%=model%>/handleChangeCreate',
       payload: {
         id: '',
         state: true
@@ -175,7 +175,7 @@ function Page(props: IProps) {
   // 修改
   const handleUpdate = (id: string) => {
     dispatch({
-      type: '<%= model %>/handleChangeUpdate',
+      type: '<%=model%>/handleChangeUpdate',
       payload: {
         id,
         state: true
@@ -188,7 +188,7 @@ function Page(props: IProps) {
   // 关闭新增/修改
   const handleCloseCreate = () => {
     dispatch({
-      type: '<%= model %>/handleChangeCreate',
+      type: '<%=model%>/handleChangeCreate',
       payload: {
         id: '',
         state: false,
@@ -201,7 +201,7 @@ function Page(props: IProps) {
   const handleCreateSubmit = (values: Record<string, any>) => {
     if (updateId) {
       dispatch({
-        type: '<%= model %>/handleUpdate',
+        type: '<%=model%>/handleUpdate',
         payload: {
           id: updateId,
           values,
@@ -210,7 +210,7 @@ function Page(props: IProps) {
       });
     } else {
       dispatch({
-        type: '<%= model %>/handleCreate',
+        type: '<%=model%>/handleCreate',
         payload: {
           values,
           query,
@@ -224,7 +224,7 @@ function Page(props: IProps) {
   // 删除
   const handleDelete = (id: string) => {
     dispatch({
-      type: '<%= model %>/handleBatchDelete',
+      type: '<%=model%>/handleBatchDelete',
       payload: { id, query },
     });
   };
@@ -242,7 +242,7 @@ function Page(props: IProps) {
       return message.warning({ content: '请勾选!', key: 'check_please' });
     }
     dispatch({
-      type: '<%= model %>/handleDelete',
+      type: '<%=model%>/handleDelete',
       payload: { ids: selectIds, query },
     });
   };
@@ -255,7 +255,7 @@ function Page(props: IProps) {
     query.pageSize = pageSize || 20;
 
     dispatch({
-      type: '<%= model %>/handleGetPage',
+      type: '<%=model%>/handleGetPage',
       payload: query,
     });
   };
@@ -266,7 +266,7 @@ function Page(props: IProps) {
   const addSearchElement = () => {
     return (
       <>
-        {checkPermission({ value: '<%= rule %>/batch-delete', permissions }) && (
+        {checkPermission({ value: '<%=rule%>/batch-delete', permissions }) && (
           <Popconfirm
             title="确定批量删除?"
             cancelText="取消"
@@ -295,7 +295,7 @@ function Page(props: IProps) {
         query={query}
         list={searchList}
         isNotSearch={<% if (funcs.includes('search')) { -%>isNotSearchBtn<% } else { -%>true<% } -%>}
-        isNotCreate={<% if (funcs.includes('search')) { -%>isNotCreateBtn<% } else { -%>true<% } -%>}
+        isNotCreate={<% if (funcs.includes('create')) { -%>isNotCreateBtn<% } else { -%>true<% } -%>}
         handleSearch={handleSearch}
 <% if (funcs.includes('batchDelete')) { -%>
         addElement={addSearchElement}
@@ -314,7 +314,7 @@ function Page(props: IProps) {
 <% if (funcs.includes('batchDelete')) { -%>
         handleRowSelect={handleRowSelect}
 <% } -%>
-      >
+      />
 <% if (funcs.includes('pagination')) { -%>
 
       <Paginations
@@ -340,14 +340,13 @@ function Page(props: IProps) {
   );
 }
 
-
 export default connect(
   ({
-     <%= model %>,
+     <%=model%>,
      authorityLogin,
      loading,
    }: {
-    <%= model %>: <%= modelInterface %>,
+    <%=model%>: <%=modelInterface%>,
     authorityLogin: IAuthorityLoginState;
     loading: {
       models: Record<string, boolean>,
@@ -355,11 +354,11 @@ export default connect(
     }
   }) => (
     {
-      status: <%= model %>,
+      status: <%=model%>,
       loginStatus: authorityLogin,
-      isLoading: loading.effects['<%= model %>/handleGetPage'],
+      isLoading: loading.effects['<%=model%>/handleGetPage'],
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-      isCreateLoading: loading.models.<%= model %>
+      isCreateLoading: loading.models.<%=model%>
 <% } -%>
     }
   ),
