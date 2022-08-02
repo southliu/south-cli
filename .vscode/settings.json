@@ -8,6 +8,7 @@
     "paren",
     "parens",
     "camelcase",
-    "jsxdev"
+    "jsxdev",
+    "mkdirs"
   ]
 }

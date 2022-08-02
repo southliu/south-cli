@@ -95,7 +95,7 @@ import { defineComponent<% if (funcs.includes('search')) { -%>, onMounted<% } -%
 import { get<%=name%>Page<% if (funcs.includes('update')) { -%>, get<%=name%>ById<% } -%>
 <% if (funcs.includes('create')) { -%>, create<%=name%><% } -%>
 <% if (funcs.includes('update')) { -%>, update<%=name%><% } -%>
-<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from '@/servers<%=rule%>'
+<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from './<%=apiName%>'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
