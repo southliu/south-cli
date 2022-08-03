@@ -20,7 +20,6 @@ export function get<%=name%>Page(data: Partial<unknown> & IPaginationData) {
 /**
  * 根据ID获取数据
  * @param id - ID
- * @param data - 请求数据
  */
 export function get<%=name%>ById(id: string) {
   return request.get(`${API.URL}/${id}`)
