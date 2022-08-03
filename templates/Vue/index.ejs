@@ -92,10 +92,6 @@ import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
 import { message } from 'ant-design-vue'
 <% } -%>
 import { defineComponent<% if (funcs.includes('search')) { -%>, onMounted<% } -%>, reactive<% if (funcs.includes('create') || funcs.includes('update')) { -%>, ref<% } -%> } from 'vue'
-import { get<%=name%>Page<% if (funcs.includes('update')) { -%>, get<%=name%>ById<% } -%>
-<% if (funcs.includes('create')) { -%>, create<%=name%><% } -%>
-<% if (funcs.includes('update')) { -%>, update<%=name%><% } -%>
-<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from './<%=apiName%>'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
@@ -113,6 +109,20 @@ import { useCreateLoading } from '@/hooks/useCreateLoading'
 import { checkPermission } from '@/utils/permissions'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
+<% if (funcs.includes('create') && funcs.includes('update') && funcs.includes('delete')) { -%>
+import {
+  get<%=name%>Page<% if (funcs.includes('update')) { %>,
+  get<%=name%>ById<% } -%><% if (funcs.includes('create')) { %>,
+  create<%=name%><% } -%><% if (funcs.includes('update')) { %>,
+  update<%=name%><% } -%><% if (funcs.includes('delete')) { %>,
+  delete<%=name%><% } %>
+} from './<%=apiName%>'
+<% } else { -%>
+import { get<%=name%>Page<% if (funcs.includes('update')) { -%>, get<%=name%>ById<% } -%>
+<% if (funcs.includes('create')) { -%>, create<%=name%><% } -%>
+<% if (funcs.includes('update')) { -%>, update<%=name%><% } -%>
+<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from './<%=apiName%>'
+<% } -%>
 import BasicContent from '@/components/Content/BasicContent.vue'
 import BasicTable from '@/components/Table/BasicTable.vue'
 <% if (funcs.includes('pagination')) { -%>
