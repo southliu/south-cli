@@ -310,11 +310,12 @@ export default defineComponent({
         startCreateLoading()
         const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
         const { data } = await functions()
-        if (data?.code === 200) {
-          getPage()
-          creates.visible = false
-          message.success(data?.message || '操作成功')
-        }
+        getPage()
+        creates.id = ''
+        creates.visible = false
+        creates.data = initCreate
+        createFormRef.value?.handleReset()
+        message.success(data?.message || '操作成功')
         endCreateLoading()
       } catch(err) {
         endCreateLoading()
