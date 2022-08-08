@@ -6,7 +6,6 @@ import type { VxeGridPropTypes } from "vxe-table"
 import { INPUT_REQUIRED, SELECT_REQUIRED } from "@/utils/config"
 <% } -%>
 <% if (funcs.includes('search')) { -%>
-import { MENU_STATUS } from "@/utils/constants"
 
 // 搜索数据
 export const searchList: IFormList[] = [
@@ -15,7 +14,16 @@ export const searchList: IFormList[] = [
     key: 'status',
     component: 'Select',
     componentProps: {
-      options: MENU_STATUS
+      options: [
+        {
+          value: 'jack',
+          label: 'Jack',
+        },
+        {
+          value: 'lucy',
+          label: 'Lucy',
+        }
+      ]
     }
   },
   {
@@ -34,15 +42,6 @@ export const createList: IFormList[] = [
     key: 'name',
     rules: INPUT_REQUIRED,
     component: 'Input'
-  },
-  {
-    title: '状态',
-    key: 'status',
-    rules: SELECT_REQUIRED,
-    component: 'Select',
-    componentProps: {
-      options: MENU_STATUS
-    }
   },
   {
     title: '控制器',
