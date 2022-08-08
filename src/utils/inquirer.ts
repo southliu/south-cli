@@ -90,19 +90,5 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
     ]
   })
 
-  // 新增类型 create: 弹窗 create-page: 跳转页面
-  if (functions.includes('create')) {
-    // 询问新增类型
-    const { type } = await inquirer.prompt({
-      name: 'type',
-      type: 'confirm',
-      message: '新增是否以弹窗形式展现? Y: 弹窗 n: 跳转'
-    })
-
-    // 处理基础功能中的新增类型
-    const createIdx = functions.indexOf('create')
-    functions[createIdx] = type ? 'create' : 'create-page'
-  }
-
   return functions
 }
