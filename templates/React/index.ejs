@@ -225,7 +225,7 @@ function Page(props: IProps) {
   // 删除
   const handleDelete = (id: string) => {
     dispatch({
-      type: '<%=model%>/handleBatchDelete',
+      type: '<%=model%>/handleDelete',
       payload: { id, query },
     });
   };
@@ -243,7 +243,7 @@ function Page(props: IProps) {
       return message.warning({ content: '请勾选!', key: 'check_please' });
     }
     dispatch({
-      type: '<%=model%>/handleDelete',
+      type: '<%=model%>/handleBatchDelete',
       payload: { ids: selectIds, query },
     });
   };
