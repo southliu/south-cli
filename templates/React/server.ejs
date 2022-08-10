@@ -19,7 +19,7 @@ function update(id: string, data: any) {
   return request.patch(`<%=rule%>/${id}`, data)
 }
 <% } -%>
-<% if (funcs.includes('update')) { -%>
+<% if (funcs.includes('delete')) { -%>
 
 /**
  * 删除
@@ -31,7 +31,7 @@ function del(id: string) {
 <% } -%>
 <% if (funcs.includes('batchDelete')) { -%>
 
-  /**
+/**
  * 批量删除
  * @param {String} ids
  */
