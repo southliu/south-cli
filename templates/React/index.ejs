@@ -11,7 +11,7 @@ import Create from '@/components/Create'
 import { connect } from 'dva'
 import { ColumnsType } from 'antd/es/table'
 <% if (funcs.includes('create') || funcs.includes('delete') || funcs.includes('batchDelete')) { -%>
-import { Popconfirm, Tooltip<% if (funcs.includes('batchDelete')) { %>, Button, message<% } %> } from 'antd'
+import { <% if (funcs.includes('delete')) { %>Popconfirm, <% } %>Tooltip<% if (funcs.includes('batchDelete')) { %>, Button, message<% } %> } from 'antd'
 <% } -%>
 import { initData } from '@/utils/initData'
 import { IAuthorityLoginState, <%=modelInterface%> } from '@/models'
