@@ -1,9 +1,10 @@
+import type { IPageFunctions } from '../../types'
+import { getFunctions, getName, getRule } from '../utils/inquirer'
+import { errorText, getApiName, hasFolder, successText } from '../utils/utils'
+import { ICreatePage } from 'types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
-import { getFunctions, getName, getRule } from '../utils/inquirer'
-import { errorText, getApiName, hasFolder, successText } from '../utils/utils'
-import type { IPageFunctions } from '../../types'
 
 /**
  * 生成Vue页面
@@ -13,9 +14,10 @@ import type { IPageFunctions } from '../../types'
  * 4. 选择页面功能：增删改查
  * 5. 生成模板页面
  */
-class GeneratorVue {
+class GeneratorVue extends ICreatePage {
   name: string // 文件名
   constructor(name: string) {
+    super()
     this.name = name
   }
 
@@ -116,9 +118,7 @@ class GeneratorVue {
     console.log(successText(`  创建接口文件成功 - ${this.name}/${apiName}.ts`))
   }
 
-  /**
-   * 创建页面
-   */
+  /** 创建页面 */
   async handleCreate() {
     // 获取当前命令行选择文件
     const cwd = process.cwd()

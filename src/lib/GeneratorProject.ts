@@ -1,17 +1,19 @@
+import { ICreateProject } from 'types/lib/create'
+import { getDownloadUrl, getRepoList } from '../utils/serves'
+import { cyanText, dimText, errorText, handleLoading } from '../utils/utils'
 import downloadGitRepo from 'download-git-repo'
 import inquirer from 'inquirer'
 import util from 'util'
 import path from 'path'
-import { getDownloadUrl, getRepoList } from '../utils/serves'
-import { cyanText, dimText, errorText, handleLoading } from '../utils/utils'
 
 /**
  * 创建项目类
  */
-class GeneratorProject {
-  name: string
-  targetDir: string
+class GeneratorProject extends ICreateProject {
+  name: string // 文件名
+  targetDir: string // 目标路径
   constructor(name: string, targetDir: string) {
+    super()
     this.name = name
     this.targetDir = targetDir
   }

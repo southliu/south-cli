@@ -1,9 +1,10 @@
+import type { IPageFunctions } from '../../types'
+import { errorText, successText } from '../utils/utils'
+import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
+import { ICreatePage } from 'types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
-import { errorText, successText } from '../utils/utils'
-import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
-import type { IPageFunctions } from '../../types'
 
 /**
  * 生成React页面
@@ -13,9 +14,10 @@ import type { IPageFunctions } from '../../types'
  * 4. 选择页面功能：增删改查
  * 5. 生成模板页面
  */
-class GeneratorPage {
+class GeneratorPage extends ICreatePage {
   name: string // 文件名
   constructor(name: string) {
+    super()
     this.name = name
   }
 
@@ -110,7 +112,7 @@ class GeneratorPage {
     console.log(successText(`  创建接口文件成功 - ${this.name}.api.ts`))
   }
   
-  // 创建处理
+  /** 创建页面 */
   async handleCreate() {
     // 1. 输入页面名称
     const title = await getTitle()
