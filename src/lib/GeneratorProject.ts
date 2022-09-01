@@ -1,4 +1,4 @@
-import { ICreateProject } from 'types/lib/create'
+import { ICreateProject } from '../../types/lib/create'
 import { getDownloadUrl, getRepoList } from '../utils/serves'
 import { cyanText, dimText, errorText, handleLoading } from '../utils/utils'
 import downloadGitRepo from 'download-git-repo'

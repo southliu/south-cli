@@ -1,7 +1,7 @@
 import type { IPageFunctions } from '../../types'
 import { errorText, successText } from '../utils/utils'
 import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
-import { ICreatePage } from 'types/lib/create'
+import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'

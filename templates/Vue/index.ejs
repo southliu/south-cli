@@ -79,7 +79,7 @@
 <% } -%>
 </template>
 
-<%- '<script lang="ts">' %>
+<%- '<script lang="ts" setup>' %>
 <% if (funcs.includes('create') || funcs.includes('search')) { -%>
 import type { IFormData } from '#/form'
 <% } -%>
@@ -91,7 +91,7 @@ import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update') || funcs.includes('delete')) { -%>
 import { message } from 'ant-design-vue'
 <% } -%>
-import { defineComponent<% if (funcs.includes('search')) { -%>, onMounted<% } -%>, reactive<% if (funcs.includes('create') || funcs.includes('update')) { -%>, ref<% } -%> } from 'vue'
+import { <% if (funcs.includes('search')) { -%>onMounted, <% } -%>reactive<% if (funcs.includes('create') || funcs.includes('update')) { -%>, ref<% } -%> } from 'vue'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
 <% if (funcs.includes('delete')) { -%>, DeleteBtn<% } -%> } from '@/components/Buttons'
@@ -136,270 +136,199 @@ import BasicForm from '@/components/Form/BasicForm.vue'
 import BasicModal from '@/components/Modal/BasicModal.vue'
 <% } -%>
 
-export default defineComponent({
-  name: '<%=name%>',
-  components: {
-    BasicContent,
-    BasicTable,
-<% if (funcs.includes('pagination')) { -%>
-    BasicPagination,
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-    BasicSearch,
-<% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-    BasicForm,
-    BasicModal,
+const createFormRef = ref<IBasicForm>()
 <% } -%>
-<% if (funcs.includes('delete')) { -%>
-    DeleteBtn,
-<% } -%>
-<% if (funcs.includes('update')) { -%>
-    UpdateBtn
-<% } -%>
-  },
-  setup() {
+const userStore = useUserStore()
+const { permissions } = storeToRefs(userStore)
+const { loading, startLoading, endLoading } = useLoading()
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-    const createFormRef = ref<IBasicForm>()
-<% } -%>
-    const userStore = useUserStore()
-    const { permissions } = storeToRefs(userStore)
-    const { loading, startLoading, endLoading } = useLoading()
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-    const { createLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
+const { createLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
 <% } -%>
 
-    // 权限前缀
-    const permissionPrefix = '<%=rule%>'
+// 权限前缀
+const permissionPrefix = '<%=rule%>'
 
-    // 权限
-    const pagePermission = reactive({
-      page: checkPermission(`${permissionPrefix}/index`, permissions.value),
+// 权限
+const pagePermission = reactive({
+  page: checkPermission(`${permissionPrefix}/index`, permissions.value),
 <% if (funcs.includes('create')) { -%>
-      create: checkPermission(`${permissionPrefix}/create`, permissions.value),
+  create: checkPermission(`${permissionPrefix}/create`, permissions.value),
 <% } -%>
 <% if (funcs.includes('update')) { -%>
-      update: checkPermission(`${permissionPrefix}/update`, permissions.value),
+  update: checkPermission(`${permissionPrefix}/update`, permissions.value),
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
-      delete: checkPermission(`${permissionPrefix}/delete`, permissions.value)
+  delete: checkPermission(`${permissionPrefix}/delete`, permissions.value)
 <% } -%>
-    })
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-
-    // 初始化新增数据
-    const initCreate = {
-      status: 1,
-      module: 'authority'
-    }
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-
-    // 搜索数据
-    const searches = reactive<ISearchData>({
-      data: {}
-    })
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-
-    // 新增数据
-    const creates = reactive<ICreateData>({
-      id: '',
-      visible: false,
-      title: '新增',
-      data: initCreate
-    })
-<% } -%>
-
-    // 表格数据
-    const tables = reactive<ITableData>({
-      total: 0,
-      data: []
-    })
-
-<% if (funcs.includes('pagination')) { -%>
-    // 分页数据
-    const pagination = reactive<IPaginationData>({
-      page: 1,
-      pageSize: 20,
-    })
-
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-    onMounted(() => {
-      getPage()
-    })
-
-    /**
-     * 获取表格数据
-     */
-    const getPage = async () => {
-      handleSearch(searches.data)
-    }
-
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-    /** 表格提交 */
-    const createSubmit = () => {
-      createFormRef.value?.handleSubmit()
-    }
-
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-    /**
-     * 搜索提交
-     * @param values - 表单返回数据
-     */
-    const handleSearch = async (values: IFormData) => {
-      searches.data = values
-      const query = { ...pagination, ...values }
-      try {
-        startLoading()
-        const { data: { data } } = await get<%=name%>Page(query)
-        const { items, total } = data
-        tables.data = items
-        tables.total = total
-      } finally {
-        endLoading()
-      }
-    }
-<% } -%>
-<% if (funcs.includes('create')) { -%>
-
-    /** 点击新增 */
-    const onCreate = () => {
-      creates.visible = !creates.visible
-      creates.title = ADD_TITLE
-      creates.id = ''
-      creates.data = initCreate
-    }
-<% } -%>
-<% if (funcs.includes('update')) { -%>
-
-    /**
-     * 点击编辑
-     * @param record - 当前行数据
-     */
-    const onUpdate = async (record: IFormData) => {
-      const { id, name } = record
-      creates.visible = !creates.visible
-      creates.id = id as string
-      creates.title = EDIT_TITLE(name as string)
-
-      try {
-        startCreateLoading()
-        const { data: { data } } = await get<%=name%>ById(id as string)
-        creates.data = data
-      } finally {
-        endCreateLoading()
-      }
-    }
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-
-    /**
-     * 新增/编辑提交
-     * @param values - 表单返回数据
-     */
-    const handleCreate = async (values: IFormData) => {
-      try {
-        startCreateLoading()
-        const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
-        const { data } = await functions()
-        getPage()
-        creates.id = ''
-        creates.visible = false
-        creates.data = initCreate
-        createFormRef.value?.handleReset()
-        message.success(data?.message || '操作成功')
-      } finally {
-        endCreateLoading()
-      }
-    }
-
-    /** 关闭新增/编辑 */
-    const onCloseCreate = () => {
-      creates.visible = false
-    }
-
-<% } -%>
-<% if (funcs.includes('delete')) { -%>
-    /**
-     * 删除
-     * @param id
-     */
-    const handleDelete = async (id: string | number) => {
-      try {
-        startLoading()
-        const { data } = await delete<%=name%>(id as string)
-        if (data?.code === 200) {
-          message.success(data?.message || '删除成功')
-          getPage()
-        }
-      } finally {
-        endLoading()
-      }
-    }
-
-<% } -%>
-<% if (funcs.includes('pagination')) { -%>
-    /**
-     * 分页
-     * @param page - 当前页
-     * @param pageSize - 分页总数
-     */
-    const handlePagination = (page: number, pageSize: number) => {
-      pagination.page = page
-      pagination.pageSize = pageSize
-      getPage()
-    }
-
-<% } -%>
-    return {
-      loading,
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-      createLoading,
-      createFormRef,
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-      searches,
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-      creates,
-<% } -%>
-      tables,
-<% if (funcs.includes('pagination')) { -%>
-      pagination,
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-      searchList,
-<% } -%>
-      tableColumns,
-      pagePermission,
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-      createList,
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-      handleSearch,
-<% } -%>
-<% if (funcs.includes('create')) { -%>
-      onCreate,
-<% } -%>
-<% if (funcs.includes('update')) { -%>
-      onUpdate,
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-      createSubmit,
-      onCloseCreate,
-      handleCreate,
-<% } -%>
-<% if (funcs.includes('delete')) { -%>
-      handleDelete,
-<% } -%>
-<% if (funcs.includes('pagination')) { -%>
-      handlePagination
-<% } -%>
-    }
-  }
 })
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+
+// 初始化新增数据
+const initCreate = {
+  status: 1,
+  module: 'authority'
+}
+<% } -%>
+<% if (funcs.includes('search')) { -%>
+
+// 搜索数据
+const searches = reactive<ISearchData>({
+  data: {}
+})
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+
+// 新增数据
+const creates = reactive<ICreateData>({
+  id: '',
+  visible: false,
+  title: '新增',
+  data: initCreate
+})
+<% } -%>
+
+// 表格数据
+const tables = reactive<ITableData>({
+  total: 0,
+  data: []
+})
+
+<% if (funcs.includes('pagination')) { -%>
+// 分页数据
+const pagination = reactive<IPaginationData>({
+  page: 1,
+  pageSize: 20,
+})
+
+<% } -%>
+<% if (funcs.includes('search')) { -%>
+onMounted(() => {
+  getPage()
+})
+
+/**
+  * 获取表格数据
+  */
+const getPage = async () => {
+  handleSearch(searches.data)
+}
+
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+/** 表格提交 */
+const createSubmit = () => {
+  createFormRef.value?.handleSubmit()
+}
+
+<% } -%>
+<% if (funcs.includes('search')) { -%>
+/**
+  * 搜索提交
+  * @param values - 表单返回数据
+  */
+const handleSearch = async (values: IFormData) => {
+  searches.data = values
+  const query = { ...pagination, ...values }
+  try {
+    startLoading()
+    const { data: { data } } = await get<%=name%>Page(query)
+    const { items, total } = data
+    tables.data = items
+    tables.total = total
+  } finally {
+    endLoading()
+  }
+}
+<% } -%>
+<% if (funcs.includes('create')) { -%>
+
+/** 点击新增 */
+const onCreate = () => {
+  creates.visible = !creates.visible
+  creates.title = ADD_TITLE
+  creates.id = ''
+  creates.data = initCreate
+}
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+
+/**
+  * 点击编辑
+  * @param record - 当前行数据
+  */
+const onUpdate = async (record: IFormData) => {
+  const { id, name } = record
+  creates.visible = !creates.visible
+  creates.id = id as string
+  creates.title = EDIT_TITLE(name as string)
+
+  try {
+    startCreateLoading()
+    const { data: { data } } = await get<%=name%>ById(id as string)
+    creates.data = data
+  } finally {
+    endCreateLoading()
+  }
+}
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+
+/**
+  * 新增/编辑提交
+  * @param values - 表单返回数据
+  */
+const handleCreate = async (values: IFormData) => {
+  try {
+    startCreateLoading()
+    const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
+    const { data } = await functions()
+    getPage()
+    creates.id = ''
+    creates.visible = false
+    creates.data = initCreate
+    createFormRef.value?.handleReset()
+    message.success(data?.message || '操作成功')
+  } finally {
+    endCreateLoading()
+  }
+}
+
+/** 关闭新增/编辑 */
+const onCloseCreate = () => {
+  creates.visible = false
+}
+
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
+/**
+  * 删除
+  * @param id
+  */
+const handleDelete = async (id: string | number) => {
+  try {
+    startLoading()
+    const { data } = await delete<%=name%>(id as string)
+    if (data?.code === 200) {
+      message.success(data?.message || '删除成功')
+      getPage()
+    }
+  } finally {
+    endLoading()
+  }
+}
+
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
+/**
+  * 分页
+  * @param page - 当前页
+  * @param pageSize - 分页总数
+  */
+const handlePagination = (page: number, pageSize: number) => {
+  pagination.page = page
+  pagination.pageSize = pageSize
+  getPage()
+}
+<% } -%>
 <%- '</script>' %>
