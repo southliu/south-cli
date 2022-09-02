@@ -10,8 +10,8 @@ import { INPUT_REQUIRED, SELECT_REQUIRED } from "@/utils/config"
 // 搜索数据
 export const searchList: IFormList[] = [
   {
-    title: '状态',
-    key: 'status',
+    label: '状态',
+    name: 'status',
     component: 'Select',
     componentProps: {
       options: [
@@ -27,8 +27,8 @@ export const searchList: IFormList[] = [
     }
   },
   {
-    title: '控制器',
-    key: 'controller',
+    label: '控制器',
+    name: 'controller',
     component: 'Input'
   }
 ]
@@ -38,20 +38,20 @@ export const searchList: IFormList[] = [
 // 新增数据
 export const createList: IFormList[] = [
   {
-    title: '名称',
-    key: 'name',
+    label: '名称',
+    name: 'name',
     rules: INPUT_REQUIRED,
     component: 'Input'
   },
   {
-    title: '控制器',
-    key: 'controller',
+    label: '控制器',
+    name: 'controller',
     rules: INPUT_REQUIRED,
     component: 'Input'
   },
   {
-    title: '动作',
-    key: 'action',
+    label: '动作',
+    name: 'action',
     rules: INPUT_REQUIRED,
     component: 'Input'
   },
