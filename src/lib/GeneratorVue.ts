@@ -1,6 +1,6 @@
 import type { IPageFunctions } from '../../types'
 import { getFunctions, getName, getRule } from '../utils/inquirer'
-import { errorText, getApiName, hasFolder, successText } from '../utils/utils'
+import { errorText, firstUpperCase, getApiName, hasFolder, successText } from '../utils/utils'
 import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
@@ -108,14 +108,15 @@ class GeneratorVue extends ICreatePage {
     console.log(successText(`  创建vue文件成功 - ${this.name}/index.vue`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}/data.ts`)
+    const dataName = firstUpperCase(apiName)
+    const dataFilePath = path.join(cwd, `${this.name}/${dataName}.ts`)
     fs.outputFileSync(dataFilePath, data)
-    console.log(successText(`  创建data文件成功 - ${this.name}/data.ts`))
+    console.log(successText(`  创建data文件成功 - ${this.name}/${dataName}.ts`))
 
     // 输出接口代码
-    const apiFilePath = path.join(cwd, `${this.name}/${apiName}.ts`)
+    const apiFilePath = path.join(cwd, `${this.name}/${apiName}.api.ts`)
     fs.outputFileSync(apiFilePath, api)
-    console.log(successText(`  创建接口文件成功 - ${this.name}/${apiName}.ts`))
+    console.log(successText(`  创建接口文件成功 - ${this.name}/${apiName}.api.ts`))
   }
 
   /** 创建页面 */
