@@ -79,6 +79,14 @@
 <% } -%>
 </template>
 
+<script lang="ts">
+import { defineComponent } from 'vue'
+
+export default defineComponent({
+  name: '<%=name%>'
+})
+</script>
+
 <%- '<script lang="ts" setup>' %>
 <% if (funcs.includes('create') || funcs.includes('search')) { -%>
 import type { IFormData } from '#/form'
