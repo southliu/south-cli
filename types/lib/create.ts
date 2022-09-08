@@ -5,14 +5,21 @@ export abstract class ICreateProject {
   public abstract name: string; // 文件名
   public abstract targetDir: string; // 目标路径
 
+  /** 获取GitHub模板 */
+  abstract handleGetRepo() : void;
+
+  /** 
+   * 获取GitHub标签
+   * @param repo - 模板名称
+   */
+  abstract handleGetTag(repo: string) : void;
+
   /**
    * 下载模板
    * @param repo - 模板名称
+   * @param tag - 标签名称
    */
-  abstract handleDownload(repo: string): void;
-
-  /** 获取GitHub模板 */
-  abstract handleGetRepo() : void;
+  abstract handleDownload(repo: string, tag: string): void;
 
   /** 创建处理 */
   abstract handleCreate(): void;
