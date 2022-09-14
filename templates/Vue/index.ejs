@@ -5,7 +5,7 @@
       <BasicSearch
         :list="searchList"
         :data="searches.data"
-        :loading="loading"
+        :isLoading="isLoading"
 <% if (funcs.includes('create')) { -%>
         :isCreate="pagePermission.create"
         @onCreate="onCreate"
@@ -19,21 +19,21 @@
     <BasicTable
       :data="tables"
       :columns="tableColumns"
-      :loading="loading"
+      :isLoading="isLoading"
     >
       <template v-slot:operate='row'>
 <% if (funcs.includes('create')) { -%>
         <UpdateBtn
           v-if="pagePermission.update"
           class="mr-2"
-          :loading="createLoading"
+          :isLoading="isCreateLoading"
           @click="onUpdate(row.record)"
         />
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
         <DeleteBtn
           v-if="pagePermission.delete"
-          :loading="loading"
+          :isLoading="isLoading"
           @click="handleDelete(row.record.id)"
         />
 <% } -%>
@@ -43,7 +43,7 @@
     <BasicTable
       :data="tables"
       :columns="tableColumns"
-      :loading="loading"
+      :isLoading="isLoading"
     />
 <% } -%>
 <% if (funcs.includes('pagination')) { -%>
@@ -53,7 +53,7 @@
         :page="pagination.page"
         :pageSize="pagination.pageSize"
         :total="tables.total"
-        :loading="loading"
+        :isLoading="isLoading"
         @handleChange="handlePagination"
       />
     </template>
@@ -63,7 +63,7 @@
 
   <BasicModal
     v-model:visible="creates.visible"
-    :loading="createLoading"
+    :isLoading="isCreateLoading"
     :title="creates.title"
     @handleFinish="createSubmit"
     @handleCancel="onCloseCreate"
@@ -149,9 +149,9 @@ const createFormRef = ref<IBasicForm>()
 <% } -%>
 const userStore = useUserStore()
 const { permissions } = storeToRefs(userStore)
-const { loading, startLoading, endLoading } = useLoading()
+const { isLoading, startLoading, endLoading } = useLoading()
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-const { createLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
+const { isCreateLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
 <% } -%>
 
 // 权限前缀
