@@ -1,5 +1,5 @@
 import type { IPageFunctions } from '../../types'
-import { errorText, successText } from '../utils/utils'
+import { errorText, successText } from '../utils/helper'
 import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
 import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
@@ -7,7 +7,7 @@ import path from 'path'
 import ejs from 'ejs'
 
 /**
- * 生成React页面
+ * 生成Umi页面
  * 1. 输入页面名称
  * 2. 输入页面权限名称
  * 3. 输入模型名称和模型接口名称
@@ -37,7 +37,7 @@ class GeneratorPage extends ICreatePage {
     modelInterface: string
   ): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/index.ejs")
+      path.resolve(__dirname, "../../templates/Umi/index.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -59,7 +59,7 @@ class GeneratorPage extends ICreatePage {
     funcs: IPageFunctions[]
   ): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/model.ejs")
+      path.resolve(__dirname, "../../templates/Umi/model.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -76,7 +76,7 @@ class GeneratorPage extends ICreatePage {
    */
   getApiTemplate(rule: String, funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/server.ejs")
+      path.resolve(__dirname, "../../templates/Umi/server.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -99,7 +99,7 @@ class GeneratorPage extends ICreatePage {
     // 输出模板代码
     const codeFilePath = path.join(cwd, `${this.name}.tsx`)
     fs.outputFileSync(codeFilePath, code)
-    console.log(successText(`  创建react文件成功 - ${this.name}.tsx`))
+    console.log(successText(`  创建umi文件成功 - ${this.name}.tsx`))
 
     // 输出模型代码
     const modelFilePath = path.join(cwd, `${this.name}.model.ts`)

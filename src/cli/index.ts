@@ -2,8 +2,8 @@
 import { Command } from 'commander'
 import path from 'path'
 import figlet from 'figlet'
-import { createProject, createVue, createReact } from '../lib/create'
-import { cyanText, errorText, italicFont } from '../utils/utils'
+import { createProject, createVue, createUmi } from '../lib/create'
+import { cyanText, errorText, italicFont } from '../utils/helper'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
@@ -26,13 +26,13 @@ program
     createVue(name)
   })
 
-// 配置生成React页面指令
+// 配置生成Umi页面指令
 program
-  .command('create-react <page-name>')
-  .description('创建一个React页面')
+  .command('create-umi <page-name>')
+  .description('创建一个Umi页面')
   .action((name) => {
     // 执行创建方法
-    createReact(name)
+    createUmi(name)
   })
 
 // 处理错误指令

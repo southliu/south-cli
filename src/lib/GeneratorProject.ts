@@ -1,6 +1,6 @@
 import { ICreateProject } from '../../types/lib/create'
 import { getDownloadUrl, getRepoList, getTagList } from '../utils/serves'
-import { cyanText, dimText, errorText, handleLoading } from '../utils/utils'
+import { cyanText, dimText, errorText, handleLoading } from '../utils/helper'
 import downloadGitRepo from 'download-git-repo'
 import inquirer from 'inquirer'
 import util from 'util'
