@@ -12,7 +12,7 @@ export async function getName(): Promise<string> {
     message: '请输入名称(首字母大写)：'
   })
 
-  return name
+  return name ? name.trim() : ''
 }
 
 /**
@@ -26,7 +26,7 @@ export async function getTitle(): Promise<string> {
     message: '请输入标题：'
   })
 
-  return title
+  return title ? title.trim() : ''
 }
 
 /**
@@ -40,7 +40,7 @@ export async function getModel(): Promise<string> {
     message: '请输入模型：'
   })
 
-  return model
+  return model ? model.trim() : ''
 }
 
 /**
@@ -54,7 +54,7 @@ export async function getModelInterface(): Promise<string> {
     message: '请输入模型接口名称：'
   })
 
-  return modelInterface
+  return modelInterface ? modelInterface.trim() : ''
 }
 
 /**
@@ -68,7 +68,7 @@ export async function getRule(): Promise<string> {
     message: '请输入权限：'
   })
 
-  return rule
+  return rule ? rule.trim() : ''
 }
 
 /**

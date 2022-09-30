@@ -9,6 +9,8 @@
     "parens",
     "camelcase",
     "jsxdev",
-    "mkdirs"
+    "mkdirs",
+    "antd",
+    "pinia"
   ]
 }

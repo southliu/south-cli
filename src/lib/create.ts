@@ -1,6 +1,7 @@
 import path from 'path'
 import { errorText, hasFile, hasFolder } from '../utils/helper'
 import GeneratorProject from './GeneratorProject'
+import GeneratorReact from './GeneratorReact'
 import GeneratorUmi from './GeneratorUmi'
 import GeneratorVue from './GeneratorVue'
 
@@ -68,19 +69,19 @@ export async function createUmi(name: string) {
  * 生成React项目
  * @param name - 页面名称
  */
-// export async function createReact(name: string) {
-//   // 获取当前命令行选择文件
-//   const cwd = process.cwd()
-//   // 文件所在路径
-//   const filePath = path.join(cwd, `${name}.tsx`)
+export async function createReact(name: string) {
+  // 获取当前命令行选择文件
+  const cwd = process.cwd()
+  // 文件所在路径
+  const filePath = path.join(cwd, `${name}.tsx`)
 
-//   // 如果文件夹存在则退出
-//   if (hasFile(filePath)) {
-//     return console.error(errorText(`  ${name}.tsx已存在`))
-//   }
+  // 如果文件夹存在则退出
+  if (hasFile(filePath)) {
+    return console.error(errorText(`  ${name}.tsx已存在`))
+  }
 
-//   // 执行创建命令
-//   const generator = new GeneratorUmi(name)
-//   generator.handleCreate()
-// }
+  // 执行创建命令
+  const generator = new GeneratorReact(name)
+  generator.handleCreate()
+}
 

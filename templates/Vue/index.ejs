@@ -91,7 +91,7 @@ export default defineComponent({
 <% if (funcs.includes('create') || funcs.includes('search')) { -%>
 import type { IFormData } from '#/form'
 <% } -%>
-<% if (funcs.includes('create')) { -%>
+<% if (funcs.includes('create')) || funcs.includes('update')) { -%>
 import type { IBasicForm } from '@/components/Form/model'
 <% } -%>
 import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
@@ -323,9 +323,9 @@ const handleDelete = async (id: string | number) => {
     endLoading()
   }
 }
-
 <% } -%>
 <% if (funcs.includes('pagination')) { -%>
+
 /**
   * 分页
   * @param page - 当前页
