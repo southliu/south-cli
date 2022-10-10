@@ -1,7 +1,7 @@
 <% if (funcs.includes('search') || funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormList } from "#/form"
 <% } -%>
-import type { ITableColumn, ITableOptions } from '#/global'
+import type { ITableColumn, ITableOptions } from '#/public'
 import type { IRowData } from './index'
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import { INPUT_REQUIRED, SELECT_REQUIRED } from '@/utils/config'
