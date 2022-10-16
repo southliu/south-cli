@@ -4,7 +4,7 @@ import type { IPagePermission, ITableOptions } from '#/public'
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
 <% } -%>
-import { useEffect<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
+import { useEffect, useMemo<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
 tableColumns } from './data'
@@ -92,18 +92,20 @@ function User() {
   const permissionPrefix = '<%=rule%>'
 
   // 权限
-  const pagePermission: IPagePermission = {
-    page: checkPermission(`${permissionPrefix}/index`, permissions),
+  const pagePermission: IPagePermission = useMemo(() => {
+    return {
+      page: checkPermission(`${permissionPrefix}/index`, permissions),
 <% if (funcs.includes('create')) { -%>
-    create: checkPermission(`${permissionPrefix}/create`, permissions),
+      create: checkPermission(`${permissionPrefix}/create`, permissions),
 <% } -%>
 <% if (funcs.includes('update')) { -%>
-    update: checkPermission(`${permissionPrefix}/update`, permissions),
+      update: checkPermission(`${permissionPrefix}/update`, permissions),
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
-    delete: checkPermission(`${permissionPrefix}/delete`, permissions)
+      delete: checkPermission(`${permissionPrefix}/delete`, permissions)
 <% } -%>
-  }
+    }
+  }, [permissions])
 
   useEffect(() => {
     if (pagePermission.page) getPage()
@@ -226,10 +228,10 @@ function User() {
 
   /**
    * 渲染操作
-   * @param value - 当前值
+   * @param _ - 当前值
    * @param record - 当前行参数
    */
-  const optionRender: ITableOptions<IRowData> = (value, record) => (
+  const optionRender: ITableOptions<IRowData> = (_, record) => (
     <>
 <% if (funcs.includes('create')) { -%>
       {
