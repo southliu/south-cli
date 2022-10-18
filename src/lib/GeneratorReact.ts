@@ -1,6 +1,6 @@
 import type { IPageFunctions } from '../../types'
 import { getFunctions, getName, getRule } from '../utils/inquirer'
-import { errorText, getApiName, hasFolder, successText } from '../utils/helper'
+import { errorText, getApiName, getApiPath, hasFolder, successText } from '../utils/helper'
 import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
@@ -9,7 +9,7 @@ import ejs from 'ejs'
 /**
  * 生成React页面
  * 1. 判断是否有同名文件夹
- * 2. 输入页面名称，需要与keepalive一致
+ * 2. 输入页面名称
  * 3. 输入页面权限名称
  * 4. 选择页面功能：增删改查
  * 5. 生成模板页面
@@ -23,7 +23,7 @@ class GeneratorReact extends ICreatePage {
 
   /**
    * 获取模板
-   * @param name - 页面唯一名称，需要与keepalive一致
+   * @param name - 页面唯一名称
    * @param rule - 权限
    * @param apiName - 接口名称
    * @param funcs - 功能数据
@@ -103,19 +103,24 @@ class GeneratorReact extends ICreatePage {
     fs.mkdirsSync(filePath)
 
     // 输出模板代码
-    const codeFilePath = path.join(cwd, `${this.name}/index.tsx`)
+    const codeFilePath = path.join(cwd, `${this.name}\\index.tsx`)
     fs.outputFileSync(codeFilePath, code)
-    console.log(successText(`  创建React文件成功 - ${this.name}/index.tsx`))
+    console.log(successText(`  创建React文件成功 - ${codeFilePath}`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}/data.ts`)
+    const dataFilePath = path.join(cwd, `${this.name}\\data.ts`)
     fs.outputFileSync(dataFilePath, data)
-    console.log(successText(`  创建data文件成功 - ${this.name}/data.ts`))
+    console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
+
+    // 获取接口文件路径
+    const apiPath = getApiPath()
+    let apiFilePath = apiPath ? `${apiPath}\\${apiName}.ts` : ''
+    // 如果接口文件为空则为当前文件下创建
+    if (!apiFilePath) apiFilePath = path.join(cwd, `${this.name}\\${apiName}.ts`)
 
     // 输出接口代码
-    const apiFilePath = path.join(cwd, `${this.name}/${apiName}.ts`)
     fs.outputFileSync(apiFilePath, api)
-    console.log(successText(`  创建接口文件成功 - ${this.name}/${apiName}.ts`))
+    console.log(successText(`  创建接口文件成功 - ${apiFilePath}`))
   }
 
   /** 创建页面 */
@@ -131,7 +136,7 @@ class GeneratorReact extends ICreatePage {
       return console.error(errorText(`  ${this.name}文件夹已存在`))
     }
 
-    // 2. 输入页面名称，需要与keepalive一致
+    // 2. 输入页面名称
     const name = await getName()
     if (!name) return console.log(errorText('  请输入有效名称'))
 

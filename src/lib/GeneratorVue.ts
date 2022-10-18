@@ -103,19 +103,19 @@ class GeneratorVue extends ICreatePage {
     fs.mkdirsSync(filePath)
 
     // 输出模板代码
-    const codeFilePath = path.join(cwd, `${this.name}/index.vue`)
+    const codeFilePath = path.join(cwd, `${this.name}\\index.vue`)
     fs.outputFileSync(codeFilePath, code)
-    console.log(successText(`  创建vue文件成功 - ${this.name}/index.vue`))
+    console.log(successText(`  创建vue文件成功 - ${codeFilePath}`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}/data.ts`)
+    const dataFilePath = path.join(cwd, `${this.name}\\data.ts`)
     fs.outputFileSync(dataFilePath, data)
-    console.log(successText(`  创建data文件成功 - ${this.name}/data.ts`))
+    console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
 
     // 输出接口代码
-    const apiFilePath = path.join(cwd, `${this.name}/${apiName}.ts`)
+    const apiFilePath = path.join(cwd, `${this.name}\\${apiName}.ts`)
     fs.outputFileSync(apiFilePath, api)
-    console.log(successText(`  创建接口文件成功 - ${this.name}/${apiName}.ts`))
+    console.log(successText(`  创建接口文件成功 - ${apiFilePath}`))
   }
 
   /** 创建页面 */
