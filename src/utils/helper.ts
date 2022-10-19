@@ -33,7 +33,11 @@ export function hasFolder(path: string): boolean {
  * 获取API文件路径
  * @param name - API文件名
  */
-export function getApiPath(name = 'servers'): string {
+interface IGetApiPathResult {
+  lastPath: string; // 最后窃取路径，转化为@/servers/lastPath
+  fullPath: string; // 完整的API路径
+}
+export function getApiPath(name = 'servers'): IGetApiPathResult {
   const lastArr: string[] = [], text = /^[A-Z]:\\$/
   let max = 0, // 最大层级，大于10则退出循环
       cwd = process.cwd() // 获取当前命令行选择文件
@@ -50,15 +54,18 @@ export function getApiPath(name = 'servers'): string {
     // 存在该文件则退出
     if (has) {
       const lastPath = lastArr.join('\\')
-      return `${apiPath}\\${lastPath}`
+      return {
+        lastPath: lastArr.join('/'),
+        fullPath: `${apiPath}\\${lastPath}`
+      }
     }
 
     // 如果当前文件是硬盘空间则退出
-    if (text.test(cwd)) return ''
+    if (text.test(cwd)) return { lastPath: '', fullPath: '' }
     max++
   }
 
-  return ''
+  return { lastPath: '', fullPath: '' }
 }
 
 /**

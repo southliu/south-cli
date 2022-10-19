@@ -124,12 +124,12 @@ import {
   create<%=name%><% } -%><% if (funcs.includes('update')) { %>,
   update<%=name%><% } -%><% if (funcs.includes('delete')) { %>,
   delete<%=name%><% } %>
-} from './<%=apiName%>'
+} from '<%=apiPath%>'
 <% } else { -%>
 import { get<%=name%>Page<% if (funcs.includes('update')) { -%>, get<%=name%>ById<% } -%>
 <% if (funcs.includes('create')) { -%>, create<%=name%><% } -%>
 <% if (funcs.includes('update')) { -%>, update<%=name%><% } -%>
-<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from './<%=apiName%>'
+<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from '<%=apiPath%>'
 <% } -%>
 import BasicContent from '@/components/Content/BasicContent.vue'
 import BasicTable from '@/components/Table/BasicTable.vue'

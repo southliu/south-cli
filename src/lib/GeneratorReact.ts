@@ -22,6 +22,17 @@ class GeneratorReact extends ICreatePage {
   }
 
   /**
+   * 获取模板接口文件路径
+   * @param apiName - 接口名称
+   */
+  getTemplateApiPath(apiName: string): string {
+    // 获取接口文件路径
+    const apiPath = getApiPath().lastPath
+    const result = apiPath ? `@/servers/${apiPath}/${apiName}` : `./${apiName}`
+    return result
+  }
+
+  /**
    * 获取模板
    * @param name - 页面唯一名称
    * @param rule - 权限
@@ -37,9 +48,11 @@ class GeneratorReact extends ICreatePage {
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/React/index.ejs")
     )
+    // 获取接口文件路径
+    const apiPath = this.getTemplateApiPath(apiName)
     const code = ejs.render(
       templateCode.toString(),
-      { name, rule, apiName, funcs }
+      { name, rule, apiPath, funcs }
     )
 
     return code
@@ -65,6 +78,7 @@ class GeneratorReact extends ICreatePage {
    * 获取接口模板
    * @param rule - 权限
    * @param name - 名称
+   * @param funcs - 功能数据
    */
   getApiTemplate(
     rule: string,
@@ -80,6 +94,21 @@ class GeneratorReact extends ICreatePage {
     )
 
     return code
+  }
+
+  /**
+   * 获取接口文件路径
+   * @param apiName - 接口名称
+   */
+  getApiFilePath(apiName: string): string {
+    // 获取当前命令行选择文件
+    const cwd = process.cwd()
+    // 获取接口文件路径
+    const apiPath = getApiPath().fullPath
+    let result = apiPath ? `${apiPath}\\${apiName}.ts` : ''
+    // 如果接口文件为空则为当前文件下创建
+    if (!result) result = path.join(cwd, `${this.name}\\${apiName}.ts`)
+    return result
   }
 
   /**
@@ -112,13 +141,8 @@ class GeneratorReact extends ICreatePage {
     fs.outputFileSync(dataFilePath, data)
     console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
 
-    // 获取接口文件路径
-    const apiPath = getApiPath()
-    let apiFilePath = apiPath ? `${apiPath}\\${apiName}.ts` : ''
-    // 如果接口文件为空则为当前文件下创建
-    if (!apiFilePath) apiFilePath = path.join(cwd, `${this.name}\\${apiName}.ts`)
-
     // 输出接口代码
+    const apiFilePath = this.getApiFilePath(apiName)
     fs.outputFileSync(apiFilePath, api)
     console.log(successText(`  创建接口文件成功 - ${apiFilePath}`))
   }

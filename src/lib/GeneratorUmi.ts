@@ -1,7 +1,6 @@
 import type { IPageFunctions } from '../../types'
 import { errorText, successText } from '../utils/helper'
 import { getFunctions, getModel, getModelInterface, getTitle, getRule } from '../utils/inquirer'
-import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
@@ -14,10 +13,9 @@ import ejs from 'ejs'
  * 4. 选择页面功能：增删改查
  * 5. 生成模板页面
  */
-class GeneratorPage extends ICreatePage {
+class GeneratorPage {
   name: string // 文件名
   constructor(name: string) {
-    super()
     this.name = name
   }
 
