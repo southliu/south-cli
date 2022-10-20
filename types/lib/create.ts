@@ -40,12 +40,12 @@ export abstract class ICreatePage {
    * @param apiName - 接口名称
    * @param funcs - 功能数据
    */
-   abstract getTemplate(
-    name: string,
-    rule: string,
-    apiName: string,
-    funcs: IPageFunctions[],
-  ): string;
+  // abstract getTemplate(
+  //   name: string,
+  //   rule: string,
+  //   apiName: string,
+  //   funcs: IPageFunctions[],
+  // ): string;
 
   
   /**

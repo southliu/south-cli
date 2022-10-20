@@ -12,6 +12,7 @@ tableColumns } from './data'
 import { message } from 'antd'
 <% } -%>
 <% if (funcs.includes('search') || funcs.includes('delete')) { -%>
+import { useTitle } from '@/hooks/useTitle'
 import { useLoading } from '@/hooks/useLoading'
 <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
@@ -63,6 +64,7 @@ const initCreate = {
 <% } -%>
 
 function User() {
+  useTitle('<%=title%>')
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const createFormRef = useRef<IFormFn>(null)
 <% } -%>

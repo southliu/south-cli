@@ -9,7 +9,7 @@ export async function getName(): Promise<string> {
   const { name } = await inquirer.prompt({
     name: 'name',
     type: 'input',
-    message: '请输入名称(首字母大写)：'
+    message: '请输入名称：'
   })
 
   return name ? name.trim() : ''

@@ -1,5 +1,5 @@
 import type { IPageFunctions } from '../../types'
-import { getFunctions, getName, getRule } from '../utils/inquirer'
+import { getFunctions, getName, getRule, getTitle } from '../utils/inquirer'
 import { errorText, getApiName, getApiPath, hasFolder, successText } from '../utils/helper'
 import { ICreatePage } from '../../types/lib/create'
 import fs from 'fs-extra'
@@ -9,10 +9,11 @@ import ejs from 'ejs'
 /**
  * 生成React页面
  * 1.判断是否有同名文件夹
- * 2.输入页面名称
- * 3.输入页面权限名称
- * 4.选择页面功能：增删改查
- * 5.生成模板页面
+ * 2.输入页面标题
+ * 3.输入页面名称
+ * 4.输入页面权限名称
+ * 5.选择页面功能：增删改查
+ * 6.生成模板页面
  */
 class GeneratorReact extends ICreatePage {
   name: string // 文件名
@@ -35,12 +36,14 @@ class GeneratorReact extends ICreatePage {
   /**
    * 获取模板
    * @param name - 页面唯一名称
+   * @param title - 标题
    * @param rule - 权限
    * @param apiName - 接口名称
    * @param funcs - 功能数据
    */
   getTemplate(
     name: string,
+    title: string,
     rule: string,
     apiName: string,
     funcs: IPageFunctions[],
@@ -52,7 +55,7 @@ class GeneratorReact extends ICreatePage {
     const apiPath = this.getTemplateApiPath(apiName)
     const code = ejs.render(
       templateCode.toString(),
-      { name, rule, apiPath, funcs }
+      { name, title, rule, apiPath, funcs }
     )
 
     return code
@@ -160,21 +163,25 @@ class GeneratorReact extends ICreatePage {
       return console.error(errorText(`  ${this.name}文件夹已存在`))
     }
 
-    // 2.输入页面名称
+    // 2.输入页面标题
+    const title = await getTitle()
+    if (!title) return console.log(errorText('  请输入有效标题'))
+
+    // 3.输入页面名称
     const name = await getName()
     if (!name) return console.log(errorText('  请输入有效名称'))
 
-    // 3.获取权限
+    // 4.获取权限
     const rule = await getRule()
     if (!rule) return console.log(errorText('  请输入有效权限'))
     // 获取api文件名称
     const apiName = getApiName(rule)
 
-    // 4.选择页面功能：增删改查
+    // 5.选择页面功能：增删改查
     const funcs = await getFunctions()
 
-    // 5.生成模板页面
-    const codeTemplate = this.getTemplate(name, rule, apiName, funcs)
+    // 6.生成模板页面
+    const codeTemplate = this.getTemplate(name, title, rule, apiName, funcs)
     const dataTemplate = this.getDateTemplate(funcs)
     const apiTemplate = this.getApiTemplate(rule, name, funcs)
     if (!codeTemplate || !dataTemplate || !apiTemplate) {
