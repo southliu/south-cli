@@ -8,6 +8,9 @@ import path from 'path'
 
 /**
  * 创建项目类
+ * 1.获取GitHub模板
+ * 2.获取GitHub标签
+ * 3.执行下载
  */
 class GeneratorProject extends ICreateProject {
   name: string // 文件名
@@ -94,15 +97,15 @@ class GeneratorProject extends ICreateProject {
   /** 创建处理 */
   async handleCreate() {
     try {
-      // 获取模板
+      // 1.获取GitHub模板
       const repo = await this.handleGetRepo()
       console.log(dimText(`  获取项目列表成功`))
 
-      // 获取标签
+      // 2.获取GitHub标签
       const tag = await this.handleGetTag(repo)
       console.log(dimText(`  获取项目列表成功`))
 
-      // 执行下载
+      // 3.执行下载
       await this.handleDownload(repo, tag)
 
       // 模板使用提示

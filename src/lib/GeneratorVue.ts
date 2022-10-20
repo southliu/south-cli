@@ -8,11 +8,11 @@ import ejs from 'ejs'
 
 /**
  * 生成Vue页面
- * 1. 判断是否有同名文件夹
- * 2. 输入页面名称，需要与keepalive一致
- * 3. 输入页面权限名称
- * 4. 选择页面功能：增删改查
- * 5. 生成模板页面
+ * 1.判断是否有同名文件夹
+ * 2.输入页面名称，需要与keepalive一致
+ * 3.输入页面权限名称
+ * 4.选择页面功能：增删改查
+ * 5.生成模板页面
  */
 class GeneratorVue extends ICreatePage {
   name: string // 文件名
@@ -154,26 +154,26 @@ class GeneratorVue extends ICreatePage {
     // 文件夹所在路径
     const filePath = path.join(cwd, this.name)
 
-    // 1. 判断是否有同名文件夹
+    // 1.判断是否有同名文件夹
     if (hasFolder(filePath)) {
       // 如果文件夹存在则退出
       return console.error(errorText(`  ${this.name}文件夹已存在`))
     }
 
-    // 2. 输入页面名称，需要与keepalive一致
+    // 2.输入页面名称，需要与keepalive一致
     const name = await getName()
     if (!name) return console.log(errorText('  请输入有效名称'))
 
-    // 3. 获取权限
+    // 3.获取权限
     const rule = await getRule()
     if (!rule) return console.log(errorText('  请输入有效权限'))
     // 获取api文件名称
     const apiName = getApiName(rule)
 
-    // 4. 选择页面功能：增删改查
+    // 4.选择页面功能：增删改查
     const funcs = await getFunctions()
 
-    // 5. 生成模板页面
+    // 5.生成模板页面
     const codeTemplate = this.getTemplate(name, rule, apiName, funcs)
     const dataTemplate = this.getDateTemplate(funcs)
     const apiTemplate = this.getApiTemplate(rule, name, funcs)

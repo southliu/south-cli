@@ -1,4 +1,16 @@
-# 使用教程：
+# South-CLI
+
+[![npm][npm-image]][npm-url]
+[![l][l-image]][l-url]
+
+[npm-image]: https://img.shields.io/npm/v/south-cli
+[npm-url]: https://www.npmjs.com/package/south-cli
+[l-image]: https://img.shields.io/npm/l/south-cli
+[l-url]: https://github.com/southliu/south-cli
+
+### CLI脚手架生成项目和页面。
+
+## 使用教程：
 ### 全局安装
 ```
 npm i south-cli -g

@@ -7,11 +7,11 @@ import ejs from 'ejs'
 
 /**
  * 生成Umi页面
- * 1. 输入页面名称
- * 2. 输入页面权限名称
- * 3. 输入模型名称和模型接口名称
- * 4. 选择页面功能：增删改查
- * 5. 生成模板页面
+ * 1.输入页面名称
+ * 2.输入页面权限名称
+ * 3.输入模型名称和模型接口名称
+ * 4.选择页面功能：增删改查
+ * 5.生成模板页面
  */
 class GeneratorPage {
   name: string // 文件名
@@ -112,23 +112,23 @@ class GeneratorPage {
   
   /** 创建页面 */
   async handleCreate() {
-    // 1. 输入页面名称
+    // 1.输入页面名称
     const title = await getTitle()
     if (!title) return console.log(errorText('  请输入有效标题'))
 
-    // 2. 获取权限
+    // 2.获取权限
     const rule = await getRule()
     if (!rule) return console.log(errorText('  请输入有效权限'))
 
-    // 3. 输入模型名称和模型接口名称
+    // 3.输入模型名称和模型接口名称
     const model = await getModel()
     const modelInterface = await getModelInterface()
     if (!model || !modelInterface) return console.log(errorText('  请输入有效模型'))
 
-    // 4. 选择页面功能：增删改查
+    // 4.选择页面功能：增删改查
     const funcs = await getFunctions()
 
-    // 5. 生成模板页面
+    // 5.生成模板页面
     const codeTemplate = this.getTemplate(title, rule, funcs, model, modelInterface)
     const modelTemplate = this.getModelTemplate(model, modelInterface, funcs)
     const apiTemplate = this.getApiTemplate(rule, funcs)
