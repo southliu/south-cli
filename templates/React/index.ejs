@@ -4,7 +4,7 @@ import type { IPagePermission, ITableOptions } from '#/public'
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
 <% } -%>
-import { useEffect, useMemo<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
+import { useCallback, useEffect, useMemo<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
 tableColumns } from './data'
@@ -13,10 +13,6 @@ import { message } from 'antd'
 <% } -%>
 <% if (funcs.includes('search') || funcs.includes('delete')) { -%>
 import { useTitle } from '@/hooks/useTitle'
-import { useLoading } from '@/hooks/useLoading'
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-import { useCreateLoading } from '@/hooks/useCreateLoading'
 <% } -%>
 import { useSelector } from 'react-redux'
 import { checkPermission } from '@/utils/permissions'
@@ -73,6 +69,14 @@ function User() {
 <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const [isCreateOpen, setCreateOpen] = useState(false)
+<% } -%>
+<% if (funcs.includes('search') || funcs.includes('delete')) { -%>
+  const [isLoading, setLoading] = useState(false)
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+  const [isCreateLoading, setCreateLoading] = useState(false)
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const [createTitle, setCreateTitle] = useState(ADD_TITLE)
   const [createId, setCreateId] = useState('')
   const [createData, setCreateData] = useState<IFormData>(initCreate)
@@ -84,11 +88,6 @@ function User() {
 <% } -%>
   const [tableData, setTableData] = useState<IFormData[]>([])
   const permissions = useSelector((state: RootState) => state.user.permissions)
-
-  const { isLoading, startLoading, endLoading } = useLoading()
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
-  const { isCreateLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
-<% } -%>
 
   // 权限前缀
   const permissionPrefix = '<%=rule%>'
@@ -108,26 +107,17 @@ function User() {
 <% } -%>
     }
   }, [permissions])
-
-  useEffect(() => {
-    if (pagePermission.page) getPage()
-  }, [permissions])
-
-  /** 获取表格数据 */
-  const getPage = () => {
-    handleSearch(searchData)
-  }
 <% if (funcs.includes('search')) { -%>
 
   /**
    * 搜索提交
    * @param values - 表单返回数据
    */
-  const handleSearch = async (values: IFormData) => {
+  const handleSearch = useCallback(async (values: IFormData) => {
     setSearchData(values)
     const query = { page, pageSize, ...values }
     try {
-      startLoading()
+      setLoading(true)
       const { data: { data } } = await get<%=name%>Page(query)
       const { items<% if (funcs.includes('pagination')) { -%>, total<% } -%> } = data
 <% if (funcs.includes('pagination')) { -%>
@@ -135,9 +125,18 @@ function User() {
 <% } -%>
       setTableData(items)
     } finally {
-      endLoading()
+      setLoading(false)
     }
-  }
+  }, [page, pageSize])
+
+  /** 获取表格数据 */
+  const getPage = useCallback(() => {
+    handleSearch(searchData)
+  }, [handleSearch, searchData])
+
+  useEffect(() => {
+    if (pagePermission.page) getPage()
+  }, [getPage, pagePermission.page])
 <% } -%>
 <% if (funcs.includes('create')) { -%>
 
@@ -162,11 +161,11 @@ function User() {
     setCreateData(initCreate)
 
     try {
-      startCreateLoading()
+      setCreateLoading(true)
       const { data: { data } } = await get<%=name%>ById(id as string)
       setCreateData(data)
     } finally {
-      endCreateLoading()
+      setCreateLoading(false)
     }
   }
 <% } -%>
@@ -183,7 +182,7 @@ function User() {
    */
   const handleCreate = async (values: IFormData) => {
     try {
-      startCreateLoading()
+      setCreateLoading(true)
       const functions = () => createId ? update<%=name%>(createId, values) : create<%=name%>(values)
       const { data } = await functions()
       getPage()
@@ -191,7 +190,7 @@ function User() {
       createFormRef.current?.handleReset()
       message.success(data?.message || '操作成功')
     } finally {
-      endCreateLoading()
+      setCreateLoading(false)
     }
   }
 <% } -%>
@@ -203,14 +202,14 @@ function User() {
    */
   const onDelete = async (id: string) => {
     try {
-      startLoading()
+      setLoading(true)
       const { data } = await delete<%=name%>(id as string)
       if (data?.code === 200) {
         message.success(data?.message || '删除成功')
         getPage()
       }
     } finally {
-      endLoading()
+      setLoading(false)
     }
   }
 <% } -%>
@@ -273,13 +272,14 @@ function User() {
         
 <% } -%>
         <BasicTable
+          loading={isLoading}
           columns={tableColumns(optionRender)}
           dataSource={tableData}
         />
 <% if (funcs.includes('pagination')) { -%>
 
         <BasicPagination
-          isLoading={isLoading}
+          disabled={isLoading}
           defaultCurrent={page}
           defaultPageSize={pageSize}
           total={total}
@@ -290,7 +290,7 @@ function User() {
 
         <BasicModal
           title={createTitle}
-          isOpen={isCreateOpen}
+          open={isCreateOpen}
           confirmLoading={isCreateLoading}
           onOk={createSubmit}
           onCancel=<%- '{() => setCreateOpen(false)}' %>
