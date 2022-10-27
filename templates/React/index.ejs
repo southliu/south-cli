@@ -51,6 +51,14 @@ import BasicPagination from '@/components/Pagination/BasicPagination'
 export interface IRowData {
   id: string;
 }
+<% if (funcs.includes('search')) { -%>
+
+// 初始化搜索
+const initSearchData = {
+  page: 1,
+  pageSize: 20
+}
+<% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
 // 初始化新增数据
@@ -61,13 +69,11 @@ const initCreate = {
 
 function User() {
   useTitle('<%=title%>')
+<% if (funcs.includes('search')) { -%>
+  const searchFormRef = useRef<IFormFn>(null)
+<% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const createFormRef = useRef<IFormFn>(null)
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-  const [searchData, setSearchData] = useState<IFormData>({})
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const [isCreateOpen, setCreateOpen] = useState(false)
 <% } -%>
 <% if (funcs.includes('search') || funcs.includes('delete')) { -%>
@@ -82,9 +88,9 @@ function User() {
   const [createData, setCreateData] = useState<IFormData>(initCreate)
 <% } -%>
 <% if (funcs.includes('pagination')) { -%>
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
-  const [total, setTotal] = useState(1)
+  const [page, setPage] = useState(initSearchData.page)
+  const [pageSize, setPageSize] = useState(initSearchData.pageSize)
+  const [total, setTotal] = useState(0)
 <% } -%>
   const [tableData, setTableData] = useState<IFormData[]>([])
   const permissions = useSelector((state: RootState) => state.user.permissions)
@@ -110,15 +116,22 @@ function User() {
 <% if (funcs.includes('search')) { -%>
 
   /**
+   * 点击搜索
+   * @param values - 表单返回数据
+   */
+  const onSearch = (values: IFormData) => {
+    setPage(1)
+    handleSearch({ page: 1, pageSize, ...values })
+  }
+
+  /**
    * 搜索提交
    * @param values - 表单返回数据
    */
   const handleSearch = useCallback(async (values: IFormData) => {
-    setSearchData(values)
-    const query = { page, pageSize, ...values }
     try {
       setLoading(true)
-      const { data: { data } } = await get<%=name%>Page(query)
+      const { data: { data } } = await get<%=name%>Page(values)
       const { items<% if (funcs.includes('pagination')) { -%>, total<% } -%> } = data
 <% if (funcs.includes('pagination')) { -%>
       setTotal(total)
@@ -127,16 +140,19 @@ function User() {
     } finally {
       setLoading(false)
     }
-  }, [page, pageSize])
+  }, [])
 
   /** 获取表格数据 */
   const getPage = useCallback(() => {
-    handleSearch(searchData)
-  }, [handleSearch, searchData])
+    const formData = searchFormRef.current?.getFieldsValue() || {}
+    const params = { ...formData, page, pageSize }
+    handleSearch(params)
+  }, [handleSearch, page, pageSize])
 
+  // 首次进入自动加载接口数据
   useEffect(() => {
-    if (pagePermission.page) getPage()
-  }, [getPage, pagePermission.page])
+    if (pagePermission.page) handleSearch({ ...initSearchData })
+  }, [handleSearch, pagePermission.page])
 <% } -%>
 <% if (funcs.includes('create')) { -%>
 
@@ -223,7 +239,8 @@ function User() {
   const onChangePagination = (page: number, pageSize: number) => {
     setPage(page)
     setPageSize(pageSize)
-    handleSearch({ ...searchData, page, pageSize })
+    const formData = searchFormRef.current?.getFieldsValue()
+    handleSearch({ ...formData, page, pageSize })
   }
 <% } -%>
 
@@ -262,12 +279,13 @@ function User() {
       <>
 <% if (funcs.includes('search')) { -%>
         <BasicSearch
+          formRef={searchFormRef}
           list={searchList}
-          data={searchData}
+          data={initSearchData}
           isLoading={isLoading}
           isCreate={pagePermission.create}
           onCreate={onCreate}
-          handleFinish={handleSearch}
+          handleFinish={onSearch}
         />
         
 <% } -%>
