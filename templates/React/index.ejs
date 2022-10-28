@@ -4,10 +4,10 @@ import type { IPagePermission, ITableOptions } from '#/public'
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
 <% } -%>
-import { useCallback, useEffect, useMemo<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
+import { useCallback, useEffect<% if (funcs.includes('create') || funcs.includes('update')) { %>, useRef<% } %>, useState } from 'react'
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
-tableColumns } from './data'
+tableColumns } from './model'
 <% if (funcs.includes('create') || funcs.includes('update') || funcs.includes('delete')) { -%>
 import { message } from 'antd'
 <% } -%>
@@ -54,7 +54,7 @@ export interface IRowData {
 <% if (funcs.includes('search')) { -%>
 
 // 初始化搜索
-const initSearchData = {
+const initSearch = {
   page: 1,
   pageSize: 20
 }
@@ -67,7 +67,7 @@ const initCreate = {
 }
 <% } -%>
 
-function User() {
+function Page() {
   useTitle('<%=title%>')
 <% if (funcs.includes('search')) { -%>
   const searchFormRef = useRef<IFormFn>(null)
@@ -88,8 +88,8 @@ function User() {
   const [createData, setCreateData] = useState<IFormData>(initCreate)
 <% } -%>
 <% if (funcs.includes('pagination')) { -%>
-  const [page, setPage] = useState(initSearchData.page)
-  const [pageSize, setPageSize] = useState(initSearchData.pageSize)
+  const [page, setPage] = useState(initSearch.page)
+  const [pageSize, setPageSize] = useState(initSearch.pageSize)
   const [total, setTotal] = useState(0)
 <% } -%>
   const [tableData, setTableData] = useState<IFormData[]>([])
@@ -99,20 +99,18 @@ function User() {
   const permissionPrefix = '<%=rule%>'
 
   // 权限
-  const pagePermission: IPagePermission = useMemo(() => {
-    return {
-      page: checkPermission(`${permissionPrefix}/index`, permissions),
+  const pagePermission: IPagePermission = {
+    page: checkPermission(`${permissionPrefix}/index`, permissions),
 <% if (funcs.includes('create')) { -%>
-      create: checkPermission(`${permissionPrefix}/create`, permissions),
+    create: checkPermission(`${permissionPrefix}/create`, permissions),
 <% } -%>
 <% if (funcs.includes('update')) { -%>
-      update: checkPermission(`${permissionPrefix}/update`, permissions),
+    update: checkPermission(`${permissionPrefix}/update`, permissions),
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
-      delete: checkPermission(`${permissionPrefix}/delete`, permissions)
+    delete: checkPermission(`${permissionPrefix}/delete`, permissions)
 <% } -%>
-    }
-  }, [permissions])
+  }
 <% if (funcs.includes('search')) { -%>
 
   /**
@@ -142,16 +140,9 @@ function User() {
     }
   }, [])
 
-  /** 获取表格数据 */
-  const getPage = useCallback(() => {
-    const formData = searchFormRef.current?.getFieldsValue() || {}
-    const params = { ...formData, page, pageSize }
-    handleSearch(params)
-  }, [handleSearch, page, pageSize])
-
   // 首次进入自动加载接口数据
-  useEffect(() => {
-    if (pagePermission.page) handleSearch({ ...initSearchData })
+  useEffect(() => { 
+    if (pagePermission.page) handleSearch({ ...initSearch })
   }, [handleSearch, pagePermission.page])
 <% } -%>
 <% if (funcs.includes('create')) { -%>
@@ -190,6 +181,13 @@ function User() {
   /** 表格提交 */
   const createSubmit = () => {
     createFormRef.current?.handleSubmit()
+  }
+
+  /** 获取表格数据 */
+  const getPage = () => {
+    const formData = searchFormRef.current?.getFieldsValue() || {}
+    const params = { ...formData, page, pageSize }
+    handleSearch(params)
   }
 
   /**
@@ -281,7 +279,7 @@ function User() {
         <BasicSearch
           formRef={searchFormRef}
           list={searchList}
-          data={initSearchData}
+          data={initSearch}
           isLoading={isLoading}
           isCreate={pagePermission.create}
           onCreate={onCreate}
@@ -327,4 +325,4 @@ function User() {
   )
 }
 
-export default User
+export default Page

@@ -109,7 +109,7 @@ import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
 <% } -%>
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
-tableColumns } from './data'
+tableColumns } from './model'
 import { useLoading } from '@/hooks/useLoading'
 <% if (funcs.includes('create')) { -%>
 import { useCreateLoading } from '@/hooks/useCreateLoading'

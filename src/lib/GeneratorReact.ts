@@ -67,7 +67,7 @@ class GeneratorReact extends ICreatePage {
    */
   getDateTemplate(funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/data.ejs")
+      path.resolve(__dirname, "../../templates/React/model.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -140,7 +140,7 @@ class GeneratorReact extends ICreatePage {
     console.log(successText(`  创建React文件成功 - ${codeFilePath}`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}\\data.ts`)
+    const dataFilePath = path.join(cwd, `${this.name}\\model.ts`)
     fs.outputFileSync(dataFilePath, data)
     console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
 
