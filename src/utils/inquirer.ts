@@ -1,11 +1,8 @@
 import type { IPageFunctions } from '../../types'
 import inquirer from 'inquirer'
 
-/**
- * 获取页面名称
- */
+/** 获取页面名称 */
 export async function getName(): Promise<string> {
-  // 获取名称
   const { name } = await inquirer.prompt({
     name: 'name',
     type: 'input',
@@ -15,11 +12,8 @@ export async function getName(): Promise<string> {
   return name ? name.trim() : ''
 }
 
-/**
- * 获取页面标题
- */
+/** 获取页面标题 */
 export async function getTitle(): Promise<string> {
-  // 获取标题
   const { title } = await inquirer.prompt({
     name: 'title',
     type: 'input',
@@ -29,11 +23,8 @@ export async function getTitle(): Promise<string> {
   return title ? title.trim() : ''
 }
 
-/**
- * 获取模型名称
- */
+/** 获取模型名称 */
 export async function getModel(): Promise<string> {
-  // 获取模型
   const { model } = await inquirer.prompt({
     name: 'model',
     type: 'input',
@@ -43,11 +34,8 @@ export async function getModel(): Promise<string> {
   return model ? model.trim() : ''
 }
 
-/**
- * 获取模型接口名称
- */
+/** 获取模型接口名称 */
 export async function getModelInterface(): Promise<string> {
-  // 获取模型
   const { modelInterface } = await inquirer.prompt({
     name: 'modelInterface',
     type: 'input',
@@ -57,11 +45,8 @@ export async function getModelInterface(): Promise<string> {
   return modelInterface ? modelInterface.trim() : ''
 }
 
-/**
- * 获取权限名称
- */
+/** 获取权限名称 */
 export async function getRule(): Promise<string> {
-  // 获取标题
   const { rule } = await inquirer.prompt({
     name: 'rule',
     type: 'input',
@@ -71,9 +56,7 @@ export async function getRule(): Promise<string> {
   return rule ? rule.trim() : ''
 }
 
-/**
- * 获取功能
- */
+/** 获取功能 */
 export async function getFunctions(): Promise<IPageFunctions[]> {
   // 询问基础功能
   const { functions }: { functions: IPageFunctions[] } = await inquirer.prompt({

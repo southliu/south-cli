@@ -9,9 +9,19 @@ import {
 } from '../lib/create'
 import path from 'path'
 import figlet from 'figlet'
+import Analyzer from '../lib/analyzer'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
+
+// 配置链接生成页面
+program
+  .command('analyzer <url>')
+  .description('创建一个项目')
+  .action((url) => {
+    // 执行创建方法
+    new Analyzer().getData(url)
+  })
 
 // 配置生成项目指令
 program
