@@ -1,9 +1,9 @@
 import path from 'path'
 import { errorText, hasFile, hasFolder } from '../utils/helper'
-import GeneratorProject from './GeneratorProject'
-import GeneratorReact from './GeneratorReact'
-import GeneratorUmi from './GeneratorUmi'
-import GeneratorVue from './GeneratorVue'
+import GeneratorProject from './generatorProject'
+import GeneratorReact from './generatorReact'
+import GeneratorUmi from './generatorUmi'
+import GeneratorVue from './generatorVue'
 
 /**
  * 生成项目

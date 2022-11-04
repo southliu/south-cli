@@ -6,6 +6,30 @@ import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
 
+// 模板参数
+interface ITemplate {
+  name: string;
+  rule: string;
+  apiName: string;
+  funcs: IPageFunctions[];
+}
+
+// 接口参数
+interface IApiTemplate {
+  rule: string;
+  name: string;
+  funcs: IPageFunctions[];
+}
+
+// 生成代码参数
+interface IGenerator {
+  code: string;
+  data: string;
+  api: string;
+  apiName: string;
+  filePath: string;
+}
+
 /**
  * 生成Vue页面
  * 1.判断是否有同名文件夹
@@ -14,7 +38,7 @@ import ejs from 'ejs'
  * 4.选择页面功能：增删改查
  * 5.生成模板页面
  */
-class GeneratorVue extends ICreatePage {
+class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   name: string // 文件名
   constructor(name: string) {
     super()
@@ -34,17 +58,10 @@ class GeneratorVue extends ICreatePage {
 
   /**
    * 获取模板
-   * @param name - 页面唯一名称，需要与keepalive一致
-   * @param rule - 权限
-   * @param apiName - 接口名称
-   * @param funcs - 功能数据
+   * @param props - 参数
    */
-  getTemplate(
-    name: string,
-    rule: string,
-    apiName: string,
-    funcs: IPageFunctions[],
-  ): string {
+  getTemplate(props: ITemplate): string {
+    const { name, rule, apiName, funcs } = props
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Vue/index.ejs")
     )
@@ -76,15 +93,10 @@ class GeneratorVue extends ICreatePage {
 
   /**
    * 获取接口模板
-   * @param rule - 权限
-   * @param name - 名称
-   * @param funcs - 功能数据
+   * @param props - 参数
    */
-  getApiTemplate(
-    rule: string,
-    name: string,
-    funcs: IPageFunctions[]
-  ): string {
+  getApiTemplate(props: IApiTemplate): string {
+    const { rule, name, funcs } = props
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Vue/server.ejs")
     )
@@ -113,19 +125,17 @@ class GeneratorVue extends ICreatePage {
 
   /**
    * 生成模板
-   * @param code - 模板代码
-   * @param data - 数据代码
-   * @param api - 接口代码
-   * @param apiName - 接口名称
-   * @param filePath - 文件夹路径
+   * @param props - 参数
    */
-  generatorTemplate(
-    code: string,
-    data: string,
-    api: string,
-    apiName: string,
-    filePath: string
-  ) {
+  generatorTemplate(props: IGenerator) {
+    const {
+      code,
+      data,
+      api,
+      apiName,
+      filePath
+    } = props
+
     // 获取当前命令行选择文件
     const cwd = process.cwd()
     // 创建文件夹
@@ -174,13 +184,22 @@ class GeneratorVue extends ICreatePage {
     const funcs = await getFunctions()
 
     // 5.生成模板页面
-    const codeTemplate = this.getTemplate(name, rule, apiName, funcs)
+    const codeTemplate = this.getTemplate({name, rule, apiName, funcs})
     const dataTemplate = this.getDateTemplate(funcs)
-    const apiTemplate = this.getApiTemplate(rule, name, funcs)
+    const apiTemplate = this.getApiTemplate({rule, name, funcs})
     if (!codeTemplate || !dataTemplate || !apiTemplate) {
       return console.log(errorText('  错误模板数据'))
     }
-    this.generatorTemplate(codeTemplate, dataTemplate, apiTemplate, apiName, filePath)
+
+    // 执行生成模板
+    const params = {
+      code: codeTemplate,
+      data: dataTemplate,
+      api: apiTemplate,
+      apiName,
+      filePath
+    }
+    this.generatorTemplate(params)
   }
 }
 

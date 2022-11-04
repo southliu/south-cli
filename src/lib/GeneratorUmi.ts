@@ -5,6 +5,14 @@ import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
 
+interface ITemplate {
+  title: string,
+  rule: string,
+  funcs: IPageFunctions[],
+  model: string,
+  modelInterface: string
+}
+
 /**
  * 生成Umi页面
  * 1.输入页面名称
@@ -21,19 +29,15 @@ class GeneratorPage {
 
   /**
    * 获取模板
-   * @param title - 标题
-   * @param rule - 权限
-   * @param funcs - 功能数据
-   * @param model - 模型名称
-   * @param modelInterface - 模型接口名称
    */
-  getTemplate(
-    title: string,
-    rule: string,
-    funcs: IPageFunctions[],
-    model: string,
-    modelInterface: string
-  ): string {
+  getTemplate(props: ITemplate): string {
+    const {
+      title,
+      rule,
+      funcs,
+      model,
+      modelInterface
+    } = props
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../templates/Umi/index.ejs")
     )
@@ -129,7 +133,7 @@ class GeneratorPage {
     const funcs = await getFunctions()
 
     // 5.生成模板页面
-    const codeTemplate = this.getTemplate(title, rule, funcs, model, modelInterface)
+    const codeTemplate = this.getTemplate({title, rule, funcs, model, modelInterface})
     const modelTemplate = this.getModelTemplate(model, modelInterface, funcs)
     const apiTemplate = this.getApiTemplate(rule, funcs)
     this.generatorTemplate(codeTemplate, modelTemplate, apiTemplate)
