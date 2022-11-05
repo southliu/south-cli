@@ -1,6 +1,30 @@
 import type { IPageFunctions } from '../../types'
 import inquirer from 'inquirer'
 
+/** 获取登录账号密码 */
+interface ILoginInfo {
+  username: string;
+  password: string;
+}
+export async function getLoginInfo(): Promise<ILoginInfo> {
+  let { username } = await inquirer.prompt({
+    name: 'username',
+    type: 'input',
+    message: '请输入账号：'
+  })
+  let { password } = await inquirer.prompt({
+    name: 'password',
+    type: 'password',
+    message: '请输入密码：'
+  })
+
+  // 处理空数据和前后空格
+  username = username ? username.trim() : ''
+  password = password ? password.trim() : ''
+
+  return { username, password }
+}
+
 /** 获取页面名称 */
 export async function getName(): Promise<string> {
   const { name } = await inquirer.prompt({
