@@ -20,6 +20,7 @@ interface IPasswordFileResult {
  */
 class Analyzer {
   private static instance: Analyzer // 为外部使用变量
+  private url = '' // 链接
 
   /** 为外部使用内部方法  */
   static getInstance() {
@@ -114,7 +115,7 @@ class Analyzer {
    * @param elem - 元素
    * @param page - 页面数据
    */
-  async clearInput(elem: string, page: puppeteer.Page) {
+  private async clearInput(elem: string, page: puppeteer.Page) {
     try {
       // ctrl + a -> Backspace
       await page.focus(elem)
@@ -155,11 +156,14 @@ class Analyzer {
         page.click('button[type="submit"]')
       ])
 
-      // 判断页面成功并保存密码文件
+      // 登录成功并保存密码文件
       const con = encryption(`${username}${passwordSymbol}${password}`)
       this.savePasswordFile(con)
+
+      // 跳转缓存页面
+      await page.goto(this.url)
     } catch(err) {
-      console.log('账号或密码错误，请重新输入')
+      console.log('账号或密码错误，请重新输入', err)
 
       // 删除密码文件
       this.removePasswordFile()
@@ -199,7 +203,7 @@ class Analyzer {
         await this.inputPassword(username, password, page)
       }
     } catch(err) {
-      console.log('登录失败')
+      console.log('登录失败', err)
     }
   }
   
@@ -214,7 +218,7 @@ class Analyzer {
       const title = await page.$$eval(label, labels => labels.map(item => item.innerHTML))
       return title
     } catch(err) {
-      console.log('获取标题失败')
+      console.log('获取标题失败', err)
       return ''
     }
   }
@@ -225,9 +229,16 @@ class Analyzer {
    */
   async getData(url: string) {
     try {
+      // 缓存url链接
+      if (url) this.url = url
+
+      // 创建窗口和页面
       const browser = await this.initBrowser()
       const page = await this.initPage(url, browser)
+
+      // 处理登录
       await this.handleLogin(page)
+
       const title = await this.getTitle(page)
       console.log('title:', title)
   
