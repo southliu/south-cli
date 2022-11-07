@@ -4,7 +4,7 @@ import request from '@/utils/request'
  * 新增
  * @param {Object} data
  */
-function create(data: any) {
+function create(data: unknown) {
   return request.post('<%=rule%>', data)
 }
 <% } -%>
@@ -15,7 +15,7 @@ function create(data: any) {
  * @param {String} id  主键ID
  * @param {Object} data
  */
-function update(id: string, data: any) {
+function update(id: string, data: unknown) {
   return request.patch(`<%=rule%>/${id}`, data)
 }
 <% } -%>
@@ -54,7 +54,7 @@ function find_one(id: string) {
  * 查询-根据条件分页查询
  * @param {Object} data
  */
-function find_page(data: any) {
+function find_page(data: unknown) {
   return request.get('<%=rule%>', { params: data })
 }
 
@@ -62,7 +62,7 @@ function find_page(data: any) {
  * 查询-根据条件分页查询
  * @param {Object} data
  */
-function find_tree(data: any) {
+function find_tree(data: unknown) {
   return request.get(`<%=rule%>/tree`, { params: data })
 }
 

@@ -1,9 +1,13 @@
 import { getLoginInfo } from '../utils/inquirer'
 import { hasFile } from '../utils/helper'
+import { decryption, encryption } from '../utils/crypto'
 import puppeteer from 'puppeteer'
 import path from 'path'
 import fs from 'fs-extra'
 
+// 加密分割标识符
+const passwordSymbol = '($$)'
+// 加密文件路径
 const passwordFilePath = path.join(__dirname, './password_file.ts')
 
 interface IPasswordFileResult {
@@ -72,16 +76,18 @@ class Analyzer {
   }
 
   /**
-   * 获取数组中数据
-   * @param str - 数组
+   * 获取字符串中数据
+   * @param str - 字符串
    */
   private getStrData(str: string) {
-    const usernameStr = str.substring(0, 9),
-          usernameArr = usernameStr.split(';'),
-          username = usernameArr?.[0] || '',
-          passwordStr = usernameStr.substring(0, 9),
-          passwordArr = passwordStr.split(';'),
-          password = passwordArr?.[0] || ''
+    const data = decryption(str)
+    if (!data && !data.includes(passwordSymbol)) {
+      return { username: '', password: '' }
+    }
+
+    const arr = data.split(passwordSymbol),
+          username = arr?.[0] || '',
+          password = arr?.[1] || ''
 
     return { username, password }
   }
@@ -91,9 +97,8 @@ class Analyzer {
     if (!hasFile(passwordFilePath)) {
       return { username: '', password: '' }
     }
-    const code = fs.readFileSync(passwordFilePath).toString()
-    const { username, password } = this.getStrData(code)
-    console.log('{ username, password }:', { username, password })
+    const code = fs.readFileSync(passwordFilePath)
+    const { username, password } = this.getStrData(code?.toString())
 
     return { username, password }
   }
@@ -102,6 +107,24 @@ class Analyzer {
   private removePasswordFile() {
     // 保存密码文件存在则删除
     if (hasFile(passwordFilePath)) fs.removeSync(passwordFilePath)
+  }
+
+  /**
+   * 清空输入框数据
+   * @param elem - 元素
+   * @param page - 页面数据
+   */
+  async clearInput(elem: string, page: puppeteer.Page) {
+    try {
+      // ctrl + a -> Backspace
+      await page.focus(elem)
+      await page.keyboard.down('Control')
+      await page.keyboard.press('KeyA')
+      await page.keyboard.up('Control')
+      await page.keyboard.press('Backspace')
+    } catch(err) {
+      console.log('清空输入框数据失败', err)
+    }
   }
 
   /**
@@ -116,24 +139,39 @@ class Analyzer {
     page: puppeteer.Page
   ) {
     try {
-      const code = this.getPasswordFile()
-      console.log('code:', code)
+      // 输入账号和密码，并登录
+      const usernameLabel = '#email', passwordLabel = '#password'
+      // 等待账号和密码元素出现
+      await page.waitForSelector(usernameLabel, { timeout: 5000 })
+      await page.waitForSelector(passwordLabel, { timeout: 5000 })
+
+      // 输入账号和密码数据
+      await page.type(usernameLabel, username)
+      await page.type(passwordLabel, password)
+
+      // 等待页面跳转
+      await Promise.all([
+        page.waitForNavigation({ timeout : 1000 }),
+        page.click('button[type="submit"]')
+      ])
+
+      // 判断页面成功并保存密码文件
+      const con = encryption(`${username}${passwordSymbol}${password}`)
+      this.savePasswordFile(con)
+    } catch(err) {
+      console.log('账号或密码错误，请重新输入')
+
       // 删除密码文件
       this.removePasswordFile()
 
-      // 输入账号和密码，并登录
+      // 清除账号和密码原本值
       const usernameLabel = '#email', passwordLabel = '#password'
-      await page.waitForSelector(usernameLabel, { timeout: 5000 })
-      await page.type(usernameLabel, username)
-      await page.waitForSelector(passwordLabel, { timeout: 5000 })
-      await page.type(passwordLabel, password)
-      await page.click('button[type="submit"]')
+      await this.clearInput(usernameLabel, page)
+      await this.clearInput(passwordLabel, page)
 
-      // 判断页面成功并保存密码文件
-      const con = `username:${username};\npassword:${password};\n`
-      this.savePasswordFile(con)
-    } catch(err) {
-      console.log('输入账号密码失败')
+      // 重新输入
+      const { username, password } = await getLoginInfo()
+      await this.inputPassword(username, password, page)
     }
   }
 
@@ -142,15 +180,26 @@ class Analyzer {
    * @param page - 页面数据
    */
   private async handleLogin(page: puppeteer.Page) {
-    const label = '.btn-group > a > .ant-btn > span'
-    const isPassword = await this.hasPasswrod(label, page)
-
-    // 需要输入登录
-    if (isPassword) {
-      await page.click(label) // 点击登录跳转登录页
-      const { username, password } = await getLoginInfo()
-      await this.inputPassword(username, password, page)
-      console.log(username, password)
+    try {
+      const label = '.btn-group > a > .ant-btn > span'
+      const isPassword = await this.hasPasswrod(label, page)
+  
+      // 需要输入登录
+      if (isPassword) {
+        await page.click(label) // 点击登录跳转登录页
+  
+        // 从密码缓存文件中获取
+        let code = this.getPasswordFile()
+        // 如果密码缓存文件不存在则手动输入
+        if (!code.username && !code.password) {
+          code = await getLoginInfo()
+        }
+        
+        const { username, password } = code
+        await this.inputPassword(username, password, page)
+      }
+    } catch(err) {
+      console.log('登录失败')
     }
   }
   
@@ -183,9 +232,6 @@ class Analyzer {
       console.log('title:', title)
   
       await browser.close()
-      // setTimeout(async () => {
-      //   await browser.close()
-      // }, 5000)
     } catch(err) {
       console.log('获取页面数据失败：', err)
     }
