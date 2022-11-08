@@ -3,7 +3,7 @@ import UTF8 from 'crypto-js/enc-utf8'
 import md5 from 'crypto-js/md5'
 
 // 加密密钥
-const CRYPTO_SECRET = '__Vite_Admin_Secret__'
+const CRYPTO_SECRET = '__South_Cli_Secret__'
 
 /**
  * 加密

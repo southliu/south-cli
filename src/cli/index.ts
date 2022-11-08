@@ -4,7 +4,6 @@ import { cyanText, errorText, italicFont } from '../utils/helper'
 import {
   createProject,
   createVue,
-  createUmi,
   createReact
 } from '../lib/create'
 import path from 'path'
@@ -48,15 +47,6 @@ program
   .action((name) => {
     // 执行创建方法
     createReact(name)
-  })
-
-// 配置生成Umi页面指令
-program
-  .command('create-umi <page-name>')
-  .description('创建一个Umi页面')
-  .action((name) => {
-    // 执行创建方法
-    createUmi(name)
   })
 
 // 处理错误指令
