@@ -62,7 +62,7 @@
 <% if (funcs.includes('create')) { -%>
 
   <BasicModal
-    v-model:visible="creates.visible"
+    v-model:isVisible="creates.isVisible"
     :isLoading="isCreateLoading"
     :title="creates.title"
     @handleFinish="createSubmit"
@@ -95,10 +95,11 @@ import type { IFormData } from '#/form'
 import type { IBasicForm } from '@/components/Form/model'
 <% } -%>
 import type { <% if (funcs.includes('create')) { -%>ICreateData, <% } -%>
-<% if (funcs.includes('search')) { -%>ISearchData, <% } -%>ITableData, IPaginationData } from '#/global'
+<% if (funcs.includes('search')) { -%>ISearchData, <% } -%>ITableData, IPaginationData } from '#/public'
 <% if (funcs.includes('create') || funcs.includes('update') || funcs.includes('delete')) { -%>
 import { message } from 'ant-design-vue'
 <% } -%>
+import { useTitle } from '@/hooks/useTitle'
 import { <% if (funcs.includes('search')) { -%>onMounted, <% } -%>reactive<% if (funcs.includes('create') || funcs.includes('update')) { -%>, ref<% } -%> } from 'vue'
 <% if (funcs.includes('update') || funcs.includes('delete')) { -%>
 import {<% if (funcs.includes('update')) { -%> UpdateBtn<% } -%>
@@ -110,10 +111,6 @@ import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>createList, <% } -%>
 tableColumns } from './model'
-import { useLoading } from '@/hooks/useLoading'
-<% if (funcs.includes('create')) { -%>
-import { useCreateLoading } from '@/hooks/useCreateLoading'
-<% } -%>
 import { checkPermission } from '@/utils/permissions'
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
@@ -144,14 +141,15 @@ import BasicForm from '@/components/Form/BasicForm.vue'
 import BasicModal from '@/components/Modal/BasicModal.vue'
 <% } -%>
 
+useTitle('<%=title%>')
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 const createFormRef = ref<IBasicForm>()
 <% } -%>
 const userStore = useUserStore()
 const { permissions } = storeToRefs(userStore)
-const { isLoading, startLoading, endLoading } = useLoading()
+const isLoading = ref(false)
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
-const { isCreateLoading, startCreateLoading, endCreateLoading } = useCreateLoading()
+const isCreateLoading = ref(false)
 <% } -%>
 
 // 权限前缀
@@ -190,7 +188,7 @@ const searches = reactive<ISearchData>({
 // 新增数据
 const creates = reactive<ICreateData>({
   id: '',
-  visible: false,
+  isVisible: false,
   title: '新增',
   data: initCreate
 })
@@ -237,13 +235,13 @@ const handleSearch = async (values: IFormData) => {
   searches.data = values
   const query = { ...pagination, ...values }
   try {
-    startLoading()
+    isLoading.value = true
     const { data: { data } } = await get<%=name%>Page(query)
     const { items, total } = data
     tables.data = items
     tables.total = total
   } finally {
-    endLoading()
+    isLoading.value = false
   }
 }
 <% } -%>
@@ -251,7 +249,7 @@ const handleSearch = async (values: IFormData) => {
 
 /** 点击新增 */
 const onCreate = () => {
-  creates.visible = !creates.visible
+  creates.isVisible = !creates.isVisible
   creates.title = ADD_TITLE
   creates.id = ''
   creates.data = initCreate
@@ -265,16 +263,16 @@ const onCreate = () => {
   */
 const onUpdate = async (record: IFormData) => {
   const { id, name } = record
-  creates.visible = !creates.visible
+  creates.isVisible = !creates.isVisible
   creates.id = id as string
   creates.title = EDIT_TITLE(name as string)
 
   try {
-    startCreateLoading()
+    isCreateLoading.value = true
     const { data: { data } } = await get<%=name%>ById(id as string)
     creates.data = data
   } finally {
-    endCreateLoading()
+    isCreateLoading.value = false
   }
 }
 <% } -%>
@@ -286,23 +284,23 @@ const onUpdate = async (record: IFormData) => {
   */
 const handleCreate = async (values: IFormData) => {
   try {
-    startCreateLoading()
+    isCreateLoading.value = true
     const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
     const { data } = await functions()
     getPage()
     creates.id = ''
-    creates.visible = false
+    creates.isVisible = false
     creates.data = initCreate
     createFormRef.value?.handleReset()
     message.success(data?.message || '操作成功')
   } finally {
-    endCreateLoading()
+    isCreateLoading.value = false
   }
 }
 
 /** 关闭新增/编辑 */
 const onCloseCreate = () => {
-  creates.visible = false
+  creates.isVisible = false
 }
 
 <% } -%>
@@ -313,14 +311,14 @@ const onCloseCreate = () => {
   */
 const handleDelete = async (id: string | number) => {
   try {
-    startLoading()
+    isLoading.value = true
     const { data } = await delete<%=name%>(id as string)
     if (data?.code === 200) {
       message.success(data?.message || '删除成功')
       getPage()
     }
   } finally {
-    endLoading()
+    isLoading.value = false
   }
 }
 <% } -%>
