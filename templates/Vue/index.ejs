@@ -262,12 +262,11 @@ const onCreate = () => {
   * @param record - 当前行数据
   */
 const onUpdate = async (record: IFormData) => {
-  const { id, name } = record
-  creates.isVisible = !creates.isVisible
-  creates.id = id as string
-  creates.title = EDIT_TITLE(name as string)
-
   try {
+    const { id, name } = record
+    creates.isVisible = !creates.isVisible
+    creates.id = id as string
+    creates.title = EDIT_TITLE(name as string)
     isCreateLoading.value = true
     const { data: { data } } = await get<%=name%>ById(id as string)
     creates.data = data
@@ -287,12 +286,12 @@ const handleCreate = async (values: IFormData) => {
     isCreateLoading.value = true
     const functions = () => creates.id ? update<%=name%>(creates.id, values) : create<%=name%>(values)
     const { data } = await functions()
-    getPage()
+    message.success(data?.message || '操作成功')
+    createFormRef.value?.handleReset()
+    creates.data = initCreate
     creates.id = ''
     creates.isVisible = false
-    creates.data = initCreate
-    createFormRef.value?.handleReset()
-    message.success(data?.message || '操作成功')
+    getPage()
   } finally {
     isCreateLoading.value = false
   }

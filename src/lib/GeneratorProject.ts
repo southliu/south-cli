@@ -76,14 +76,14 @@ class GeneratorProject extends ICreateProject {
    * @param tag - 标签名称
    */
   async handleDownload(repo: string, tag: string) {
-    const requestUrl = getDownloadUrl(repo, tag)
-    // 下载方法添加promise
-    const download = util.promisify(downloadGitRepo)
-    // 获取参数位置
-    const targetDir = path.resolve(process.cwd(), this.targetDir)
-
-    // 调用下载
     try {
+      const requestUrl = getDownloadUrl(repo, tag)
+      // 下载方法添加promise
+      const download = util.promisify(downloadGitRepo)
+      // 获取参数位置
+      const targetDir = path.resolve(process.cwd(), this.targetDir)
+  
+      // 调用下载
       await handleLoading(
         download(requestUrl, targetDir),
         '下载代码中...'
@@ -111,8 +111,8 @@ class GeneratorProject extends ICreateProject {
       // 模板使用提示
       console.log(`\r\n创建项目${cyanText(this.name)}成功,请执行以下操作:`)
       console.log(`\r\n  cd ${cyanText(this.name)}`)
-      console.log('  yarn\r')
-      console.log('  yarn dev\r\n')
+      console.log('  pnpm i\r')
+      console.log('  pnpm dev\r\n')
     } catch(err) {
       console.log(errorText('\n  创建失败'))
     }
