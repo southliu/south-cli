@@ -33,19 +33,29 @@ class Analyzer {
 
   /** 初始化界面 */
   private async initBrowser() {
-    const browser = await puppeteer.launch({
-      headless: false, // 是否开启无头模式
-      args: ['--no-sandbox']
-    })
-
-    return browser
+    try {
+      const browser = await puppeteer.launch({
+        headless: false, // 是否开启无头模式
+        args: ['--no-sandbox']
+      })
+  
+      return browser
+    } catch(err) {
+      console.log('无法初始化界面:', err)
+      return false
+    }
   }
 
   /** 初始化页面 */
   private async initPage(url: string, browser: puppeteer.Browser) {
-    const page = await browser.newPage()
-    await page.goto(url)
-    return page
+    try {
+      const page = await browser.newPage()
+      await page.goto(url)
+      return page
+    } catch(err) {
+      console.log('无法初始化页面:', err)
+      return false
+    }
   }
 
   /**
@@ -234,14 +244,16 @@ class Analyzer {
 
       // 创建窗口和页面
       const browser = await this.initBrowser()
+      if (!browser) return
+
       const page = await this.initPage(url, browser)
+      if (!page) return
 
       // 处理登录
       await this.handleLogin(page)
-
       const title = await this.getTitle(page)
       console.log('title:', title)
-  
+
       await browser.close()
     } catch(err) {
       console.log('获取页面数据失败：', err)
