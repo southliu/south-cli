@@ -99,6 +99,7 @@ class GeneratorProject extends ICreateProject {
     try {
       // 1.获取GitHub模板
       const repo = await this.handleGetRepo()
+      if (!repo) return console.log(errorText('  网络不佳，请重新尝试'))
       console.log(dimText(`  获取项目列表成功`))
 
       // 2.获取GitHub标签
