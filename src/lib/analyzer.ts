@@ -44,17 +44,47 @@ class Analyzer {
   }
 
   /**
-   * 获取标题
+   * 处理点击事件
+   * @param path - 元素路径
+   * @param page - 页面
+   */
+  private async clickElement(path: string, page: puppeteer.Page) {
+    await page.waitForSelector(path, { timeout: 5000 })
+    await page.click(path)
+  }
+
+  /**
+   * 获取列表数据
    * @param page - 页面数据
    */
-  private async getTitle(page: puppeteer.Page) {
+  private async getListData(page: puppeteer.Page) {
     try {
-      const label = 'table:nth-child(2)'
+      // 等待并点击data加号展开树形表格
+      const dataCollapsed = 'div.caseContainer > div.ant-table-wrapper > div > div > div > div > div > table > tbody > tr:nth-child(2) > td:nth-child(1) > span.ant-table-row-expand-icon.ant-table-row-collapsed'
+      await this.clickElement(dataCollapsed, page)
+
+      // 等待并点击items加号展开树形表格
+      const itemsCollapsed = 'div.caseContainer > div.ant-table-wrapper > div > div > div > div > div > table > tbody > tr:nth-child(3) > td:nth-child(1) > span.ant-table-row-expand-icon.ant-table-row-collapsed'
+      await this.clickElement(itemsCollapsed, page)
+
+      // 获取页面行数据
+      const label = 'div.caseContainer > div.ant-table-wrapper > div > div > div > div > div > table > tbody > tr'
       await page.waitForSelector(label, { timeout: 5000 })
-      const title = await page.$$eval(label, labels => labels.map(item => item.innerHTML))
-      return title
+      
+      return await page.$$eval(label, labels => {
+        const result: { title: string, dataIndex: string, width: number }[] = []
+
+        labels.map(item => {
+          const title = (item.querySelector('.table-desc') as HTMLElement)?.innerText || ''
+          const dataIndex = (item.querySelector('.ant-table-row > td') as HTMLElement)?.innerText || ''
+
+          if (title && dataIndex) result.push({ title, dataIndex, width: 200 })
+        })
+
+        return result
+      })
     } catch(err) {
-      console.log('获取标题失败', err)
+      console.log('获取列表数据失败', err)
       return ''
     }
   }
@@ -74,8 +104,10 @@ class Analyzer {
 
       // 处理登录
       await new AnalyzerLogin().handleLogin(page, url)
-      const title = await this.getTitle(page)
-      console.log('title:', title)
+
+      // 获取页面数据
+      const listData = await this.getListData(page)
+      console.log('listData:', listData)
 
       await browser.close()
     } catch(err) {
