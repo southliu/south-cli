@@ -26,7 +26,7 @@ class AnalyzerLogin {
    private async hasPasswrod(page: puppeteer.Page) {
     try {
       const label = 'div > div.btn-group > a > button'
-      await page.waitForSelector(label, { timeout: 5000 })
+      await page.waitForSelector(label, { timeout: 3000 })
       await page.click(label) // 点击登录跳转登录页
       return true
     } catch(err) {
@@ -76,8 +76,8 @@ class AnalyzerLogin {
       // 输入账号和密码，并登录
       const usernameLabel = '#email', passwordLabel = '#password'
       // 等待账号和密码元素出现
-      await page.waitForSelector(usernameLabel, { timeout: 5000 })
-      await page.waitForSelector(passwordLabel, { timeout: 5000 })
+      await page.waitForSelector(usernameLabel, { timeout: 3000 })
+      await page.waitForSelector(passwordLabel, { timeout: 3000 })
 
       // 输入账号和密码数据
       await page.type(usernameLabel, username)

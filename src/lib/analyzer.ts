@@ -1,6 +1,18 @@
 import puppeteer from 'puppeteer'
 import AnalyzerLogin from './analyzerLogin'
 
+interface IQuery {
+  label: string,
+  name: string,
+  component: 'Input'
+}
+
+interface ITable {
+  title: string,
+  dataIndex: string,
+  width: number
+}
+
 /**
  * 根据链接获取界面数据
  */
@@ -54,10 +66,38 @@ class Analyzer {
   }
 
   /**
-   * 获取列表数据
+   * 获取表格查询数据
    * @param page - 页面数据
    */
-  private async getListData(page: puppeteer.Page) {
+  private async getTableQueryData(page: puppeteer.Page) {
+    try {
+      // 获取页面行数据
+      const label = 'div.colQuery > div > div > div > div > div > div > table > tbody > tr'
+      await page.waitForSelector(label, { timeout: 5000 })
+      
+      return await page.$$eval(label, labels => {
+        const result: IQuery[] = []
+
+        labels.map(item => {
+          const label = (item.querySelector('td:last-child > p') as HTMLElement)?.innerText || ''
+          const name = (item.querySelector('td:first-child') as HTMLElement)?.innerText || ''
+
+          if (name && label) result.push({ label, name, component: 'Input' })
+        })
+
+        return result
+      })
+    } catch(err) {
+      console.log('获取查询数据失败', err)
+      return ''
+    }
+  }
+
+  /**
+   * 获取表格数据
+   * @param page - 页面数据
+   */
+  private async getTableData(page: puppeteer.Page) {
     try {
       // 等待并点击data加号展开树形表格
       const dataCollapsed = 'div.caseContainer > div.ant-table-wrapper > div > div > div > div > div > table > tbody > tr:nth-child(2) > td:nth-child(1) > span.ant-table-row-expand-icon.ant-table-row-collapsed'
@@ -72,7 +112,7 @@ class Analyzer {
       await page.waitForSelector(label, { timeout: 5000 })
       
       return await page.$$eval(label, labels => {
-        const result: { title: string, dataIndex: string, width: number }[] = []
+        const result: ITable[] = []
 
         labels.map(item => {
           const title = (item.querySelector('.table-desc') as HTMLElement)?.innerText || ''
@@ -84,7 +124,7 @@ class Analyzer {
         return result
       })
     } catch(err) {
-      console.log('获取列表数据失败', err)
+      console.log('获取表格数据失败', err)
       return ''
     }
   }
@@ -105,9 +145,13 @@ class Analyzer {
       // 处理登录
       await new AnalyzerLogin().handleLogin(page, url)
 
-      // 获取页面数据
-      const listData = await this.getListData(page)
-      console.log('listData:', listData)
+      // 获取表格查询数据
+      const queryData = await this.getTableQueryData(page)
+      console.log('queryData:', queryData)
+
+      // 获取表格数据
+      const tableData = await this.getTableData(page)
+      console.log('tableData:', tableData)
 
       await browser.close()
     } catch(err) {
