@@ -1,9 +1,10 @@
-import type { IPageFunctions } from '../../types'
-import { getFunctions, getName, getRule, getTitle } from '../utils/inquirer'
-import { errorText, getApiName, getApiPath, hasFolder, successText } from '../utils/helper'
-import { ICreatePage } from '../../types/lib/create'
-import fs from 'fs-extra'
+import type { IPageFunctions } from '../../../types'
+import { getFunctions, getName, getRule, getTitle } from '../../utils/inquirer'
+import { getApiName, getApiPath } from './utils/helper'
+import { errorText, hasFolder, successText } from '../../utils/helper'
+import { ICreatePage } from '../../../types/lib/create'
 import path from 'path'
+import fs from 'fs-extra'
 import ejs from 'ejs'
 
 // 模板参数

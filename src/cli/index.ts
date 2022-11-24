@@ -8,18 +8,27 @@ import {
 } from '../lib/create'
 import path from 'path'
 import figlet from 'figlet'
-import Analyzer from '../lib/analyzer'
+import { analyzerTable, analyzerCreate } from '../lib/analyzer'
 
 const pack = require(path.join(__dirname, '../../../package.json'))
 const program = new Command(pack.name)
 
-// 配置链接生成页面
+// 获取Yapi表格数据
 program
-  .command('analyzer <url>')
-  .description('创建一个项目')
+  .command('analyzer-table <url>')
+  .description('获取Yapi表格数据')
   .action((url) => {
     // 执行创建方法
-    new Analyzer().getData(url)
+    analyzerTable(url)
+  })
+
+// 获取Yapi新增数据
+program
+  .command('analyzer-create <url>')
+  .description('获取Yapi新增数据')
+  .action((url) => {
+    // 执行创建方法
+    analyzerCreate(url)
   })
 
 // 配置生成项目指令

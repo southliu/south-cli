@@ -1,5 +1,5 @@
+import { errorText, hasFile, hasFolder } from '../../utils/helper'
 import path from 'path'
-import { errorText, hasFile, hasFolder } from '../utils/helper'
 import GeneratorProject from './generatorProject'
 import GeneratorReact from './generatorReact'
 import GeneratorVue from './generatorVue'
@@ -34,7 +34,7 @@ export async function createVue(name: string) {
   // 文件所在路径
   const filePath = path.join(cwd, `${name}.vue`)
 
-  // 如果文件夹存在则退出
+  // 如果文件存在则退出
   if (hasFile(filePath)) {
     return console.error(errorText(`  ${name}.vue已存在`))
   }
@@ -54,7 +54,7 @@ export async function createReact(name: string) {
   // 文件所在路径
   const filePath = path.join(cwd, `${name}.tsx`)
 
-  // 如果文件夹存在则退出
+  // 如果文件存在则退出
   if (hasFile(filePath)) {
     return console.error(errorText(`  ${name}.tsx已存在`))
   }
