@@ -1,6 +1,8 @@
-import puppeteer from 'puppeteer'
 import { clickElement } from './utils/helper'
-import { errorText } from '../../utils/helper'
+import { errorText, successText } from '../../utils/helper'
+import path from 'path'
+import fs from 'fs-extra'
+import puppeteer from 'puppeteer'
 import AnalyzerInit from './analyzerInit'
 
 interface ICreate {
@@ -11,8 +13,10 @@ interface ICreate {
 
 class AnalyzerCreate {
   private url: string // 链接
-  constructor(url: string) {
+  private name: string // 文件名
+  constructor(url: string, name: string) {
     this.url = url
+    this.name = name
   }
 
   /**
@@ -61,10 +65,10 @@ class AnalyzerCreate {
   }
 
   /** 获取新增数据 */
-  async getData() {
+  private async getData() {
     try {
       const { page, browser } = await new AnalyzerInit().init(this.url)
-      if (!browser || !page) return console.log('初始化失败')
+      if (!browser || !page) return []
 
       const result = await this.getCreateData(page)
 
@@ -73,6 +77,54 @@ class AnalyzerCreate {
     } catch(err) {
       console.log(errorText('获取新增数据失败：'), err)
       return []
+    }
+  }
+
+  /**
+   * 处理数据
+   * @param data - 数据
+   */
+  private filterData(data: ICreate[]): string {
+    if (data.length === 0) return ''
+    let result = ''
+
+    // 处理表格数据
+    for (let i = 0; i < data.length; i++) {
+      const element = data[i]
+
+      if (i === 0) {
+        result += '// 新增数据\n'
+        result += 'export const createList: (id: string) => IFormList[] = id => [\n'
+      }
+
+      result += '  {\n'
+      result += `    label: '${element.label}',\n`
+      result += `    name: '${element.name}',\n`
+      result += `    component: '${element.component}'\n`
+      result += '  },\n'
+
+      if (i === data.length - 1) {
+        result += ']\n'
+      }
+    }
+
+    return result
+  }
+
+  /** 创建文件 */
+  async handleCreate() {
+    try {
+      const data = await this.getData()
+
+      // 获取当前命令行选择文件
+      const cwd = process.cwd()
+
+      // 输出文件
+      const codeFilePath = path.join(cwd, `${this.name}.ts`)
+      fs.outputFileSync(codeFilePath, this.filterData(data))
+      console.log(successText(`创建${this.name}.ts文件成功`))
+    } catch(err) {
+      console.log(errorText('创建新增文件失败：'), err)
     }
   }
 }

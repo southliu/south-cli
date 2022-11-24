@@ -1,6 +1,8 @@
-import puppeteer from 'puppeteer'
 import { clickElement } from './utils/helper'
-import { errorText } from '../../utils/helper'
+import { errorText, successText } from '../../utils/helper'
+import path from 'path'
+import fs from 'fs-extra'
+import puppeteer from 'puppeteer'
 import AnalyzerInit from './analyzerInit'
 
 interface IQuery {
@@ -17,8 +19,10 @@ interface ITable {
 
 class AnalyzerTable {
   private url: string // 链接
-  constructor(url: string) {
+  private name: string // 文件名
+  constructor(url: string, name: string) {
     this.url = url
+    this.name = name
   }
 
   /**
@@ -99,7 +103,7 @@ class AnalyzerTable {
   }
 
   /** 获取数据 */
-  async getData(): Promise<[IQuery[], ITable[]] | []> {
+  private async getData(): Promise<[IQuery[], ITable[]] | []> {
     try {
       const { page, browser } = await new AnalyzerInit().init(this.url)
       if (!browser || !page) return []
@@ -112,6 +116,80 @@ class AnalyzerTable {
     } catch(err) {
       console.log(errorText('获取表格数据失败'), err)
       return []
+    }
+  }
+
+  /**
+   * 处理数据
+   * @param data - 数据
+   */
+  private filterData(data: [IQuery[], ITable[]] | []): string {
+    if (data.length === 0) return ''
+    const [query, table] = data
+    let result = ''
+
+    // 处理查询数据
+    for (let i = 0; i < query.length; i++) {
+      const element = query[i]
+
+      if (i === 0) {
+        result += '// 搜索数据\n'
+        result += 'export const searchList: IFormList[] = [\n'
+      }
+
+      result += '  {\n'
+      result += `    label: '${element.label}',\n`
+      result += `    name: '${element.name}',\n`
+      result += `    component: '${element.component}'\n`
+      result += '  },\n'
+
+      if (i === query.length - 1) {
+        result += ']\n\n'
+      }
+    }
+
+    // 处理表格数据
+    for (let i = 0; i < table.length; i++) {
+      const element = table[i]
+
+      if (i === 0) {
+        result += '/**\n'
+        result += ' * 表格数据\n'
+        result += ' * @param optionRender - 渲染操作函数\n'
+        result += ' */\n'
+        result += 'export const tableColumns = (optionRender: ITableOptions<object>): ITableColumn => {\n'
+        result += '  return [\n'
+      }
+
+      result += '    {\n'
+      result += `      title: '${element.title}',\n`
+      result += `      dataIndex: '${element.dataIndex}',\n`
+      result += `      width: '${element.width}'\n`
+      result += '    },\n'
+
+      if (i === table.length - 1) {
+        result += '  ]\n'
+        result += '}'
+      }
+    }
+
+    return result
+  }
+
+  /** 创建文件 */
+  async handleCreate() {
+    try {
+      const data = await this.getData()
+
+      // 获取当前命令行选择文件
+      const cwd = process.cwd()
+
+      // 输出文件
+      const codeFilePath = path.join(cwd, `${this.name}.ts`)
+      fs.outputFileSync(codeFilePath, this.filterData(data))
+      console.log(successText(`创建${this.name}.ts文件成功`))
+    } catch(err) {
+      console.log(errorText('创建新增文件失败：'), err)
     }
   }
 }
