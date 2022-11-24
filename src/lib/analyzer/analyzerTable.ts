@@ -50,7 +50,7 @@ class AnalyzerTable {
   }
 
   /**
-   * 展开树形菜单
+   * 展开树形表格
    * @param page - 页面数据
    */
   private async tableCollapsed(page: puppeteer.Page) {
@@ -63,7 +63,7 @@ class AnalyzerTable {
       const itemsCollapsed = 'span.ant-table-row-expand-icon.ant-table-row-collapsed'
       await clickElement(itemsCollapsed, page)
     } catch(err) {
-      console.log(errorText('展开树形菜单失败'))
+      console.log(errorText('展开树形表格失败'))
     }
   }
 
@@ -73,13 +73,13 @@ class AnalyzerTable {
    */
   private async getTableData(page: puppeteer.Page) {
     try {
-      // 展开树形菜单
+      // 展开树形表格
       await this.tableCollapsed(page)
 
       // 获取页面行数据
       const label = 'div.caseContainer > div.ant-table-wrapper > div > div > div > div > div > table > tbody > tr'
       await page.waitForSelector(label, { timeout: 3000 })
-      
+
       return await page.$$eval(label, labels => {
         const result: ITable[] = []
 
@@ -105,9 +105,7 @@ class AnalyzerTable {
       if (!browser || !page) return []
 
       const queryData = await this.getQueryData(page)
-      console.log('queryData:', queryData)
       const tableData = await this.getTableData(page)
-      console.log('tableData:', tableData)
 
       await browser.close()
       return [queryData, tableData]

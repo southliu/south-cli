@@ -21,5 +21,7 @@ export async function analyzerTable(url: string) {
   const create = new AnalyzerCreate(url)
   const createData = await create.getData()
 
+  console.log('createData:', createData)
+
   return createData
 }
