@@ -21,7 +21,7 @@ class Analyzer {
     try {
       const browser = await puppeteer.launch({
         headless: false, // 是否开启无头模式
-        args: ['--no-sandbox']
+        userDataDir: './cacheData' // 将浏览器数据保存在指定路径下
       })
   
       return browser

@@ -3,17 +3,6 @@ import fs from 'fs-extra'
 import path from 'path'
 
 /**
- * 首字母大写
- * @param word - 单词
- */
-export function firstUpperCase(word: string) {
-  // 如果不是字符串则返回
-  if (typeof word !== 'string') return word
-  const first = word.substring(0, 1).toUpperCase()
-  return `${first}${word.substring(1, word.length)}`
-}
-
-/**
  * 文件是否存在
  * @param path - 路径
  */
