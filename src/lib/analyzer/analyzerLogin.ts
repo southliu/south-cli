@@ -1,6 +1,6 @@
-import { errorText } from '../utils/helper'
-import { getLoginInfo } from '../utils/inquirer'
-import { getLocalInfo, removeLocalInfo, setLocalInfo } from '../utils/local'
+import { errorText } from '../../utils/helper'
+import { getLoginInfo } from '../../utils/inquirer'
+import { getLocalInfo, removeLocalInfo, setLocalInfo } from '../../utils/local'
 import puppeteer from 'puppeteer'
 
 const USERNAME = 'username'

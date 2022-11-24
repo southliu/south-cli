@@ -1,5 +1,5 @@
 import path from 'path'
-import { errorText, hasFile, hasFolder } from '../utils/helper'
+import { errorText, hasFile, hasFolder } from '../../utils/helper'
 import GeneratorProject from './generatorProject'
 import GeneratorReact from './generatorReact'
 import GeneratorVue from './generatorVue'

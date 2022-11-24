@@ -1,7 +1,8 @@
-import type { IPageFunctions } from '../../types'
-import { getFunctions, getName, getRule, getTitle } from '../utils/inquirer'
-import { errorText, getApiName, getApiPath, hasFolder, successText } from '../utils/helper'
-import { ICreatePage } from '../../types/lib/create'
+import type { IPageFunctions } from '../../../types'
+import { getFunctions, getName, getRule, getTitle } from '../../utils/inquirer'
+import { getApiName, getApiPath } from './utils/helper'
+import { errorText, hasFolder, successText } from '../../utils/helper'
+import { ICreatePage } from '../../../types/lib/create'
 import fs from 'fs-extra'
 import path from 'path'
 import ejs from 'ejs'
@@ -32,15 +33,15 @@ interface IGenerator {
 }
 
 /**
- * 生成Vue页面
+ * 生成React页面
  * 1.判断是否有同名文件夹
  * 2.输入页面标题
- * 3.输入页面名称，需要与keepalive一致
+ * 3.输入页面名称
  * 4.输入页面权限名称
  * 5.选择页面功能：增删改查
  * 6.生成模板页面
  */
-class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
+class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   name: string // 文件名
   constructor(name: string) {
     super()
@@ -65,7 +66,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   getTemplate(props: ITemplate): string {
     const { name, title, rule, apiName, funcs } = props
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/index.ejs")
+      path.resolve(__dirname, "../../templates/React/index.ejs")
     )
     // 获取接口文件路径
     const apiPath = this.getTemplateApiPath(apiName)
@@ -83,7 +84,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
    */
   getDateTemplate(funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/model.ejs")
+      path.resolve(__dirname, "../../templates/React/model.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -100,7 +101,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   getApiTemplate(props: IApiTemplate): string {
     const { rule, name, funcs } = props
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/server.ejs")
+      path.resolve(__dirname, "../../templates/React/server.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -144,9 +145,9 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     fs.mkdirsSync(filePath)
 
     // 输出模板代码
-    const codeFilePath = path.join(cwd, `${this.name}\\index.vue`)
+    const codeFilePath = path.join(cwd, `${this.name}\\index.tsx`)
     fs.outputFileSync(codeFilePath, code)
-    console.log(successText(`  创建vue文件成功 - ${codeFilePath}`))
+    console.log(successText(`  创建React文件成功 - ${codeFilePath}`))
 
     // 输出数据代码
     const dataFilePath = path.join(cwd, `${this.name}\\model.ts`)
@@ -176,7 +177,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     const title = await getTitle()
     if (!title) return console.log(errorText('  请输入有效标题'))
 
-    // 3.输入页面名称，需要与keepalive一致
+    // 3.输入页面名称
     const name = await getName()
     if (!name) return console.log(errorText('  请输入有效名称'))
 
@@ -209,4 +210,4 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   }
 }
 
-export default GeneratorVue
+export default GeneratorReact
