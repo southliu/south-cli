@@ -66,7 +66,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   getTemplate(props: ITemplate): string {
     const { name, title, rule, apiName, funcs } = props
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/index.ejs")
+      path.resolve(__dirname, "../../../templates/Vue/index.ejs")
     )
     // 获取接口文件路径
     const apiPath = this.getTemplateApiPath(apiName)
@@ -84,7 +84,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
    */
   getDateTemplate(funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/model.ejs")
+      path.resolve(__dirname, "../../../templates/Vue/model.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -101,7 +101,7 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   getApiTemplate(props: IApiTemplate): string {
     const { rule, name, funcs } = props
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/Vue/server.ejs")
+      path.resolve(__dirname, "../../../templates/Vue/server.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
