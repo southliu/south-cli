@@ -1,7 +1,7 @@
 import type { IPageFunctions } from '../../../types'
 import { getFunctions, getName, getRule, getTitle } from '../../utils/inquirer'
 import { getApiName, getApiPath } from './utils/helper'
-import { errorText, hasFolder, successText } from '../../utils/helper'
+import { errorText, firstUpperCase, hasFolder, successText } from '../../utils/helper'
 import { ICreatePage } from '../../../types/lib/create'
 import path from 'path'
 import fs from 'fs-extra'
@@ -64,9 +64,12 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
    * @param props - 参数
    */
   getTemplate(props: ITemplate): string {
-    const { name, title, rule, apiName, funcs } = props
+    const { title, rule, apiName, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
+
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/index.ejs")
+      path.resolve(__dirname, "../../../templates/React/index.ejs")
     )
     // 获取接口文件路径
     const apiPath = this.getTemplateApiPath(apiName)
@@ -84,7 +87,7 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
    */
   getDateTemplate(funcs: IPageFunctions[]): string {
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/model.ejs")
+      path.resolve(__dirname, "../../../templates/React/model.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
@@ -99,9 +102,12 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
    * @param props - 参数
    */
   getApiTemplate(props: IApiTemplate): string {
-    const { rule, name, funcs } = props
+    const { rule, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
+
     const templateCode = fs.readFileSync(
-      path.resolve(__dirname, "../../templates/React/server.ejs")
+      path.resolve(__dirname, "../../../templates/React/server.ejs")
     )
     const code = ejs.render(
       templateCode.toString(),
