@@ -198,7 +198,6 @@ function Page() {
       const functions = () => createId ? update<%=name%>(createId, values) : create<%=name%>(values)
       const { data } = await functions()
       message.success(data?.message || '操作成功')
-      createFormRef.current?.handleReset()
       setCreateOpen(false)
       getPage()
     } finally {
