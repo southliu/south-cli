@@ -30,7 +30,7 @@ export abstract class ICreateProject {
 /**
  * 创建页面抽象类
  */
-export abstract class ICreatePage<ITemplate, IApiTemplate, IGenerator> {
+export abstract class ICreatePage<ITemplate, IApiTemplate, IOptionTemplate, IGenerator> {
   public abstract name: string; // 文件名
 
   /**
@@ -50,6 +50,12 @@ export abstract class ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     * @param apiName - 接口名称
     */
   abstract getTemplateApiPath(apiName: string): string;
+
+  /**
+   * 获取新增跳转页面模板
+  * @param props - 参数
+   */
+  abstract getOptionTemplate(props: IOptionTemplate): string;
 
   /**
    * 获取接口模板

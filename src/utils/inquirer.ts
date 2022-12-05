@@ -107,8 +107,7 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
     })
 
     // 处理基础功能中的新增类型
-    const createIdx = functions.indexOf('create')
-    functions[createIdx] = type ? 'create' : 'create-page'
+    if (!type) functions.push('create-page')
   }
 
   return functions
