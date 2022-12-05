@@ -1,7 +1,7 @@
 import type { IPageFunctions } from '../../../types'
 import { getFunctions, getName, getRule, getTitle } from '../../utils/inquirer'
 import { getApiName, getApiPath } from './utils/helper'
-import { errorText, hasFolder, successText } from '../../utils/helper'
+import { errorText, firstUpperCase, hasFolder, successText } from '../../utils/helper'
 import { ICreatePage } from '../../../types/lib/create'
 import path from 'path'
 import fs from 'fs-extra'
@@ -23,6 +23,14 @@ interface IApiTemplate {
   funcs: IPageFunctions[];
 }
 
+// 新增跳转操作参数
+interface IOptionTemplate {
+  rule: string;
+  name: string;
+  apiName: string;
+  funcs: IPageFunctions[];
+}
+
 // 生成代码参数
 interface IGenerator {
   code: string;
@@ -41,7 +49,12 @@ interface IGenerator {
  * 5.选择页面功能：增删改查
  * 6.生成模板页面
  */
-class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
+class GeneratorVue extends ICreatePage<
+  ITemplate,
+  IApiTemplate,
+  IOptionTemplate,
+  IGenerator
+> {
   name: string // 文件名
   constructor(name: string) {
     super()
@@ -106,6 +119,27 @@ class GeneratorVue extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     const code = ejs.render(
       templateCode.toString(),
       { rule, name, funcs }
+    )
+
+    return code
+  }
+
+  /**
+   * 获取新增跳转页面模板
+   */
+  getOptionTemplate(props: IOptionTemplate): string {
+    const { rule, apiName, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
+
+    const templateCode = fs.readFileSync(
+      path.resolve(__dirname, "../../../templates/Vue/option.ejs")
+    )
+    // 获取接口文件路径
+    const apiPath = this.getTemplateApiPath(apiName)
+    const code = ejs.render(
+      templateCode.toString(),
+      { rule, name, apiPath, funcs }
     )
 
     return code

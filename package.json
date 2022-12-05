@@ -1,6 +1,6 @@
 {
   "name": "south-cli",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "cli脚手架生成项目",
   "repository": "https://github.com/SouthLiu/south-cli",
   "homepage": "https://github.com/SouthLiu/south-cli",

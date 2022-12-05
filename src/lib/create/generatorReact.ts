@@ -23,10 +23,19 @@ interface IApiTemplate {
   funcs: IPageFunctions[];
 }
 
+// 新增跳转操作参数
+interface IOptionTemplate {
+  rule: string;
+  name: string;
+  apiName: string;
+  funcs: IPageFunctions[];
+}
+
 // 生成代码参数
 interface IGenerator {
   code: string;
   data: string;
+  option: string;
   api: string;
   apiName: string;
   filePath: string;
@@ -41,7 +50,12 @@ interface IGenerator {
  * 5.选择页面功能：增删改查
  * 6.生成模板页面
  */
-class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
+class GeneratorReact extends ICreatePage<
+  ITemplate,
+  IApiTemplate,
+  IOptionTemplate,
+  IGenerator
+> {
   name: string // 文件名
   constructor(name: string) {
     super()
@@ -98,6 +112,27 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
   }
 
   /**
+   * 获取新增跳转页面模板
+   */
+  getOptionTemplate(props: IOptionTemplate): string {
+    const { rule, apiName, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
+
+    const templateCode = fs.readFileSync(
+      path.resolve(__dirname, "../../../templates/React/option.ejs")
+    )
+    // 获取接口文件路径
+    const apiPath = this.getTemplateApiPath(apiName)
+    const code = ejs.render(
+      templateCode.toString(),
+      { rule, name, apiPath, funcs }
+    )
+
+    return code
+  }
+
+  /**
    * 获取接口模板
    * @param props - 参数
    */
@@ -140,6 +175,7 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     const {
       code,
       data,
+      option,
       api,
       apiName,
       filePath
@@ -159,6 +195,13 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     const dataFilePath = path.join(cwd, `${this.name}\\model.ts`)
     fs.outputFileSync(dataFilePath, data)
     console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
+
+    if (option) {
+      // 输出新增跳转代码
+      const optionFilePath = path.join(cwd, `${this.name}\\option.tsx`)
+      fs.outputFileSync(optionFilePath, option)
+      console.log(successText(`  创建option文件成功 - ${optionFilePath}`))
+    }
 
     // 输出接口代码
     const apiFilePath = this.getApiFilePath(apiName)
@@ -199,6 +242,7 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     // 6.生成模板页面
     const codeTemplate = this.getTemplate({name, title, rule, apiName, funcs})
     const dataTemplate = this.getDateTemplate(funcs)
+    const optionTemplate = this.getOptionTemplate({rule, name, apiName, funcs})
     const apiTemplate = this.getApiTemplate({rule, name, funcs})
     if (!codeTemplate || !dataTemplate || !apiTemplate) {
       return console.log(errorText('  错误模板数据'))
@@ -208,6 +252,7 @@ class GeneratorReact extends ICreatePage<ITemplate, IApiTemplate, IGenerator> {
     const params = {
       code: codeTemplate,
       data: dataTemplate,
+      option: optionTemplate,
       api: apiTemplate,
       apiName,
       filePath
