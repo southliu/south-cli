@@ -70,6 +70,10 @@ program
         ${cyanText('south create-vue ' + italicFont('vue-name'))}\r\n
         \r\n创建React页面操作:
         ${cyanText('south create-react ' + italicFont('react-name'))}\r\n
+        \r\n获取Yapi页面表格参数操作:
+        ${cyanText('south analyzer-table ' + italicFont('url'))}\r\n
+        \r\n获取Yapi页面新增参数操作:
+        ${cyanText('south analyzer-create ' + italicFont('url'))}\r\n
         \r\n帮助说明:
         ${cyanText('south --help')}\r
       `)
