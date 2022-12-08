@@ -155,7 +155,7 @@ function Page() {
 
   /** 点击新增 */
   const onCreate = () => {
-    navigate('<%=rule%>/option')
+    navigate('<%=rule%>/option?type=create')
   }
 <% } -%>
 <% if (funcs.includes('update') && funcs.includes('create-page')) { -%>
@@ -165,7 +165,7 @@ function Page() {
    * @param id - 唯一值
    */
   const onUpdate = (id: string) => {
-    navigate(`<%=rule%>/option?id=${id}`)
+    navigate(`<%=rule%>/option?type=update&id=${id}`)
   }
 <% } -%>
 <% if (funcs.includes('create') && !funcs.includes('create-page')) { -%>
