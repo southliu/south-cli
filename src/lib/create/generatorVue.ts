@@ -133,6 +133,8 @@ class GeneratorVue extends ICreatePage<
    */
   getOptionTemplate(props: IOptionTemplate): string {
     const { rule, apiName, funcs } = props
+    if (!funcs.includes('create-page')) return ''
+
     let { name } = props
     name = firstUpperCase(name) // 首字母大写
 

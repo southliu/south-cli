@@ -1,6 +1,6 @@
 import type { IFormData } from '#/form'
 import type { RootState } from '@/stores'
-import type { IPagePermission, ITableOptions } from '#/public'
+import type { IPagePermission<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { %>, ITableOptions<% } -%> } from '#/public'
 <% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('search')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
 <% } -%>
@@ -49,11 +49,13 @@ import BasicTable from '@/components/Table/BasicTable'
 <% if (funcs.includes('pagination')) { -%>
 import BasicPagination from '@/components/Pagination/BasicPagination'
 <% } -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
 
 // 当前行数据
 interface IRowData {
   id: string;
 }
+<% } -%>
 <% if (funcs.includes('search')) { -%>
 
 // 初始化搜索
@@ -107,7 +109,7 @@ function Page() {
   // 权限
   const pagePermission: IPagePermission = {
     page: checkPermission(`${permissionPrefix}/index`, permissions),
-<% if (funcs.includes('create')) { -%>
+<% if (funcs.includes('create') || funcs.includes('create-page')) { -%>
     create: checkPermission(`${permissionPrefix}/create`, permissions),
 <% } -%>
 <% if (funcs.includes('update')) { -%>
@@ -270,6 +272,7 @@ function Page() {
     handleSearch({ ...formData, page, pageSize })
   }
 <% } -%>
+<% if (funcs.includes('create') || funcs.includes('create-page') || funcs.includes('update')) { -%>
 
   /**
    * 渲染操作
@@ -300,6 +303,7 @@ function Page() {
 <% } -%>
     </>
   )
+<% } -%>
 
   return (
     <BasicContent isPermission={pagePermission.page}>
@@ -310,15 +314,21 @@ function Page() {
           list={searchList}
           data={initSearch}
           isLoading={isLoading}
+<% if (funcs.includes('create') || funcs.includes('create-page')) { -%>
           isCreate={pagePermission.create}
           onCreate={onCreate}
+<% } -%>
           handleFinish={onSearch}
         />
         
 <% } -%>
         <BasicTable
           loading={isLoading}
+<% if (funcs.includes('create') || funcs.includes('create-page') || funcs.includes('update')) { -%>
           columns={tableColumns(optionRender)}
+<% } else { -%>
+          columns={tableColumns()}
+<% } -%>
           dataSource={tableData}
         />
 <% if (funcs.includes('pagination')) { -%>
