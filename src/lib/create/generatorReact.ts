@@ -27,6 +27,7 @@ interface IApiTemplate {
 interface IOptionTemplate {
   rule: string;
   name: string;
+  title: string;
   apiName: string;
   funcs: IPageFunctions[];
 }
@@ -115,7 +116,7 @@ class GeneratorReact extends ICreatePage<
    * 获取新增跳转页面模板
    */
   getOptionTemplate(props: IOptionTemplate): string {
-    const { rule, apiName, funcs } = props
+    const { rule, title, apiName, funcs } = props
     let { name } = props
     name = firstUpperCase(name) // 首字母大写
 
@@ -126,7 +127,7 @@ class GeneratorReact extends ICreatePage<
     const apiPath = this.getTemplateApiPath(apiName)
     const code = ejs.render(
       templateCode.toString(),
-      { rule, name, apiPath, funcs }
+      { rule, title, name, apiPath, funcs }
     )
 
     return code
@@ -242,7 +243,7 @@ class GeneratorReact extends ICreatePage<
     // 6.生成模板页面
     const codeTemplate = this.getTemplate({name, title, rule, apiName, funcs})
     const dataTemplate = this.getDateTemplate(funcs)
-    const optionTemplate = this.getOptionTemplate({rule, name, apiName, funcs})
+    const optionTemplate = this.getOptionTemplate({rule, name, title, apiName, funcs})
     const apiTemplate = this.getApiTemplate({rule, name, funcs})
     if (!codeTemplate || !dataTemplate || !apiTemplate) {
       return console.log(errorText('  错误模板数据'))

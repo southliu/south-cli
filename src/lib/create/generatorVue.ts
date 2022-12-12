@@ -77,7 +77,9 @@ class GeneratorVue extends ICreatePage<
    * @param props - 参数
    */
   getTemplate(props: ITemplate): string {
-    const { name, title, rule, apiName, funcs } = props
+    const { title, rule, apiName, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../../templates/Vue/index.ejs")
     )
@@ -112,7 +114,9 @@ class GeneratorVue extends ICreatePage<
    * @param props - 参数
    */
   getApiTemplate(props: IApiTemplate): string {
-    const { rule, name, funcs } = props
+    const { rule, funcs } = props
+    let { name } = props
+    name = firstUpperCase(name) // 首字母大写
     const templateCode = fs.readFileSync(
       path.resolve(__dirname, "../../../templates/Vue/server.ejs")
     )
