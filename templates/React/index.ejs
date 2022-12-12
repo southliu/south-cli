@@ -1,5 +1,5 @@
 import type { IFormData } from '#/form'
-import type { RootState } from '@/stores'
+import type { <% if (funcs.includes('create-page')) { %>AppDispatch, <% } %>RootState } from '@/stores'
 import type { IPagePermission<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { %>, ITableOptions<% } -%> } from '#/public'
 <% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('search')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
@@ -11,10 +11,16 @@ tableColumns } from './model'
 <% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('delete')) { -%>
 import { message } from 'antd'
 <% } -%>
-<% if (funcs.includes('search') || funcs.includes('delete')) { -%>
-import { useTitle } from '@/hooks/useTitle'
+<% if (funcs.includes('create-page')) { -%>
+import { useDispatch, useSelector } from 'react-redux'
 <% } -%>
+import { useTitle } from '@/hooks/useTitle'
+<% if (funcs.includes('create-page')) { -%>
+import { setRefreshPage } from '@/stores/public'
+<% } -%>
+<% if (funcs.includes('search') || funcs.includes('delete')) { -%>
 import { useSelector } from 'react-redux'
+<% } -%>
 <% if (funcs.includes('create-page')) { -%>
 import { useNavigate } from 'react-router-dom'
 <% } -%>
@@ -77,6 +83,9 @@ function Page() {
 <% if (funcs.includes('create-page') && (funcs.includes('create') || funcs.includes('update'))) { -%>
   const navigate = useNavigate()
 <% } -%>
+<% if (funcs.includes('create-page')) { -%>
+  const dispatch: AppDispatch = useDispatch()
+<% } -%>
 <% if (funcs.includes('search')) { -%>
   const searchFormRef = useRef<IFormFn>(null)
 <% } -%>
@@ -102,6 +111,9 @@ function Page() {
 <% } -%>
   const [tableData, setTableData] = useState<IFormData[]>([])
   const permissions = useSelector((state: RootState) => state.user.permissions)
+  <% if (funcs.includes('create-page') && (funcs.includes('create') || funcs.includes('update'))) { -%>
+    const isRefreshPage = useSelector((state: RootState) => state.public.isRefreshPage)
+  <% } -%>
 
   // 权限前缀
   const permissionPrefix = '<%=rule%>'
@@ -150,8 +162,20 @@ function Page() {
 
   // 首次进入自动加载接口数据
   useEffect(() => { 
-    if (pagePermission.page) handleSearch({ ...initSearch })
-  }, [handleSearch, pagePermission.page])
+    if (pagePermission.page<% if (funcs.includes('create-page')) { %> && !isRefreshPage<% } %>) handleSearch({ ...initSearch })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pagePermission.page])
+<% } -%>
+<% if (funcs.includes('create-page')) { -%>
+
+  // 如果是新增或编辑成功重新加载页面
+  useEffect(() => { 
+    if (isRefreshPage) {
+      dispatch(setRefreshPage(false))
+      getPage()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRefreshPage])
 <% } -%>
 <% if (funcs.includes('create') && funcs.includes('create-page')) { -%>
 
