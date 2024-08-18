@@ -1,12 +1,12 @@
 import { errorText } from '../../utils/helper'
-import puppeteer from 'puppeteer'
+import { launch, type Browser } from 'puppeteer'
 import AnalyzerLogin from './analyzerLogin'
 
 class analyzerInit {
   /** 初始化界面 */
   private async initBrowser() {
     try {
-      const browser = await puppeteer.launch({
+      const browser = await launch({
         headless: false, // 是否开启无头模式
         userDataDir: './cacheData' // 将浏览器数据保存在指定路径下
       })
@@ -19,7 +19,7 @@ class analyzerInit {
   }
 
   /** 初始化页面 */
-  private async initPage(url: string, browser: puppeteer.Browser) {
+  private async initPage(url: string, browser: Browser) {
     try {
       const page = await browser.newPage()
       await page.goto(url)

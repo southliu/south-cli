@@ -1,35 +1,35 @@
 import type { IFormData } from '#/form'
-import type { <% if (funcs.includes('create-page')) { %>AppDispatch, <% } %>RootState } from '@/stores'
-import type { IPagePermission<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { %>, ITableOptions<% } -%> } from '#/public'
-<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('search')) { -%>
+import type { <% if (funcs.includes('createPage')) { %>AppDispatch, <% } %>RootState } from '@/stores'
+import type { IPagePermission<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { %>, ITableOptions<% } -%> } from '#/public'
+<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('search')) { -%>
 import type { IFormFn } from '@/components/Form/BasicForm'
 <% } -%>
-import { useCallback, useEffect<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('search')) { %>, useRef<% } %>, useState } from 'react'
+import { useCallback, useEffect<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('search')) { %>, useRef<% } %>, useState } from 'react'
 import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>createList, <% } -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>createList, <% } -%>
 tableColumns } from './model'
-<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) || funcs.includes('delete')) { -%>
+<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('delete')) { -%>
 import { message } from 'antd'
 <% } -%>
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
 import { useDispatch, useSelector } from 'react-redux'
 <% } -%>
 import { useTitle } from '@/hooks/useTitle'
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
 import { setRefreshPage } from '@/stores/public'
 <% } -%>
 <% if (funcs.includes('search') || funcs.includes('delete')) { -%>
 import { useSelector } from 'react-redux'
 <% } -%>
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
 import { useNavigate } from 'react-router-dom'
 <% } -%>
 import { checkPermission } from '@/utils/permissions'
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
 import { UpdateBtn, DeleteBtn } from '@/components/Buttons'
 <% } -%>
-<% if ((funcs.includes('create') && funcs.includes('update') && funcs.includes('delete')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') && funcs.includes('update') && funcs.includes('delete')) && !funcs.includes('createPage')) { -%>
 import {
   get<%=name%>Page<% if (funcs.includes('update')) { %>,
   get<%=name%>ById<% } -%><% if (funcs.includes('create')) { %>,
@@ -38,16 +38,16 @@ import {
   delete<%=name%><% } %>
 } from '<%=apiPath%>'
 <% } else { -%>
-import { get<%=name%>Page<% if (funcs.includes('update') && !funcs.includes('create-page')) { -%>, get<%=name%>ById<% } -%>
-<% if (funcs.includes('create') && !funcs.includes('create-page')) { -%>, create<%=name%><% } -%>
-<% if (funcs.includes('update') && !funcs.includes('create-page')) { -%>, update<%=name%><% } -%>
+import { get<%=name%>Page<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>, get<%=name%>ById<% } -%>
+<% if (funcs.includes('create') && !funcs.includes('createPage')) { -%>, create<%=name%><% } -%>
+<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>, update<%=name%><% } -%>
 <% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from '<%=apiPath%>'
 <% } -%>
 import BasicContent from '@/components/Content/BasicContent'
 <% if (funcs.includes('search')) { -%>
 import BasicSearch from '@/components/Search/BasicSearch'
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 import BasicModal from '@/components/Modal/BasicModal'
 import BasicForm from '@/components/Form/BasicForm'
 <% } -%>
@@ -55,7 +55,7 @@ import BasicTable from '@/components/Table/BasicTable'
 <% if (funcs.includes('pagination')) { -%>
 import BasicPagination from '@/components/Pagination/BasicPagination'
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 
 // 当前行数据
 interface IRowData {
@@ -70,7 +70,7 @@ const initSearch = {
   pageSize: 20
 }
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 
 // 初始化新增数据
 const initCreate = {
@@ -80,26 +80,26 @@ const initCreate = {
 
 function Page() {
   useTitle('<%=title%>')
-<% if (funcs.includes('create-page') && (funcs.includes('create') || funcs.includes('update'))) { -%>
+<% if (funcs.includes('createPage') && (funcs.includes('create') || funcs.includes('update'))) { -%>
   const navigate = useNavigate()
 <% } -%>
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
   const dispatch: AppDispatch = useDispatch()
 <% } -%>
 <% if (funcs.includes('search')) { -%>
   const searchFormRef = useRef<IFormFn>(null)
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
   const createFormRef = useRef<IFormFn>(null)
   const [isCreateOpen, setCreateOpen] = useState(false)
 <% } -%>
 <% if (funcs.includes('search') || funcs.includes('delete')) { -%>
   const [isLoading, setLoading] = useState(false)
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
   const [isCreateLoading, setCreateLoading] = useState(false)
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
   const [createTitle, setCreateTitle] = useState(ADD_TITLE)
   const [createId, setCreateId] = useState('')
   const [createData, setCreateData] = useState<IFormData>(initCreate)
@@ -111,7 +111,7 @@ function Page() {
 <% } -%>
   const [tableData, setTableData] = useState<IFormData[]>([])
   const permissions = useSelector((state: RootState) => state.user.permissions)
-  <% if (funcs.includes('create-page') && (funcs.includes('create') || funcs.includes('update'))) { -%>
+  <% if (funcs.includes('createPage') && (funcs.includes('create') || funcs.includes('update'))) { -%>
     const isRefreshPage = useSelector((state: RootState) => state.public.isRefreshPage)
   <% } -%>
 
@@ -121,7 +121,7 @@ function Page() {
   // 权限
   const pagePermission: IPagePermission = {
     page: checkPermission(`${permissionPrefix}/index`, permissions),
-<% if (funcs.includes('create') || funcs.includes('create-page')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
     create: checkPermission(`${permissionPrefix}/create`, permissions),
 <% } -%>
 <% if (funcs.includes('update')) { -%>
@@ -162,11 +162,11 @@ function Page() {
 
   // 首次进入自动加载接口数据
   useEffect(() => { 
-    if (pagePermission.page<% if (funcs.includes('create-page')) { %> && !isRefreshPage<% } %>) handleSearch({ ...initSearch })
+    if (pagePermission.page<% if (funcs.includes('createPage')) { %> && !isRefreshPage<% } %>) handleSearch({ ...initSearch })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pagePermission.page])
 <% } -%>
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
 
   // 如果是新增或编辑成功重新加载页面
   useEffect(() => { 
@@ -177,14 +177,14 @@ function Page() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isRefreshPage])
 <% } -%>
-<% if (funcs.includes('create') && funcs.includes('create-page')) { -%>
+<% if (funcs.includes('create') && funcs.includes('createPage')) { -%>
 
   /** 点击新增 */
   const onCreate = () => {
     navigate('<%=rule%>/option?type=create')
   }
 <% } -%>
-<% if (funcs.includes('update') && funcs.includes('create-page')) { -%>
+<% if (funcs.includes('update') && funcs.includes('createPage')) { -%>
 
   /**
    * 点击编辑
@@ -194,7 +194,7 @@ function Page() {
     navigate(`<%=rule%>/option?type=update&id=${id}`)
   }
 <% } -%>
-<% if (funcs.includes('create') && !funcs.includes('create-page')) { -%>
+<% if (funcs.includes('create') && !funcs.includes('createPage')) { -%>
 
   /** 点击新增 */
   const onCreate = () => {
@@ -204,7 +204,7 @@ function Page() {
     setCreateData(initCreate)
   }
 <% } -%>
-<% if (funcs.includes('update') && !funcs.includes('create-page')) { -%>
+<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>
 
   /**
    * 点击编辑
@@ -223,7 +223,7 @@ function Page() {
     }
   }
 <% } -%>
-<% if (funcs.includes('create-page')) { -%>
+<% if (funcs.includes('createPage')) { -%>
 
   /** 获取表格数据 */
   const getPage = () => {
@@ -232,7 +232,7 @@ function Page() {
     handleSearch(params)
   }
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 
   /** 表格提交 */
   const createSubmit = () => {
@@ -296,7 +296,7 @@ function Page() {
     handleSearch({ ...formData, page, pageSize })
   }
 <% } -%>
-<% if (funcs.includes('create') || funcs.includes('create-page') || funcs.includes('update')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage') || funcs.includes('update')) { -%>
 
   /**
    * 渲染操作
@@ -338,7 +338,7 @@ function Page() {
           list={searchList}
           data={initSearch}
           isLoading={isLoading}
-<% if (funcs.includes('create') || funcs.includes('create-page')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
           isCreate={pagePermission.create}
           onCreate={onCreate}
 <% } -%>
@@ -348,7 +348,7 @@ function Page() {
 <% } -%>
         <BasicTable
           loading={isLoading}
-<% if (funcs.includes('create') || funcs.includes('create-page') || funcs.includes('update')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage') || funcs.includes('update')) { -%>
           columns={tableColumns(optionRender)}
 <% } else { -%>
           columns={tableColumns()}
@@ -365,7 +365,7 @@ function Page() {
           onChange={onChangePagination}
         />
 <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 
         <BasicModal
           title={createTitle}
