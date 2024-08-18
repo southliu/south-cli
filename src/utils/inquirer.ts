@@ -6,6 +6,7 @@ interface ILoginInfo {
   username: string;
   password: string;
 }
+
 export async function getLoginInfo(): Promise<ILoginInfo> {
   let { username } = await inquirer.prompt({
     name: 'username',
@@ -97,7 +98,7 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
     ]
   })
 
-  // 新增类型 create: 弹窗 create-page: 跳转页面
+  // 新增类型 create: 弹窗 createPage: 跳转页面
   if (functions.includes('create')) {
     // 询问新增类型
     const { type } = await inquirer.prompt({
@@ -107,7 +108,7 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
     })
 
     // 处理基础功能中的新增类型
-    if (!type) functions.push('create-page')
+    if (!type) functions.push('createPage')
   }
 
   return functions
