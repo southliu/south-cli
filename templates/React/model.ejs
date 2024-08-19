@@ -1,7 +1,7 @@
 <% if (funcs.includes('search') || funcs.includes('create') || funcs.includes('update')) { -%>
 import type { IFormList } from "#/form"
 <% } -%>
-import type { ITableColumn<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { %>, ITableOptions<% } -%> } from '#/public'
+import type { ITableColumn<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { %>, ITableOptions<% } -%> } from '#/public'
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import { INPUT_REQUIRED, SELECT_REQUIRED } from '@/utils/config'
 import { OPEN_CLOSE } from '@/utils/constants'
@@ -21,7 +21,7 @@ export const searchList: IFormList[] = [
     component: 'Input'
   }
 ]
-<% if (funcs.includes('create') || funcs.includes('create-page') || funcs.includes('update')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage') || funcs.includes('update')) { -%>
 
 /**
  * 表格数据
@@ -70,7 +70,7 @@ export const tableColumns = (): ITableColumn => {
       dataIndex: 'status',
       width: 200
     },
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('create-page')) { -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
     {
       title: '操作',
       dataIndex: 'operate',

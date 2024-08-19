@@ -1,7 +1,7 @@
+import type { Page } from 'puppeteer'
 import { errorText } from '../../utils/helper'
 import { getLoginInfo } from '../../utils/inquirer'
 import { getLocalInfo, removeLocalInfo, setLocalInfo } from '../../utils/local'
-import puppeteer from 'puppeteer'
 
 const USERNAME = 'username'
 const PASSWORD = 'password'
@@ -14,7 +14,7 @@ interface IPasswordFileResult {
 interface IInputPasswordProps {
   username: string,
   password: string,
-  page: puppeteer.Page,
+  page: Page,
   url: string
 }
 
@@ -23,7 +23,7 @@ class AnalyzerLogin {
    * 判断是否有登录/注册按钮
    * @param page - 页面数据
    */
-   private async hasPasswrod(page: puppeteer.Page) {
+   private async hasPasswrod(page: Page) {
     try {
       const label = 'div > div.btn-group > a > button'
       await page.waitForSelector(label, { timeout: 3000 })
@@ -47,7 +47,7 @@ class AnalyzerLogin {
    * @param elem - 元素
    * @param page - 页面数据
    */
-  private async clearInput(elem: string, page: puppeteer.Page) {
+  private async clearInput(elem: string, page: Page) {
     try {
       // ctrl + a -> Backspace
       await page.focus(elem)
@@ -117,7 +117,7 @@ class AnalyzerLogin {
    * 处理登录
    * @param page - 页面数据
    */
-  async handleLogin(page: puppeteer.Page, url: string) {
+  async handleLogin(page: Page, url: string) {
     try {
       const isPassword = await this.hasPasswrod(page)
   

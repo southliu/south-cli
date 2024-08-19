@@ -1,8 +1,8 @@
+import type { Page } from 'puppeteer'
 import { clickElement } from './utils/helper'
 import { errorText, successText } from '../../utils/helper'
 import path from 'path'
 import fs from 'fs-extra'
-import puppeteer from 'puppeteer'
 import AnalyzerInit from './analyzerInit'
 
 interface IQuery {
@@ -29,7 +29,7 @@ class AnalyzerTable {
    * 获取表格查询数据
    * @param page - 页面数据
    */
-  private async getQueryData(page: puppeteer.Page) {
+  private async getQueryData(page: Page) {
     try {
       // 获取页面行数据
       const label = 'div.colQuery > div > div > div > div > div > div > table > tbody > tr'
@@ -57,7 +57,7 @@ class AnalyzerTable {
    * 展开树形表格
    * @param page - 页面数据
    */
-  private async tableCollapsed(page: puppeteer.Page) {
+  private async tableCollapsed(page: Page) {
     try {
       // 等待并点击data加号展开树形表格
       const dataCollapsed = 'span.ant-table-row-expand-icon.ant-table-row-collapsed'
@@ -75,7 +75,7 @@ class AnalyzerTable {
    * 获取表格数据
    * @param page - 页面数据
    */
-  private async getTableData(page: puppeteer.Page) {
+  private async getTableData(page: Page) {
     try {
       // 展开树形表格
       await this.tableCollapsed(page)
