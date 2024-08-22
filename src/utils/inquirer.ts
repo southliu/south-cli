@@ -1,5 +1,5 @@
 import type { IPageFunctions } from '../../types'
-import inquirer from 'inquirer'
+import { input, checkbox, confirm, password as psdInput } from '@inquirer/prompts'
 
 /** 获取登录账号密码 */
 interface ILoginInfo {
@@ -8,14 +8,10 @@ interface ILoginInfo {
 }
 
 export async function getLoginInfo(): Promise<ILoginInfo> {
-  let { username } = await inquirer.prompt({
-    name: 'username',
-    type: 'input',
+  let username = await input({
     message: '请输入账号：'
   })
-  let { password } = await inquirer.prompt({
-    name: 'password',
-    type: 'password',
+  let password = await psdInput({
     message: '请输入密码：'
   })
 
@@ -28,9 +24,7 @@ export async function getLoginInfo(): Promise<ILoginInfo> {
 
 /** 获取页面名称 */
 export async function getName(): Promise<string> {
-  const { name } = await inquirer.prompt({
-    name: 'name',
-    type: 'input',
+  const name = await input({
     message: '请输入名称(get${name})：'
   })
 
@@ -39,9 +33,7 @@ export async function getName(): Promise<string> {
 
 /** 获取页面标题 */
 export async function getTitle(): Promise<string> {
-  const { title } = await inquirer.prompt({
-    name: 'title',
-    type: 'input',
+  const title = await input({
     message: '请输入标题：'
   })
 
@@ -50,9 +42,7 @@ export async function getTitle(): Promise<string> {
 
 /** 获取模型名称 */
 export async function getModel(): Promise<string> {
-  const { model } = await inquirer.prompt({
-    name: 'model',
-    type: 'input',
+  const model = await input({
     message: '请输入模型：'
   })
 
@@ -61,9 +51,7 @@ export async function getModel(): Promise<string> {
 
 /** 获取模型接口名称 */
 export async function getModelInterface(): Promise<string> {
-  const { modelInterface } = await inquirer.prompt({
-    name: 'modelInterface',
-    type: 'input',
+  const modelInterface = await input({
     message: '请输入模型接口名称：'
   })
 
@@ -72,9 +60,7 @@ export async function getModelInterface(): Promise<string> {
 
 /** 获取权限名称 */
 export async function getRule(): Promise<string> {
-  const { rule } = await inquirer.prompt({
-    name: 'rule',
-    type: 'input',
+  const rule = await input({
     message: '请输入权限：'
   })
 
@@ -82,11 +68,9 @@ export async function getRule(): Promise<string> {
 }
 
 /** 获取功能 */
-export async function getFunctions(): Promise<IPageFunctions[]> {
+export async function getFunctions() {
   // 询问基础功能
-  const { functions }: { functions: IPageFunctions[] } = await inquirer.prompt({
-    name: 'functions',
-    type: 'checkbox',
+  const functions: IPageFunctions[] = await checkbox({
     message: '选择页面功能:',
     choices: [
       { name: '搜索', value: 'search', checked: true },
@@ -101,9 +85,7 @@ export async function getFunctions(): Promise<IPageFunctions[]> {
   // 新增类型 create: 弹窗 createPage: 跳转页面
   if (functions.includes('create')) {
     // 询问新增类型
-    const { type } = await inquirer.prompt({
-      name: 'type',
-      type: 'confirm',
+    const type = await confirm({
       message: '新增是否以弹窗形式展现? Y: 弹窗 n: 跳转'
     })
 

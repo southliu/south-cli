@@ -11,6 +11,7 @@
     "jsxdev",
     "mkdirs",
     "antd",
-    "pinia"
+    "pinia",
+    "rawlist",
   ]
 }
