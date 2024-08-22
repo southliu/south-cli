@@ -1,8 +1,8 @@
 import { ICreateProject } from '../../../types/lib/create'
 import { getDownloadUrl, getRepoList, getTagList } from '../../utils/serves'
 import { cyanText, dimText, errorText, handleLoading } from '../../utils/helper'
+import { rawlist } from '@inquirer/prompts'
 import downloadGitRepo from 'download-git-repo'
-import inquirer from 'inquirer'
 import util from 'util'
 import path from 'path'
 
@@ -26,14 +26,15 @@ class GeneratorProject extends ICreateProject {
     try {
       // 获取模板列表
       const repoList = await handleLoading(getRepoList(), '获取项目列表中...')
-      if (!repoList) return console.log('\n  暂无项目列表数据')
+      if (!repoList) {
+        console.log('\n  暂无项目列表数据')
+        return ''
+      }
       // 过滤获取名称
-      const repos = repoList.map((item: { name: string }) => item.name)
+      const repos = repoList.map((item: { name: string }) => ({ name: item.name, value: item.name }))
 
       // 咨询用户选择项目
-      const { repo } = await inquirer.prompt({
-        name: 'repo',
-        type: 'list',
+      const repo = await rawlist({
         choices: repos,
         message: '请选择项目:'
       })
@@ -41,6 +42,7 @@ class GeneratorProject extends ICreateProject {
       return repo
     } catch(err) {
       console.log(errorText('\n  获取项目列表失败'))
+      return ''
     }
   }
 
@@ -52,14 +54,15 @@ class GeneratorProject extends ICreateProject {
     try {
       // 获取标签列表
       const tagList = await handleLoading(getTagList(repo), '获取标签列表中...')
-      if (!tagList) return console.log('\n  暂无标签列表数据')
+      if (!tagList) {
+        console.log('\n  暂无标签列表数据')
+        return ''
+      }
       // 过滤获取名称
-      const tags = tagList.map((item: { name: string }) => item.name)
+      const tags = tagList.map((item: { name: string }) => ({ name: item.name, value: item.name }))
 
       // 咨询用户选择标签
-      const { tag } = await inquirer.prompt({
-        name: 'tag',
-        type: 'list',
+      const tag = await rawlist({
         choices: tags,
         message: '请选择标签:'
       })
@@ -67,6 +70,7 @@ class GeneratorProject extends ICreateProject {
       return tag
     } catch(err) {
       console.log(errorText('\n  获取项目列表失败'))
+      return ''
     }
   }
 
