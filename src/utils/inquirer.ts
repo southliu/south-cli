@@ -61,7 +61,7 @@ export async function getModelInterface(): Promise<string> {
 /** 获取权限名称 */
 export async function getRule(): Promise<string> {
   const rule = await input({
-    message: '请输入权限：'
+    message: '请输入权限(如：/sys/user)：'
   })
 
   return rule ? rule.trim() : ''

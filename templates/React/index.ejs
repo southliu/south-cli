@@ -1,210 +1,120 @@
-import type { IFormData } from '#/form'
-import type { <% if (funcs.includes('createPage')) { %>AppDispatch, <% } %>RootState } from '@/stores'
-import type { IPagePermission<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { %>, ITableOptions<% } -%> } from '#/public'
-<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('search')) { -%>
-import type { IFormFn } from '@/components/Form/BasicForm'
-<% } -%>
-import { useCallback, useEffect<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('search')) { %>, useRef<% } %>, useState } from 'react'
-import { <% if (funcs.includes('search')) { -%>searchList, <% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>createList, <% } -%>
-tableColumns } from './model'
-<% if (((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) || funcs.includes('delete')) { -%>
-import { message } from 'antd'
-<% } -%>
-<% if (funcs.includes('createPage')) { -%>
-import { useDispatch, useSelector } from 'react-redux'
-<% } -%>
-import { useTitle } from '@/hooks/useTitle'
-<% if (funcs.includes('createPage')) { -%>
-import { setRefreshPage } from '@/stores/public'
-<% } -%>
-<% if (funcs.includes('search') || funcs.includes('delete')) { -%>
-import { useSelector } from 'react-redux'
-<% } -%>
-<% if (funcs.includes('createPage')) { -%>
-import { useNavigate } from 'react-router-dom'
-<% } -%>
-import { checkPermission } from '@/utils/permissions'
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-import { ADD_TITLE, EDIT_TITLE } from '@/utils/config'
-import { UpdateBtn, DeleteBtn } from '@/components/Buttons'
-<% } -%>
-<% if ((funcs.includes('create') && funcs.includes('update') && funcs.includes('delete')) && !funcs.includes('createPage')) { -%>
+import type { FormData } from '#/form';
+import type { PagePermission } from '#/public';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { searchList, createList, tableColumns } from './model';
+import { type FormInstance, message } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { checkPermission } from '@/utils/permissions';
+import { useCommonStore } from '@/hooks/useCommonStore';
+import { ADD_TITLE, EDIT_TITLE, INIT_PAGINATION } from '@/utils/config';
+import { UpdateBtn, DeleteBtn } from '@/components/Buttons';
 import {
-  get<%=name%>Page<% if (funcs.includes('update')) { %>,
-  get<%=name%>ById<% } -%><% if (funcs.includes('create')) { %>,
-  create<%=name%><% } -%><% if (funcs.includes('update')) { %>,
-  update<%=name%><% } -%><% if (funcs.includes('delete')) { %>,
-  delete<%=name%><% } %>
-} from '<%=apiPath%>'
-<% } else { -%>
-import { get<%=name%>Page<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>, get<%=name%>ById<% } -%>
-<% if (funcs.includes('create') && !funcs.includes('createPage')) { -%>, create<%=name%><% } -%>
-<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>, update<%=name%><% } -%>
-<% if (funcs.includes('delete')) { -%>, delete<%=name%><% } -%> } from '<%=apiPath%>'
-<% } -%>
-import BasicContent from '@/components/Content/BasicContent'
-<% if (funcs.includes('search')) { -%>
-import BasicSearch from '@/components/Search/BasicSearch'
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-import BasicModal from '@/components/Modal/BasicModal'
-import BasicForm from '@/components/Form/BasicForm'
-<% } -%>
-import BasicTable from '@/components/Table/BasicTable'
-<% if (funcs.includes('pagination')) { -%>
-import BasicPagination from '@/components/Pagination/BasicPagination'
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
+  get<%=name%>Page,
+  get<%=name%>ById,
+  create<%=name%>,
+  update<%=name%>,
+  delete<%=name%>
+} from '<%=apiPath%>';
+import BaseContent from '@/components/Content/BaseContent';
+import BaseSearch from '@/components/Search/BaseSearch';
+import BaseModal from '@/components/Modal/BaseModal';
+import BaseForm from '@/components/Form/BaseForm';
+import BaseTable from '@/components/Table/BaseTable';
+import BasePagination from '@/components/Pagination/BasePagination';
+import BaseCard from '@/components/Card/BaseCard';
 
 // 当前行数据
-interface IRowData {
+interface RowData {
   id: string;
 }
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-
-// 初始化搜索
-const initSearch = {
-  page: 1,
-  pageSize: 20
-}
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
 
 // 初始化新增数据
 const initCreate = {
   status: 1
-}
-<% } -%>
+};
 
-function Page() {
-  useTitle('<%=title%>')
-<% if (funcs.includes('createPage') && (funcs.includes('create') || funcs.includes('update'))) { -%>
-  const navigate = useNavigate()
-<% } -%>
-<% if (funcs.includes('createPage')) { -%>
-  const dispatch: AppDispatch = useDispatch()
-<% } -%>
-<% if (funcs.includes('search')) { -%>
-  const searchFormRef = useRef<IFormFn>(null)
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-  const createFormRef = useRef<IFormFn>(null)
-  const [isCreateOpen, setCreateOpen] = useState(false)
-<% } -%>
-<% if (funcs.includes('search') || funcs.includes('delete')) { -%>
-  const [isLoading, setLoading] = useState(false)
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-  const [isCreateLoading, setCreateLoading] = useState(false)
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-  const [createTitle, setCreateTitle] = useState(ADD_TITLE)
-  const [createId, setCreateId] = useState('')
-  const [createData, setCreateData] = useState<IFormData>(initCreate)
-<% } -%>
-<% if (funcs.includes('pagination')) { -%>
-  const [page, setPage] = useState(initSearch.page)
-  const [pageSize, setPageSize] = useState(initSearch.pageSize)
-  const [total, setTotal] = useState(0)
-<% } -%>
-  const [tableData, setTableData] = useState<IFormData[]>([])
-  const permissions = useSelector((state: RootState) => state.user.permissions)
-  <% if (funcs.includes('createPage') && (funcs.includes('create') || funcs.includes('update'))) { -%>
-    const isRefreshPage = useSelector((state: RootState) => state.public.isRefreshPage)
-  <% } -%>
+function <%=name%>() {
+  const { t } = useTranslation();
+  const createFormRef = useRef<FormInstance>(null);
+  const columns = tableColumns(t, optionRender);
+  const [isFetch, setFetch] = useState(false);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [isCreateLoading, setCreateLoading] = useState(false);
+  const [createTitle, setCreateTitle] = useState(ADD_TITLE(t));
+  const [createId, setCreateId] = useState('');
+  const [createData, setCreateData] = useState<FormData>(initCreate);
+  const [searchData, setSearchData] = useState<FormData>({});
+  const [page, setPage] = useState(INIT_PAGINATION.page);
+  const [pageSize, setPageSize] = useState(INIT_PAGINATION.pageSize);
+  const [total, setTotal] = useState(0);
+  const [tableData, setTableData] = useState<FormData[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const { permissions } = useCommonStore();
 
   // 权限前缀
-  const permissionPrefix = '<%=rule%>'
+  const permissionPrefix = '/authority/menu';
 
   // 权限
-  const pagePermission: IPagePermission = {
+  const pagePermission: PagePermission = {
     page: checkPermission(`${permissionPrefix}/index`, permissions),
-<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
+    <% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
     create: checkPermission(`${permissionPrefix}/create`, permissions),
-<% } -%>
-<% if (funcs.includes('update')) { -%>
+    <% } -%>
+    <% if (funcs.includes('update')) { -%>
     update: checkPermission(`${permissionPrefix}/update`, permissions),
-<% } -%>
-<% if (funcs.includes('delete')) { -%>
+    <% } -%>
+    <% if (funcs.includes('delete')) { -%>
     delete: checkPermission(`${permissionPrefix}/delete`, permissions)
-<% } -%>
-  }
-<% if (funcs.includes('search')) { -%>
+    <% } -%>
+  };
+
+  /** 获取表格数据 */
+  const getPage = useCallback(async () => {
+    const params = { ...searchData, page, pageSize };
+
+    try {
+      setLoading(true);
+      const res = await get<%=name%>Page(params);
+      const { code, data } = res;
+      if (Number(code) !== 200) return;
+      const { items, total } = data;
+      setTotal(total);
+      setTableData(items);
+    } finally {
+      setFetch(false);
+      setLoading(false);
+    }
+  }, [page, pageSize, searchData]);
+
+  useEffect(() => {
+    if (isFetch) getPage();
+  }, [getPage, isFetch]);
 
   /**
    * 点击搜索
    * @param values - 表单返回数据
    */
-  const onSearch = (values: IFormData) => {
-    setPage(1)
-    handleSearch({ page: 1, pageSize, ...values })
-  }
-
-  /**
-   * 搜索提交
-   * @param values - 表单返回数据
-   */
-  const handleSearch = useCallback(async (values: IFormData) => {
-    try {
-      setLoading(true)
-      const { data: { data } } = await get<%=name%>Page(values)
-      const { items<% if (funcs.includes('pagination')) { -%>, total<% } -%> } = data
-<% if (funcs.includes('pagination')) { -%>
-      setTotal(total)
-<% } -%>
-      setTableData(items)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+  const onSearch = (values: FormData) => {
+    setPage(1);
+    setSearchData(values);
+    setFetch(true);
+  };
 
   // 首次进入自动加载接口数据
-  useEffect(() => { 
-    if (pagePermission.page<% if (funcs.includes('createPage')) { %> && !isRefreshPage<% } %>) handleSearch({ ...initSearch })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pagePermission.page])
-<% } -%>
-<% if (funcs.includes('createPage')) { -%>
-
-  // 如果是新增或编辑成功重新加载页面
-  useEffect(() => { 
-    if (isRefreshPage) {
-      dispatch(setRefreshPage(false))
-      getPage()
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isRefreshPage])
-<% } -%>
-<% if (funcs.includes('create') && funcs.includes('createPage')) { -%>
+  useEffect(() => {
+    if (pagePermission.page) getPage();
+    // TODO: 重复请求测试，可删
+    if (pagePermission.page) getPage();
+  }, [getPage, pagePermission.page]);
 
   /** 点击新增 */
   const onCreate = () => {
-    navigate('<%=rule%>/option?type=create')
-  }
-<% } -%>
-<% if (funcs.includes('update') && funcs.includes('createPage')) { -%>
-
-  /**
-   * 点击编辑
-   * @param id - 唯一值
-   */
-  const onUpdate = (id: string) => {
-    navigate(`<%=rule%>/option?type=update&id=${id}`)
-  }
-<% } -%>
-<% if (funcs.includes('create') && !funcs.includes('createPage')) { -%>
-
-  /** 点击新增 */
-  const onCreate = () => {
-    setCreateOpen(true)
-    setCreateTitle(ADD_TITLE)
-    setCreateId('')
-    setCreateData(initCreate)
-  }
-<% } -%>
-<% if (funcs.includes('update') && !funcs.includes('createPage')) { -%>
+    setCreateOpen(true);
+    setCreateTitle(ADD_TITLE(t));
+    setCreateId('');
+    setCreateData(initCreate);
+  };
 
   /**
    * 点击编辑
@@ -212,58 +122,45 @@ function Page() {
    */
   const onUpdate = async (id: string) => {
     try {
-      setCreateOpen(true)
-      setCreateTitle(EDIT_TITLE(id))
-      setCreateId(id)
-      setCreateLoading(true)
-      const { data: { data } } = await get<%=name%>ById(id as string)
-      setCreateData(data)
+      setCreateOpen(true);
+      setCreateTitle(EDIT_TITLE(t, id));
+      setCreateId(id);
+      setCreateLoading(true);
+      const { code, data } = await get<%=name%>ById(id as string);
+      if (Number(code) !== 200) return;
+      setCreateData(data);
     } finally {
-      setCreateLoading(false)
+      setCreateLoading(false);
     }
-  }
-<% } -%>
-<% if (funcs.includes('createPage')) { -%>
+  };
 
-  /** 获取表格数据 */
-  const getPage = () => {
-    const formData = searchFormRef.current?.getFieldsValue() || {}
-    const params = { ...formData, page, pageSize }
-    handleSearch(params)
-  }
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
-
-  /** 表格提交 */
+  /** 表单提交 */
   const createSubmit = () => {
-    createFormRef.current?.handleSubmit()
-  }
+    createFormRef?.current?.submit();
+  };
 
-  /** 获取表格数据 */
-  const getPage = () => {
-    const formData = searchFormRef.current?.getFieldsValue() || {}
-    const params = { ...formData, page, pageSize }
-    handleSearch(params)
-  }
+  /** 关闭新增/修改弹窗 */
+  const closeCreate = () => {
+    setCreateOpen(false);
+  };
 
   /**
    * 新增/编辑提交
    * @param values - 表单返回数据
    */
-  const handleCreate = async (values: IFormData) => {
+  const handleCreate = async (values: FormData) => {
     try {
-      setCreateLoading(true)
-      const functions = () => createId ? update<%=name%>(createId, values) : create<%=name%>(values)
-      const { data } = await functions()
-      message.success(data?.message || '操作成功')
-      setCreateOpen(false)
-      getPage()
+      setCreateLoading(true);
+      const functions = () => createId ? update<%=name%>(createId, values) : create<%=name%>(values);
+      const { code, message } = await functions();
+      if (Number(code) !== 200) return;
+      messageApi.success(message || t('public.successfulOperation'));
+      setCreateOpen(false);
+      getPage();
     } finally {
-      setCreateLoading(false)
+      setCreateLoading(false);
     }
-  }
-<% } -%>
-<% if (funcs.includes('delete')) { -%>
+  };
 
   /**
    * 点击删除
@@ -271,121 +168,104 @@ function Page() {
    */
   const onDelete = async (id: string) => {
     try {
-      setLoading(true)
-      const { data } = await delete<%=name%>(id as string)
-      if (data?.code === 200) {
-        message.success(data?.message || '删除成功')
-        getPage()
+      setLoading(true);
+      const { code, message } = await delete<%=name%>(id as string);
+      if (Number(code) === 200) {
+        messageApi.success(message || t('public.successfullyDeleted'));
+        getPage();
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-<% } -%>
-<% if (funcs.includes('pagination')) { -%>
+  };
 
   /**
    * 处理分页
    * @param page - 当前页数
    * @param pageSize - 每页条数
    */
-  const onChangePagination = (page: number, pageSize: number) => {
-    setPage(page)
-    setPageSize(pageSize)
-    const formData = searchFormRef.current?.getFieldsValue()
-    handleSearch({ ...formData, page, pageSize })
-  }
-<% } -%>
-<% if (funcs.includes('create') || funcs.includes('createPage') || funcs.includes('update')) { -%>
+  const onChangePagination = useCallback((page: number, pageSize: number) => {
+    setPage(page);
+    setPageSize(pageSize);
+    setFetch(true);
+  }, []);
 
   /**
    * 渲染操作
    * @param _ - 当前值
    * @param record - 当前行参数
    */
-  const optionRender: ITableOptions<object> = (_, record) => (
-    <>
-<% if (funcs.includes('create')) { -%>
+  function optionRender(_: unknown, record: object) {
+    return <>
       {
         pagePermission.update === true &&
         <UpdateBtn
           className='mr-5px'
           isLoading={isLoading}
-          onClick=<%- '{() => onUpdate((record as IRowData).id)}' %>
+          onClick={() => onUpdate((record as RowData).id)}
         />
       }
-<% } -%>
-<% if (funcs.includes('update')) { -%>
       {
         pagePermission.delete === true &&
         <DeleteBtn
           className='mr-5px'
           isLoading={isLoading}
-          handleDelete=<%- '{() => onDelete((record as IRowData).id)}' %>
+          handleDelete={() => onDelete((record as RowData).id)}
         />
       }
-<% } -%>
-    </>
-  )
-<% } -%>
+    </>;
+  }
 
   return (
-    <BasicContent isPermission={pagePermission.page}>
-      <>
-<% if (funcs.includes('search')) { -%>
-        <BasicSearch
-          formRef={searchFormRef}
-          list={searchList}
-          data={initSearch}
+    <BaseContent isPermission={pagePermission.page}>
+      { contextHolder }
+      <BaseCard>
+        <BaseSearch
+          list={searchList(t)}
+          data={searchData}
           isLoading={isLoading}
-<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
-          isCreate={pagePermission.create}
-          onCreate={onCreate}
-<% } -%>
           handleFinish={onSearch}
         />
-        
-<% } -%>
-        <BasicTable
-          loading={isLoading}
-<% if (funcs.includes('create') || funcs.includes('createPage') || funcs.includes('update')) { -%>
-          columns={tableColumns(optionRender)}
-<% } else { -%>
-          columns={tableColumns()}
-<% } -%>
-          dataSource={tableData}
-        />
-<% if (funcs.includes('pagination')) { -%>
+      </BaseCard>
 
-        <BasicPagination
+      <BaseCard className='mt-10px'>
+        <BaseTable
+          isLoading={isLoading}
+          isCreate={pagePermission.create}
+          columns={columns}
+          dataSource={tableData}
+          getPage={getPage}
+          onCreate={onCreate}
+        />
+
+        <BasePagination
           disabled={isLoading}
           current={page}
           pageSize={pageSize}
           total={total}
           onChange={onChangePagination}
         />
-<% } -%>
-<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('createPage')) { -%>
+      </BaseCard>
 
-        <BasicModal
-          title={createTitle}
-          open={isCreateOpen}
-          confirmLoading={isCreateLoading}
-          onOk={createSubmit}
-          onCancel=<%- '{() => setCreateOpen(false)}' %>
-        >
-          <BasicForm
-            formRef={createFormRef}
-            list={createList}
-            data={createData}
-            labelCol={{ span: 6 }}
-            handleFinish={handleCreate}
-          />
-        </BasicModal>
-<% } -%>
-      </>
-    </BasicContent>
-  )
+      <BaseModal
+        width={600}
+        title={createTitle}
+        open={isCreateOpen}
+        confirmLoading={isCreateLoading}
+        onOk={createSubmit}
+        onCancel={closeCreate}
+      >
+        <BaseForm
+          ref={createFormRef}
+          list={createList(t, createId)}
+          data={createData}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 19 }}
+          handleFinish={handleCreate}
+        />
+      </BaseModal>
+    </BaseContent>
+  );
 }
 
-export default Page
+export default <%=name%>;
