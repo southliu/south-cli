@@ -8,11 +8,12 @@
   "bin": {
     "south": "./bin/src/cli/index.js"
   },
-  "scripts": {
-    "dev": "tsc && gulp ejs",
-    "tsc": "tsc -w && gulp ejs",
+  "scripts": {  
+    "dev": "tsc -w && gulp ejs",
+    "tsc": "tsc && gulp ejs",
     "ejs": "gulp ejs",
-    "link:dev": "tsc && gulp ejs && concurrently \"npm link\"",
+    "lint-ejs": "npx ejs-lint templates/**/*.ejs",
+    "link:dev": "tsc && gul\"p ejs && concurrently \"npm link\"",
     "adduser": "npm adduser",
     "upload": "tsc && gulp ejs && concurrently \"npm publish\""
   },
@@ -40,6 +41,7 @@
     "fs-extra": "^11.3.0",
     "js-cookie": "^3.0.5",
     "loading-cli": "^1.1.2",
+    "lodash": "^4.17.21",
     "puppeteer": "^24.1.0"
   },
   "devDependencies": {
@@ -55,10 +57,10 @@
     "@typescript-eslint/eslint-plugin": "^8.20.0",
     "@typescript-eslint/parser": "^8.20.0",
     "concurrently": "^9.1.2",
+    "ejs-lint": "^2.0.1",
     "eslint": "^9.18.0",
     "gulp": "^5.0.0",
     "husky": "^9.1.7",
-    "mustache": "^4.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },

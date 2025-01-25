@@ -1,77 +1,145 @@
 import type { FormData } from '#/form';
 import type { PagePermission } from '#/public';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect<% if (funcs.includes('create') || funcs.includes('update')) { -%>, useRef<% } -%>, useState } from 'react';
+<% if ((funcs.includes('create') || funcs.includes('update')) && funcs.includes('search')) { -%>
 import { searchList, createList, tableColumns } from './model';
+<% } -%>
+<% if (!(funcs.includes('create') || funcs.includes('update')) && funcs.includes('search')) { -%>
+import { searchList, tableColumns } from './model';
+<% } -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('search')) { -%>
+import { createList, tableColumns } from './model';
+<% } -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && funcs.includes('delete')) { -%>
 import { type FormInstance, message } from 'antd';
+<% } -%>
+<% if (!(funcs.includes('create') || funcs.includes('update')) && funcs.includes('delete')) { -%>
+import { message } from 'antd';
+<% } -%>
+<% if ((funcs.includes('create') || funcs.includes('update')) && !funcs.includes('delete')) { -%>
+import { type FormInstance } from 'antd';
+<% } -%>
 import { useTranslation } from 'react-i18next';
 import { checkPermission } from '@/utils/permissions';
 import { useCommonStore } from '@/hooks/useCommonStore';
+<% if (funcs.includes('create') && funcs.includes('update') && funcs.includes('pagination')) { -%>
 import { ADD_TITLE, EDIT_TITLE, INIT_PAGINATION } from '@/utils/config';
+<% } -%>
+<% if (!funcs.includes('create') && funcs.includes('update') && funcs.includes('pagination')) { -%>
+import { EDIT_TITLE, INIT_PAGINATION } from '@/utils/config';
+<% } -%>
+<% if (!funcs.includes('create') && !funcs.includes('update') && funcs.includes('pagination')) { -%>
+import { INIT_PAGINATION } from '@/utils/config';
+<% } -%>
+<% if (funcs.includes('create') && funcs.includes('update') && !funcs.includes('pagination')) { -%>
+import { ADD_TITLE, EDIT_TITLE } from '@/utils/config';
+<% } -%>
+<% if (funcs.includes('create') && !funcs.includes('update') && !funcs.includes('pagination')) { -%>
+import { ADD_TITLE } from '@/utils/config';
+<% } -%>
+<% if (!funcs.includes('create') && funcs.includes('update') && !funcs.includes('pagination')) { -%>
+import { EDIT_TITLE } from '@/utils/config';
+<% } -%>
+<% if (funcs.includes('delete') && funcs.includes('update')) { -%>
 import { UpdateBtn, DeleteBtn } from '@/components/Buttons';
+<% } -%>
+<% if (funcs.includes('delete') && !funcs.includes('update')) { -%>
+import { DeleteBtn } from '@/components/Buttons';
+<% } -%>
+<% if (!funcs.includes('delete') && funcs.includes('update')) { -%>
+import { UpdateBtn} from '@/components/Buttons';
+<% } -%>
 import {
   get<%=name%>Page,
+<% if (funcs.includes('update')) { -%>
   get<%=name%>ById,
+<% } -%>
+<% if (funcs.includes('create')) { -%>
   create<%=name%>,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
   update<%=name%>,
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
   delete<%=name%>
+<% } -%>
 } from '<%=apiPath%>';
 import BaseContent from '@/components/Content/BaseContent';
 import BaseSearch from '@/components/Search/BaseSearch';
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 import BaseModal from '@/components/Modal/BaseModal';
 import BaseForm from '@/components/Form/BaseForm';
+<% } -%>
 import BaseTable from '@/components/Table/BaseTable';
+<% if (funcs.includes('pagination')) { -%>
 import BasePagination from '@/components/Pagination/BasePagination';
+<% } -%>
 import BaseCard from '@/components/Card/BaseCard';
 
 // 当前行数据
 interface RowData {
   id: string;
 }
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
 // 初始化新增数据
-const initCreate = {
-  status: 1
-};
+const initCreate = {};
+<% } -%>
 
 function <%=name%>() {
   const { t } = useTranslation();
+  const { permissions } = useCommonStore();
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const createFormRef = useRef<FormInstance>(null);
+<% } -%>
   const columns = tableColumns(t, optionRender);
   const [isFetch, setFetch] = useState(false);
-  const [isCreateOpen, setCreateOpen] = useState(false);
   const [isLoading, setLoading] = useState(false);
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
+  const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCreateLoading, setCreateLoading] = useState(false);
+<% if (funcs.includes('create')) { -%>
   const [createTitle, setCreateTitle] = useState(ADD_TITLE(t));
+<% } -%>
+<% if (!funcs.includes('create')) { -%>
+  const [createTitle, setCreateTitle] = useState(EDIT_TITLE(t));
+<% } -%>
   const [createId, setCreateId] = useState('');
   const [createData, setCreateData] = useState<FormData>(initCreate);
+<% } -%>
+<% if (funcs.includes('search')) { -%>
   const [searchData, setSearchData] = useState<FormData>({});
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
   const [page, setPage] = useState(INIT_PAGINATION.page);
   const [pageSize, setPageSize] = useState(INIT_PAGINATION.pageSize);
   const [total, setTotal] = useState(0);
+<% } -%>
   const [tableData, setTableData] = useState<FormData[]>([]);
+<% if (funcs.includes('create') || funcs.includes('update') || funcs.includes('delete')) { -%>
   const [messageApi, contextHolder] = message.useMessage();
-  const { permissions } = useCommonStore();
+<% } -%>
 
   // 权限前缀
-  const permissionPrefix = '/authority/menu';
+  const permissionPrefix = '<%=rule%>';
 
   // 权限
   const pagePermission: PagePermission = {
     page: checkPermission(`${permissionPrefix}/index`, permissions),
-    <% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
+<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
     create: checkPermission(`${permissionPrefix}/create`, permissions),
-    <% } -%>
-    <% if (funcs.includes('update')) { -%>
+<% } -%>
+<% if (funcs.includes('update')) { -%>
     update: checkPermission(`${permissionPrefix}/update`, permissions),
-    <% } -%>
-    <% if (funcs.includes('delete')) { -%>
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
     delete: checkPermission(`${permissionPrefix}/delete`, permissions)
-    <% } -%>
+<% } -%>
   };
 
   /** 获取表格数据 */
   const getPage = useCallback(async () => {
-    const params = { ...searchData, page, pageSize };
+    const params = { ...searchData<% if (funcs.includes('pagination')) { -%>, page, pageSize<% } -%> };
 
     try {
       setLoading(true);
@@ -85,28 +153,31 @@ function <%=name%>() {
       setFetch(false);
       setLoading(false);
     }
-  }, [page, pageSize, searchData]);
+  }, [<% if (funcs.includes('pagination')) { -%>page, pageSize, <% } -%>searchData]);
 
   useEffect(() => {
     if (isFetch) getPage();
   }, [getPage, isFetch]);
+<% if (funcs.includes('search')) { -%>
 
   /**
    * 点击搜索
    * @param values - 表单返回数据
    */
   const onSearch = (values: FormData) => {
+<% if (funcs.includes('pagination')) { -%>
     setPage(1);
+<% } -%>
     setSearchData(values);
     setFetch(true);
   };
+<% } -%>
 
   // 首次进入自动加载接口数据
   useEffect(() => {
     if (pagePermission.page) getPage();
-    // TODO: 重复请求测试，可删
-    if (pagePermission.page) getPage();
   }, [getPage, pagePermission.page]);
+<% if (funcs.includes('create')) { -%>
 
   /** 点击新增 */
   const onCreate = () => {
@@ -115,6 +186,8 @@ function <%=name%>() {
     setCreateId('');
     setCreateData(initCreate);
   };
+<% } -%>
+<% if (funcs.includes('update')) { -%>
 
   /**
    * 点击编辑
@@ -126,13 +199,15 @@ function <%=name%>() {
       setCreateTitle(EDIT_TITLE(t, id));
       setCreateId(id);
       setCreateLoading(true);
-      const { code, data } = await get<%=name%>ById(id as string);
+      const { code, data } = await get<%=name%>ById(id);
       if (Number(code) !== 200) return;
       setCreateData(data);
     } finally {
       setCreateLoading(false);
     }
   };
+<% } -%>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
   /** 表单提交 */
   const createSubmit = () => {
@@ -161,6 +236,8 @@ function <%=name%>() {
       setCreateLoading(false);
     }
   };
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
 
   /**
    * 点击删除
@@ -169,7 +246,7 @@ function <%=name%>() {
   const onDelete = async (id: string) => {
     try {
       setLoading(true);
-      const { code, message } = await delete<%=name%>(id as string);
+      const { code, message } = await delete<%=name%>(id);
       if (Number(code) === 200) {
         messageApi.success(message || t('public.successfullyDeleted'));
         getPage();
@@ -178,6 +255,8 @@ function <%=name%>() {
       setLoading(false);
     }
   };
+<% } -%>
+<% if (funcs.includes('pagination')) { -%>
 
   /**
    * 处理分页
@@ -189,6 +268,8 @@ function <%=name%>() {
     setPageSize(pageSize);
     setFetch(true);
   }, []);
+<% } -%>
+<% if (funcs.includes('delete') || funcs.includes('update')) { -%>
 
   /**
    * 渲染操作
@@ -197,14 +278,17 @@ function <%=name%>() {
    */
   function optionRender(_: unknown, record: object) {
     return <>
+<% if (funcs.includes('update')) { -%>
       {
         pagePermission.update === true &&
         <UpdateBtn
           className='mr-5px'
           isLoading={isLoading}
-          onClick={() => onUpdate((record as RowData).id)}
+          onClick=<%- '{() => onUpdate((record as RowData).id)}' %>
         />
       }
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
       {
         pagePermission.delete === true &&
         <DeleteBtn
@@ -213,12 +297,15 @@ function <%=name%>() {
           handleDelete={() => onDelete((record as RowData).id)}
         />
       }
+<% } -%>
     </>;
   }
+<% } -%>
 
   return (
     <BaseContent isPermission={pagePermission.page}>
       { contextHolder }
+<% if (funcs.includes('search')) { -%>
       <BaseCard>
         <BaseSearch
           list={searchList(t)}
@@ -227,6 +314,7 @@ function <%=name%>() {
           handleFinish={onSearch}
         />
       </BaseCard>
+<% } -%>
 
       <BaseCard className='mt-10px'>
         <BaseTable
@@ -237,6 +325,7 @@ function <%=name%>() {
           getPage={getPage}
           onCreate={onCreate}
         />
+<% if (funcs.includes('pagination')) { -%>
 
         <BasePagination
           disabled={isLoading}
@@ -245,7 +334,9 @@ function <%=name%>() {
           total={total}
           onChange={onChangePagination}
         />
+<% } -%>
       </BaseCard>
+<% if (funcs.includes('create') || funcs.includes('update')) { -%>
 
       <BaseModal
         width={600}
@@ -257,13 +348,14 @@ function <%=name%>() {
       >
         <BaseForm
           ref={createFormRef}
-          list={createList(t, createId)}
+          list={createList(t)}
           data={createData}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 19 }}
           handleFinish={handleCreate}
         />
       </BaseModal>
+<% } -%>
     </BaseContent>
   );
 }

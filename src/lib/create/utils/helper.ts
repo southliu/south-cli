@@ -10,25 +10,25 @@ import path from 'path'
   fullPath: string; // 完整的API路径
 }
 export function getApiPath(name = 'servers'): IGetApiPathResult {
-  const lastArr: string[] = [], text = /^[A-Z]:\\$/
+  const lastArr: string[] = [], text = /^[A-Z]:\/$/
   let max = 0, // 最大层级，大于10则退出循环
       cwd = process.cwd() // 获取当前命令行选择文件
 
   while (max < 10) {
     // 分割最后一个路径，并记录该路径
-    const cwdPaths = cwd.split('\\'), last = cwdPaths.pop()
-    if (last && last !== 'pages' && last !== 'viwes') lastArr.push(last)
+    const cwdPaths = cwd.split('\/'), last = cwdPaths.pop()
+    if (last && last !== 'pages' && last !== 'views') lastArr.push(last)
 
     cwd = path.resolve(cwd, '..') // 父级路径
-    const apiPath = `${cwd}\\${name}`, // API路径
+    const apiPath = `${cwd}\/${name}`, // API路径
           has = hasFolder(apiPath) // 是否存在API文件
 
     // 存在该文件则退出
     if (has) {
-      const lastPath = lastArr.join('\\')
+      const lastPath = lastArr.join('\/')
       return {
         lastPath: lastArr.join('/'),
-        fullPath: `${apiPath}\\${lastPath}`
+        fullPath: `${apiPath}\/${lastPath}`
       }
     }
 
