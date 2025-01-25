@@ -160,9 +160,9 @@ class GeneratorVue extends ICreatePage<
     const cwd = process.cwd()
     // 获取接口文件路径
     const apiPath = getApiPath().fullPath
-    let result = apiPath ? `${apiPath}\\${apiName}.ts` : ''
+    let result = apiPath ? `${apiPath}\/${apiName}.ts` : ''
     // 如果接口文件为空则为当前文件下创建
-    if (!result) result = path.join(cwd, `${this.name}\\${apiName}.ts`)
+    if (!result) result = path.join(cwd, `${this.name}\/${apiName}.ts`)
     return result
   }
 
@@ -185,12 +185,12 @@ class GeneratorVue extends ICreatePage<
     fs.mkdirsSync(filePath)
 
     // 输出模板代码
-    const codeFilePath = path.join(cwd, `${this.name}\\index.vue`)
+    const codeFilePath = path.join(cwd, `${this.name}\/index.vue`)
     fs.outputFileSync(codeFilePath, code)
     console.log(successText(`  创建vue文件成功 - ${codeFilePath}`))
 
     // 输出数据代码
-    const dataFilePath = path.join(cwd, `${this.name}\\model.ts`)
+    const dataFilePath = path.join(cwd, `${this.name}\/model.ts`)
     fs.outputFileSync(dataFilePath, data)
     console.log(successText(`  创建data文件成功 - ${dataFilePath}`))
 
@@ -198,6 +198,7 @@ class GeneratorVue extends ICreatePage<
     const apiFilePath = this.getApiFilePath(apiName)
     fs.outputFileSync(apiFilePath, api)
     console.log(successText(`  创建接口文件成功 - ${apiFilePath}`))
+    console.log(successText(`  请将接口文件剪切进对应的api文件夹中`))
   }
 
   /** 创建页面 */

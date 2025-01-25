@@ -23,7 +23,7 @@ class AnalyzerLogin {
    * 判断是否有登录/注册按钮
    * @param page - 页面数据
    */
-   private async hasPasswrod(page: Page) {
+   private async hasPassword(page: Page) {
     try {
       const label = 'div > div.btn-group > a > button'
       await page.waitForSelector(label, { timeout: 3000 })
@@ -119,7 +119,7 @@ class AnalyzerLogin {
    */
   async handleLogin(page: Page, url: string) {
     try {
-      const isPassword = await this.hasPasswrod(page)
+      const isPassword = await this.hasPassword(page)
   
       // 需要输入登录
       if (isPassword) {  

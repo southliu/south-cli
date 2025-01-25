@@ -1,6 +1,6 @@
-import type { IFormData } from '#/form'
-import type { IPageServerResult, IPaginationData } from '#/public'
-import { request } from '@/utils/request'
+import type { FormData } from '#/form';
+import type { PageServerResult, PaginationData } from '#/public';
+import { request } from '@/utils/request';
 
 enum API {
   URL = '<%=rule%>'
@@ -10,11 +10,11 @@ enum API {
  * 获取分页数据
  * @param data - 请求数据
  */
-export function get<%=name%>Page(data: Partial<IFormData> & IPaginationData) {
-  return request.get<IPageServerResult<IFormData[]>>(
-    `${API.URL}/index`,
+export function get<%=name%>Page(data: Partial<FormData> & PaginationData) {
+  return request.get<PageServerResult<FormData[]>>(
+    `${API.URL}/page`,
     { params: data }
-  )
+  );
 }
 <% if (funcs.includes('update')) { -%>
 
@@ -23,7 +23,7 @@ export function get<%=name%>Page(data: Partial<IFormData> & IPaginationData) {
  * @param id - ID
  */
 export function get<%=name%>ById(id: string) {
-  return request.get(`${API.URL}/${id}`)
+  return request.get<FormData>(`${API.URL}/detail?id=${id}`);
 }
 <% } -%>
 <% if (funcs.includes('create')) { -%>
@@ -32,8 +32,8 @@ export function get<%=name%>ById(id: string) {
  * 新增数据
  * @param data - 请求数据
  */
-export function create<%=name%>(data: IFormData) {
-  return request.post(API.URL, data)
+export function create<%=name%>(data: FormData) {
+  return request.post(API.URL, data);
 }
 <% } -%>
 <% if (funcs.includes('update')) { -%>
@@ -43,8 +43,8 @@ export function create<%=name%>(data: IFormData) {
  * @param id - 修改id值
  * @param data - 请求数据
  */
-export function update<%=name%>(id: string, data: IFormData) {
-  return request.put(`${API.URL}/${id}`, data)
+export function update<%=name%>(id: string, data: FormData) {
+  return request.put(`${API.URL}/${id}`, data);
 }
 <% } -%>
 <% if (funcs.includes('delete')) { -%>
@@ -54,7 +54,7 @@ export function update<%=name%>(id: string, data: IFormData) {
  * @param id - 删除id值
  */
 export function delete<%=name%>(id: string) {
-  return request.delete(`${API.URL}/${id}`)
+  return request.delete(`${API.URL}/${id}`);
 }
 <% } -%>
 <% if (funcs.includes('batchDelete')) { -%>
@@ -63,7 +63,7 @@ export function delete<%=name%>(id: string) {
  * 批量删除
  * @param ids - 批量删除id值
  */
-export function batchDelete<%=name%>(ids: string[]) {
+export function batchDelete<%=name%>(id: string) {
   return request.delete(`${API.URL}`, { data: { ids } })
 }
 <% } -%>
