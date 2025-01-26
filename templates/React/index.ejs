@@ -20,8 +20,12 @@ import { message } from 'antd';
 import { type FormInstance } from 'antd';
 <% } -%>
 import { useTranslation } from 'react-i18next';
+<% if (rule) { -%>
 import { checkPermission } from '@/utils/permissions';
+<% } -%>
+<% if (rule) { -%>
 import { useCommonStore } from '@/hooks/useCommonStore';
+<% } -%>
 <% if (funcs.includes('create') && funcs.includes('update') && funcs.includes('pagination')) { -%>
 import { ADD_TITLE, EDIT_TITLE, INIT_PAGINATION } from '@/utils/config';
 <% } -%>
@@ -88,7 +92,9 @@ const initCreate = {};
 
 function <%=name%>() {
   const { t } = useTranslation();
+<% if (rule) { -%>
   const { permissions } = useCommonStore();
+<% } -%>
 <% if (funcs.includes('create') || funcs.includes('update')) { -%>
   const createFormRef = useRef<FormInstance>(null);
 <% } -%>
@@ -120,6 +126,7 @@ function <%=name%>() {
   const [messageApi, contextHolder] = message.useMessage();
 <% } -%>
 
+<% if (rule) { -%>
   // 权限前缀
   const permissionPrefix = '<%=rule%>';
 
@@ -136,6 +143,23 @@ function <%=name%>() {
     delete: checkPermission(`${permissionPrefix}/delete`, permissions)
 <% } -%>
   };
+<% } -%>
+<% if (!rule) { -%>
+  // 权限
+  const pagePermission: PagePermission = {
+    page: true,
+<% if (funcs.includes('create') || funcs.includes('createPage')) { -%>
+    create: true,
+<% } -%>
+<% if (funcs.includes('update')) { -%>
+    update: true,
+<% } -%>
+<% if (funcs.includes('delete')) { -%>
+    delete: true
+<% } -%>
+  };
+<% } -%>
+
 
   /** 获取表格数据 */
   const getPage = useCallback(async () => {

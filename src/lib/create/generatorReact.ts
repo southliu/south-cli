@@ -235,10 +235,9 @@ class GeneratorReact extends ICreatePage<
     if (!name) return console.log(errorText('  请输入有效名称'))
 
     // 4.获取权限
-    const rule = await getRule()
-    if (!rule) return console.log(errorText('  请输入有效权限'))
+    let rule = await getRule()
     // 获取api文件名称
-    const apiName = getApiName(rule)
+    const apiName = getApiName(rule) || 'server'
 
     // 5.选择页面功能：增删改查
     const funcs = await getFunctions()
@@ -247,7 +246,7 @@ class GeneratorReact extends ICreatePage<
     const codeTemplate = this.getTemplate({name, title, rule, apiName, funcs})
     const dataTemplate = this.getDateTemplate(funcs)
     const optionTemplate = this.getOptionTemplate({rule, name, title, apiName, funcs})
-    const apiTemplate = this.getApiTemplate({rule, name, funcs})
+    const apiTemplate = this.getApiTemplate({rule: rule || '/server', name, funcs})
     if (!codeTemplate || !dataTemplate || !apiTemplate) {
       return console.log(errorText('  错误模板数据'))
     }
