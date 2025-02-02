@@ -1,6 +1,6 @@
 {
   "name": "south-cli",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "cli脚手架生成项目",
   "repository": "https://github.com/SouthLiu/south-cli",
   "homepage": "https://github.com/SouthLiu/south-cli",
@@ -8,12 +8,12 @@
   "bin": {
     "south": "./bin/src/cli/index.js"
   },
-  "scripts": {  
-    "dev": "tsc -w && gulp ejs",
-    "tsc": "tsc && gulp ejs",
+  "scripts": {
+    "dev": "gulp ejs && tsc -w",
+    "tsc": "gulp ejs && tsc",
     "ejs": "gulp ejs",
     "lint-ejs": "npx ejs-lint templates/**/*.ejs",
-    "link:dev": "tsc && gul\"p ejs && concurrently \"npm link\"",
+    "link:dev": "tsc && gulp ejs && concurrently \"npm link\"",
     "adduser": "npm adduser",
     "upload": "tsc && gulp ejs && concurrently \"npm publish\""
   },
@@ -31,9 +31,9 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@inquirer/prompts": "^7.2.3",
+    "@inquirer/prompts": "^7.2.4",
     "axios": "^1.7.9",
-    "commander": "^13.0.0",
+    "commander": "^13.1.0",
     "crypto-js": "^4.2.0",
     "download-git-repo": "^3.0.2",
     "ejs": "^3.1.10",
@@ -42,7 +42,7 @@
     "js-cookie": "^3.0.5",
     "loading-cli": "^1.1.2",
     "lodash": "^4.17.21",
-    "puppeteer": "^24.1.0"
+    "puppeteer": "^24.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
@@ -53,14 +53,15 @@
     "@types/fs-extra": "^11.0.4",
     "@types/inquirer": "^9.0.7",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "^22.10.7",
-    "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0",
+    "@types/node": "^22.13.0",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
     "concurrently": "^9.1.2",
     "ejs-lint": "^2.0.1",
-    "eslint": "^9.18.0",
+    "eslint": "^9.19.0",
     "gulp": "^5.0.0",
     "husky": "^9.1.7",
+    "inquirer": "^12.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },

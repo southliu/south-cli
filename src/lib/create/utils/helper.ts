@@ -45,8 +45,8 @@ export function getApiPath(name = 'servers'): IGetApiPathResult {
  * @param rule - 路由
  */
  export function getApiName(rule: string): string {
-  if (rule) return ''
+  if (!rule) return ''
   // 返回路由中最后一个单词
   const arr = rule.split('/')
-  return arr[arr.length - 1]
+  return arr?.[arr.length - 1] || ''
 }
