@@ -16,10 +16,10 @@ export function getApiPath(name = 'servers'): IGetApiPathResult {
 
   while (max < 10) {
     // 分割最后一个路径，并记录该路径
-    const cwdPaths = cwd.split('\/'), last = cwdPaths.pop()
+    const cwdPaths = cwd.split('\\'), last = cwdPaths.pop()
     if (last && last !== 'pages' && last !== 'views') lastArr.push(last)
 
-    cwd = path.resolve(cwd, '..') // 父级路径
+    cwd = path.resolve(cwd) // 当前路径
     const apiPath = `${cwd}\/${name}`, // API路径
           has = hasFolder(apiPath) // 是否存在API文件
 
@@ -28,7 +28,7 @@ export function getApiPath(name = 'servers'): IGetApiPathResult {
       const lastPath = lastArr.join('\/')
       return {
         lastPath: lastArr.join('/'),
-        fullPath: `${apiPath}\/${lastPath}`
+        fullPath: lastPath
       }
     }
 
